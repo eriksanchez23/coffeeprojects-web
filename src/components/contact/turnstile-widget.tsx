@@ -34,7 +34,11 @@ export function TurnstileWidget({ siteKey, locale }: { siteKey: string; locale: 
 
   useEffect(() => {
     const el = ref.current
-    if (!el || !siteKey) return
+    if (!el) return
+    if (!siteKey) {
+      console.error('Turnstile site key is not configured; the contact form cannot be verified')
+      return
+    }
     let widgetId: string | undefined
     let cancelled = false
     loadScript()
@@ -42,7 +46,7 @@ export function TurnstileWidget({ siteKey, locale }: { siteKey: string; locale: 
         if (cancelled) return
         widgetId = api.render(el, { sitekey: siteKey, theme: 'dark', language: locale, size: 'flexible' })
       })
-      .catch(() => undefined)
+      .catch(() => console.error('Turnstile failed to load'))
     return () => {
       cancelled = true
       if (widgetId) (window as unknown as { turnstile?: TurnstileApi }).turnstile?.remove(widgetId)

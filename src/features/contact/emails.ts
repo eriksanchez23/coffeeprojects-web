@@ -35,6 +35,6 @@ export function clientEmail(i: ContactInput) {
   const c = copy[i.locale]
   return {
     subject: c.subject,
-    html: `<p>${c.hi} ${esc(i.name)},</p><p>${c.body}</p><p>— ${c.sign}<br/><a href="https://coffeeprojects.es">coffeeprojects.es</a></p>`,
+    html: `<p>${c.hi},</p><p>${c.body}</p><p>— ${c.sign}<br/><a href="https://coffeeprojects.es">coffeeprojects.es</a></p>`,
   }
 }

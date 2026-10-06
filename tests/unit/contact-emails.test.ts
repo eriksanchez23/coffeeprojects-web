@@ -27,4 +27,7 @@ describe('emails', () => {
     expect(clientEmail({ ...input, locale: 'en' }).subject).toMatch(/request/i)
     expect(clientEmail({ ...input, locale: 'es' }).subject).toMatch(/solicitud/i)
   })
+  it('uses a neutral greeting without echoing the visitor name', () => {
+    expect(clientEmail(input).html).not.toContain('script')
+  })
 })

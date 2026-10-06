@@ -1,13 +1,15 @@
 import { z } from 'zod'
 import { budgets, projectTypes, timelines } from './options'
 
+// Single-line fields never legitimately hold control characters (header/log injection, invisible junk).
+const stripControl = (v: unknown) => (typeof v === 'string' ? v.replace(/\p{Cc}/gu, '') : v)
 const checkbox = z.preprocess((v) => v === true || v === 'on' || v === 'true', z.boolean())
 const optionalText = (max: number) =>
-  z.preprocess((v) => (typeof v === 'string' && v.trim() === '' ? undefined : v), z.string().trim().max(max, 'tooLong').optional())
+  z.preprocess((v) => { const c = stripControl(v); return typeof c === 'string' && c.trim() === '' ? undefined : c }, z.string().trim().max(max, 'tooLong').optional())
 
 export const contactSchema = z.object({
-  name: z.string({ message: 'required' }).trim().min(1, 'required').max(100, 'tooLong'),
-  email: z.string({ message: 'required' }).trim().email('invalidEmail').max(200, 'tooLong'),
+  name: z.preprocess(stripControl, z.string({ message: 'required' }).trim().min(1, 'required').max(100, 'tooLong')),
+  email: z.preprocess(stripControl, z.string({ message: 'required' }).trim().email('invalidEmail').max(200, 'tooLong')),
   phone: optionalText(30),
   projectType: z.enum(projectTypes, { message: 'required' }),
   budget: z.preprocess((v) => (v === '' ? undefined : v), z.enum(budgets).optional()),

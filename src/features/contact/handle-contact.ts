@@ -15,20 +15,29 @@ export type ContactDeps = {
   log(e: unknown): void
 }
 
+// Fields the form shows an error for; failures elsewhere need a form-level message.
+const RENDERED_FIELDS: ReadonlySet<string> = new Set(['name', 'email', 'phone', 'projectType', 'message', 'howFound', 'nda', 'privacy'])
+
 export async function handleContact(raw: Record<string, unknown>, deps: ContactDeps): Promise<ContactResult> {
   const eventId = deps.newEventId()
 
   // Honeypot: bots fill hidden fields. Pretend success so they don't retry.
-  if (typeof raw.website === 'string' && raw.website.trim() !== '') return { status: 'ok', saved: false, eventId }
+  if (typeof raw.cp_hp === 'string' && raw.cp_hp.trim() !== '') return { status: 'ok', saved: false, eventId }
 
   const parsed = contactSchema.safeParse(raw)
   if (!parsed.success) {
     const fieldErrors: Partial<Record<keyof ContactInput, string>> = {}
+    let hidden = false
     for (const issue of parsed.error.issues) {
       const key = issue.path[0] as keyof ContactInput
-      fieldErrors[key] ??= issue.message
+      if (RENDERED_FIELDS.has(key)) fieldErrors[key] ??= issue.message
+      else hidden = true
     }
-    return { status: 'error', fieldErrors }
+    return {
+      status: 'error',
+      ...(Object.keys(fieldErrors).length > 0 && { fieldErrors }),
+      ...(hidden && { formError: 'generic' as const }),
+    }
   }
   const input = parsed.data
 

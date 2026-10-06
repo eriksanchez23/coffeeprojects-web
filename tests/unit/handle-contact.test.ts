@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { handleContact } from '@/features/contact/handle-contact'
+import { clientIp, hashIp } from '@/features/contact/ip'
 
 const base = {
   name: 'Ana',
@@ -10,7 +11,7 @@ const base = {
   locale: 'es',
   sourcePath: '/contacto',
   turnstileToken: 'tok',
-  website: '',
+  cp_hp: '',
 }
 
 function deps(over: Partial<Parameters<typeof handleContact>[1]> = {}) {
@@ -30,7 +31,7 @@ function deps(over: Partial<Parameters<typeof handleContact>[1]> = {}) {
 describe('handleContact', () => {
   it('silently accepts but does not save when the honeypot is filled', async () => {
     const d = deps()
-    const r = await handleContact({ ...base, website: 'http://spam' }, d)
+    const r = await handleContact({ ...base, cp_hp: 'http://spam' }, d)
     expect(r).toEqual({ status: 'ok', saved: false, eventId: 'evt-1' })
     expect(d.createContact).not.toHaveBeenCalled()
   })
@@ -71,5 +72,47 @@ describe('handleContact', () => {
   it('returns a generic error when saving fails', async () => {
     const r = await handleContact(base, deps({ createContact: vi.fn().mockRejectedValue(new Error('db')) }))
     expect(r).toEqual({ status: 'error', formError: 'generic' })
+  })
+  it('shows a form-level error when only non-rendered fields fail validation', async () => {
+    const r = await handleContact({ ...base, budget: 'bogus' }, deps())
+    expect(r).toEqual({ status: 'error', formError: 'generic' })
+  })
+
+  it('adds the form-level error next to field errors when a hidden field also fails', async () => {
+    const r = await handleContact({ ...base, email: 'bad', timeline: 'bogus' }, deps())
+    expect(r).toEqual({ status: 'error', fieldErrors: { email: 'invalidEmail' }, formError: 'generic' })
+  })
+
+  it('strips unknown raw fields before saving (no mass assignment)', async () => {
+    const d = deps()
+    await handleContact({ ...base, status: 'archived', ipHash: 'evil', internalNotes: 'x', assignedTo: 1, turnstileToken: 'tok' }, d)
+    const saved = (d.createContact as ReturnType<typeof vi.fn>).mock.calls[0]![0] as Record<string, unknown>
+    expect(saved).not.toHaveProperty('status')
+    expect(saved).not.toHaveProperty('internalNotes')
+    expect(saved).not.toHaveProperty('assignedTo')
+    expect(saved).not.toHaveProperty('turnstileToken')
+    expect(saved.ipHash).toBe('hash')
+  })
+})
+
+describe('hashIp', () => {
+  it('is a deterministic 64-hex HMAC that depends on both salt and ip', () => {
+    const h = hashIp('1.2.3.4', 'salt')
+    expect(h).toMatch(/^[0-9a-f]{64}$/)
+    expect(hashIp('1.2.3.4', 'salt')).toBe(h)
+    expect(hashIp('1.2.3.5', 'salt')).not.toBe(h)
+    expect(hashIp('1.2.3.4', 'other')).not.toBe(h)
+    expect(h).not.toContain('1.2.3.4')
+  })
+})
+
+describe('clientIp', () => {
+  const headers = (o: Record<string, string>) => ({ get: (k: string) => o[k] ?? null })
+  it('prefers x-real-ip, then the first x-forwarded-for hop', () => {
+    expect(clientIp(headers({ 'x-real-ip': '9.9.9.9', 'x-forwarded-for': '1.1.1.1, 2.2.2.2' }))).toBe('9.9.9.9')
+    expect(clientIp(headers({ 'x-forwarded-for': '1.1.1.1, 2.2.2.2' }))).toBe('1.1.1.1')
+  })
+  it('returns null when no header is present', () => {
+    expect(clientIp(headers({}))).toBeNull()
   })
 })

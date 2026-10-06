@@ -63,8 +63,8 @@ export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: 
       <input type="hidden" name="sourcePath" value={sourcePath} />
       {/* Honeypot: hidden from humans and assistive tech */}
       <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label htmlFor="website">{t('honeypot')}</label>
-        <input id="website" name="website" tabIndex={-1} autoComplete="off" />
+        <label htmlFor="cp_hp">{t('honeypot')}</label>
+        <input id="cp_hp" name="cp_hp" tabIndex={-1} autoComplete="off" />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
