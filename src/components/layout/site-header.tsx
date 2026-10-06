@@ -1,0 +1,37 @@
+import { getTranslations } from 'next-intl/server'
+import { Button } from '@/components/ui/button'
+import { Container } from '@/components/ui/container'
+import { Link } from '@/i18n/navigation'
+import { LanguageSwitcher } from './language-switcher'
+import { Logo } from './logo'
+import { MobileMenu } from './mobile-menu'
+
+export async function SiteHeader() {
+  const t = await getTranslations('nav')
+  const links = [
+    { href: '/services' as const, label: t('services') },
+    { href: '/team' as const, label: t('team') },
+    { href: '/projects' as const, label: t('projects') },
+    { href: { pathname: '/' as const, hash: 'faq' }, label: t('faq') },
+  ]
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-line bg-bg-0/70 backdrop-blur-xl">
+      <Container className="flex h-16 items-center justify-between gap-6">
+        <Logo />
+        <nav aria-label="Main" className="hidden items-center gap-7 text-sm md:flex">
+          {links.map((l) => (
+            <Link key={l.label} href={l.href} className="text-ink-2 transition-colors hover:text-ink-0">
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+        <div className="hidden items-center gap-3 md:flex">
+          <LanguageSwitcher />
+          <Button href="/contact">{t('cta')}</Button>
+        </div>
+        <MobileMenu links={links} ctaLabel={t('cta')} openLabel={t('openMenu')} closeLabel={t('closeMenu')} />
+      </Container>
+    </header>
+  )
+}

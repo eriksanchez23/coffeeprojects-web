@@ -25,6 +25,8 @@
     "@payloadcms/richtext-lexical": "3.90.2",
     "@payloadcms/storage-vercel-blob": "3.90.2",
     "@payloadcms/ui": "3.90.2",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
