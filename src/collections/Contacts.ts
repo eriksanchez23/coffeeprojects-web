@@ -10,7 +10,7 @@ export const Contacts: CollectionConfig = {
   labels: { singular: 'Contact request', plural: 'Contact requests' },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email', 'projectType', 'status', 'utmCampaign', 'createdAt'],
+    defaultColumns: ['name', 'email', 'projectType', 'plan', 'status', 'createdAt'],
     listSearchableFields: ['name', 'email', 'message'],
     group: 'Inbox',
     components: { beforeListTable: ['/components/admin/default-new-filter#DefaultNewFilter'] },
@@ -43,6 +43,12 @@ export const Contacts: CollectionConfig = {
     { name: 'email', type: 'email', required: true, admin: readOnly, access: locked },
     { name: 'phone', type: 'text', admin: readOnly, access: locked },
     { name: 'projectType', type: 'select', required: true, options: toOptions(projectTypes), admin: readOnly, access: locked },
+    {
+      name: 'plan',
+      type: 'text',
+      admin: { ...readOnly, description: 'Pricing package chosen on the pricing page (validated against the Pricing global)' },
+      access: locked,
+    },
     { name: 'budget', type: 'select', options: toOptions(budgets), admin: readOnly, access: locked },
     { name: 'timeline', type: 'select', options: toOptions(timelines), admin: readOnly, access: locked },
     { name: 'message', type: 'textarea', required: true, admin: readOnly, access: locked },

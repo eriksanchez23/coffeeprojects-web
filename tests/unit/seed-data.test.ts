@@ -3,6 +3,7 @@ import { slugify } from '@/fields/slug'
 import { locales } from '@/i18n/locales'
 import { faqs } from '@/seed/data/faqs'
 import { home } from '@/seed/data/home'
+import { pricing } from '@/seed/data/pricing'
 import { projects } from '@/seed/data/projects'
 import { services } from '@/seed/data/services'
 import { team } from '@/seed/data/team'
@@ -21,6 +22,7 @@ const localizedSets = {
   team: team.map((t) => t.localized),
   projects: projects.map((p) => p.localized),
   faqs: faqs.map((f) => f.localized),
+  pricing: [pricing.localized],
 }
 
 describe('seed data', () => {
@@ -60,5 +62,40 @@ describe('seed data', () => {
       expect(home.localized.en[key].length).toBe(home.localized.es[key].length)
       expect(home.localized.fr[key].length).toBe(home.localized.es[key].length)
     }
+  })
+})
+
+describe('pricing seed (docs/05-pricing-es.md)', () => {
+  it('has the price sheet packages, in order, with their exact prices', () => {
+    expect(pricing.shared.packages).toEqual([
+      { slug: 'basico', initialPrice: 300, monthlyPrice: 20, featured: false },
+      { slug: 'estandar', initialPrice: 400, monthlyPrice: 30, featured: true },
+      { slug: 'profesional', initialPrice: 1000, monthlyPrice: 50, featured: false },
+    ])
+    expect(pricing.shared.custom).toEqual({ fromPrice: 500, monthlyPrice: 20 })
+    expect(pricing.localized.es.packages.map((p) => p.name)).toEqual(['Básico', 'Estándar', 'Profesional'])
+  })
+
+  it('keeps the Spanish inclusions verbatim', () => {
+    expect(pricing.localized.es.packages[2].items.map((i) => i.text)).toEqual([
+      'Landing Page',
+      'Dominio incluido',
+      'Con SEO',
+      'Panel de acceso privado',
+      'Automatizaciones (principalmente a WhatsApp)',
+      'Mantenimiento experto: todo tipo de soporte, actualización y mantenimiento de la web',
+    ])
+    expect(pricing.localized.es.packages[0].items[2]).toEqual({ text: 'Sin SEO', excluded: true })
+    expect(pricing.localized.es.footnote).toBe('Los importes mostrados no incluyen IVA, que se aplicará según la normativa vigente.')
+  })
+
+  it('translates every package with the same inclusions and exclusions', () => {
+    for (const locale of ['en', 'fr'] as const) {
+      expect(pricing.localized[locale].packages.map((p) => p.items.map((i) => Boolean(i.excluded)))).toEqual(
+        pricing.localized.es.packages.map((p) => p.items.map((i) => Boolean(i.excluded))),
+      )
+    }
+    expect(pricing.localized.en.vatNote).toBe('+ VAT')
+    expect(pricing.localized.fr.vatNote).toBe('+ TVA')
   })
 })

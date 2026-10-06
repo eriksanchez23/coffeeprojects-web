@@ -17,6 +17,7 @@ import { TeamMembers } from './collections/TeamMembers'
 import { Users } from './collections/Users'
 import { Home } from './globals/Home'
 import { Legal } from './globals/Legal'
+import { Pricing } from './globals/Pricing'
 import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
@@ -35,7 +36,7 @@ export default buildConfig({
   },
   i18n: { supportedLanguages: { en, es } },
   collections: [Contacts, Services, Projects, TeamMembers, Faqs, Media, Users],
-  globals: [Home, SiteSettings, Legal],
+  globals: [Home, Pricing, SiteSettings, Legal],
   localization: {
     locales: [
       { code: 'es', label: 'Español' },

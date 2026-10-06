@@ -99,11 +99,13 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('es' | 'en' | 'fr') | ('es' | 'en' | 'fr')[];
   globals: {
     home: Home;
+    pricing: Pricing;
     'site-settings': SiteSetting;
     legal: Legal;
   };
   globalsSelect: {
     home: HomeSelect<false> | HomeSelect<true>;
+    pricing: PricingSelect<false> | PricingSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     legal: LegalSelect<false> | LegalSelect<true>;
   };
@@ -148,6 +150,10 @@ export interface Contact {
   email: string;
   phone?: string | null;
   projectType: 'web' | 'ecommerce' | 'fivem-script' | 'fivem-server' | 'discord-bot' | 'maintenance' | 'custom';
+  /**
+   * Pricing package chosen on the pricing page (validated against the Pricing global)
+   */
+  plan?: string | null;
   budget?: ('lt500' | '500-1500' | '1500-3000' | '3000-6000' | 'gt6000' | 'tbd') | null;
   timeline?: ('flexible' | 'lt1m' | '1-2m' | '2-4m' | 'gt4m') | null;
   message: string;
@@ -517,6 +523,7 @@ export interface ContactsSelect<T extends boolean = true> {
   email?: T;
   phone?: T;
   projectType?: T;
+  plan?: T;
   budget?: T;
   timeline?: T;
   message?: T;
@@ -829,6 +836,83 @@ export interface Home {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing".
+ */
+export interface Pricing {
+  id: number;
+  eyebrow: string;
+  title: string;
+  subtitle?: string | null;
+  intro?: string | null;
+  packages?:
+    | {
+        /**
+         * Stable id used in contact links (?plan=). Lowercase, digits and dashes. Do not translate.
+         */
+        slug: string;
+        name: string;
+        /**
+         * EUR, VAT excluded
+         */
+        initialPrice: number;
+        /**
+         * EUR, VAT excluded
+         */
+        monthlyPrice?: number | null;
+        /**
+         * Highlighted as recommended
+         */
+        featured?: boolean | null;
+        items?:
+          | {
+              text: string;
+              /**
+               * Shown as not included (e.g. "Sin SEO")
+               */
+              excluded?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        ctaLabel?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Custom service card ("from" price)
+   */
+  custom: {
+    title: string;
+    subtitle?: string | null;
+    description?: string | null;
+    /**
+     * EUR, VAT excluded
+     */
+    fromPrice?: number | null;
+    /**
+     * EUR, VAT excluded
+     */
+    monthlyPrice?: number | null;
+    ctaLabel?: string | null;
+  };
+  /**
+   * Shown after every price, e.g. "+ IVA"
+   */
+  vatNote?: string | null;
+  footnote?: string | null;
+  /**
+   * Search engine and social preview. Leave empty to use defaults.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".
  */
 export interface SiteSetting {
@@ -962,6 +1046,57 @@ export interface HomeSelect<T extends boolean = true> {
         stackTitle?: T;
       };
   stack?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pricing_select".
+ */
+export interface PricingSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  subtitle?: T;
+  intro?: T;
+  packages?:
+    | T
+    | {
+        slug?: T;
+        name?: T;
+        initialPrice?: T;
+        monthlyPrice?: T;
+        featured?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              excluded?: T;
+              id?: T;
+            };
+        ctaLabel?: T;
+        id?: T;
+      };
+  custom?:
+    | T
+    | {
+        title?: T;
+        subtitle?: T;
+        description?: T;
+        fromPrice?: T;
+        monthlyPrice?: T;
+        ctaLabel?: T;
+      };
+  vatNote?: T;
+  footnote?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   _status?: T;
   updatedAt?: T;
   createdAt?: T;

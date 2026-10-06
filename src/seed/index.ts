@@ -4,6 +4,7 @@ import { locales } from '@/i18n/locales'
 import { faqs } from './data/faqs'
 import { home, homeData } from './data/home'
 import { legal } from './data/legal'
+import { pricing, pricingData } from './data/pricing'
 import { projects } from './data/projects'
 import { services } from './data/services'
 import { settings } from './data/settings'
@@ -94,6 +95,18 @@ async function run() {
       })
     }
   } else payload.logger.info('skip seeded global home')
+
+  const currentPricing = await payload.findGlobal({ slug: 'pricing', locale: 'es', depth: 0 })
+  if (shouldWrite(Boolean(currentPricing.title), seedOverwrite())) {
+    // Same pattern as Home: ES first, then EN/FR onto the saved package rows so prices stay shared.
+    await payload.updateGlobal({ slug: 'pricing', locale: 'es', data: { ...pricingData('es'), _status: 'published' } as never })
+    const saved = await payload.findGlobal({ slug: 'pricing', locale: 'es', draft: true })
+    const rowIds = (saved.packages ?? []).map((r) => r.id)
+    if (rowIds.length !== pricing.shared.packages.length) throw new Error('pricing seed: package rows were not saved')
+    for (const locale of locales.filter((l) => l !== 'es')) {
+      await payload.updateGlobal({ slug: 'pricing', locale, data: { ...pricingData(locale, rowIds), _status: 'published' } as never })
+    }
+  } else payload.logger.info('skip seeded global pricing')
 
   payload.logger.info('Seed complete')
 }
