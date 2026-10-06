@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { PageShell } from '@/components/layout/page-shell'
+import { TrackLead } from '@/components/tracking/track-lead'
 import { Button } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
 import type { Locale } from '@/i18n/locales'
@@ -8,12 +9,20 @@ import { localizedPaths } from '@/i18n/paths'
 
 export const metadata: Metadata = { robots: { index: false, follow: false } }
 
-export default async function ThanksPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function ThanksPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>
+  searchParams: Promise<{ e?: string | string[] }>
+}) {
   const locale = (await params).locale as Locale
+  const { e } = await searchParams
   setRequestLocale(locale)
   const t = await getTranslations('thanks')
   return (
     <PageShell locale={locale} alternates={localizedPaths('/contact/thanks')} hideMobileCta>
+      <TrackLead eventId={typeof e === 'string' ? e : undefined} />
       <section className="steam-glow grid min-h-[70vh] place-items-center py-24 text-center">
         <Container className="max-w-2xl">
           <p aria-hidden className="text-6xl">☕</p>

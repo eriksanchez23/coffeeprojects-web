@@ -34,6 +34,7 @@ describe('handleContact', () => {
     const r = await handleContact({ ...base, cp_hp: 'http://spam' }, d)
     expect(r).toEqual({ status: 'ok', saved: false, eventId: 'evt-1' })
     expect(d.createContact).not.toHaveBeenCalled()
+    expect(d.afterSave).not.toHaveBeenCalled()
   })
 
   it('returns field errors for invalid input', async () => {
@@ -69,10 +70,18 @@ describe('handleContact', () => {
     expect(d.log).toHaveBeenCalled()
   })
 
-  it('returns a generic error when saving fails', async () => {
-    const r = await handleContact(base, deps({ createContact: vi.fn().mockRejectedValue(new Error('db')) }))
+  it('returns a generic error and skips afterSave when saving fails', async () => {
+    const d = deps({ createContact: vi.fn().mockRejectedValue(new Error('db')) })
+    const r = await handleContact(base, d)
     expect(r).toEqual({ status: 'error', formError: 'generic' })
+    expect(d.afterSave).not.toHaveBeenCalled()
   })
+  it('still succeeds when afterSave (CAPI) fails', async () => {
+    const d = deps({ afterSave: vi.fn().mockRejectedValue(new Error('capi')) })
+    expect(await handleContact(base, d)).toEqual({ status: 'ok', saved: true, eventId: 'evt-1' })
+    expect(d.log).toHaveBeenCalled()
+  })
+
   it('shows a form-level error when only non-rendered fields fail validation', async () => {
     const r = await handleContact({ ...base, budget: 'bogus' }, deps())
     expect(r).toEqual({ status: 'error', formError: 'generic' })

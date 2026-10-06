@@ -6,6 +6,8 @@ import { setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { ConsentBanner } from '@/components/layout/consent-banner'
+import { AttributionCapture } from '@/components/tracking/attribution-capture'
+import { MetaPixel } from '@/components/tracking/meta-pixel'
 import { routing } from '@/i18n/routing'
 import { fontVariables } from '@/lib/fonts'
 
@@ -30,6 +32,8 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           {children}
           <ConsentBanner />
+          <MetaPixel pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID} />
+          <AttributionCapture />
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

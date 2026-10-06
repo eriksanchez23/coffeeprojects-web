@@ -5,6 +5,7 @@ import { CtaBand } from '@/components/sections/cta-band'
 import { FaqList } from '@/components/sections/faq-list'
 import { ServiceIcon } from '@/components/sections/service-icon'
 import { ServicesGrid } from '@/components/sections/services-grid'
+import { TrackViewContent } from '@/components/tracking/track-view-content'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonClasses } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
@@ -41,6 +42,7 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
 
   return (
     <PageShell locale={locale} alternates={localizedPaths('/services/[slug]', slugs)}>
+      <TrackViewContent name={s.title} category={s.contactType} />
       <section className="steam-glow pt-20 pb-16" aria-labelledby="service-title">
         <Container className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
           <div>

@@ -1,11 +1,16 @@
 'use server'
 import { randomUUID } from 'node:crypto'
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { LEAD_COOKIE, LEAD_COOKIE_MAX_AGE_S } from '@/components/tracking/lead-proof'
 import { buildPath } from '@/i18n/build-path'
 import { type Locale, locales } from '@/i18n/locales'
 import { payloadClient } from '@/lib/cms/client'
 import { env } from '@/lib/env'
+import { ATTR_COOKIE, parseAttributionCookie } from '@/features/tracking/attribution'
+import { capiConfigFromEnv, sendCapiEvent } from '@/features/tracking/capi'
+import { CONSENT_COOKIE, parseConsent } from '@/features/tracking/consent'
+import { afterSaveLead } from '@/features/tracking/lead'
 import { clientEmail, teamEmail } from './emails'
 import { type ContactResult, handleContact } from './handle-contact'
 import { clientIp, hashIp } from './ip'
@@ -22,6 +27,10 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
   // Falls back to the Payload secret so the hash is never unsalted when IP_HASH_SALT is unset.
   const ipHash = hashIp(ip ?? `unknown:${randomUUID()}`, process.env.IP_HASH_SALT || process.env.PAYLOAD_SECRET || '')
   const raw = formDataToObject(fd)
+  // Consent is read from the cookie, not the form field, so a forged field cannot trigger server-side tracking.
+  const jar = await cookies()
+  const marketing = parseConsent(jar.get(CONSENT_COOKIE)?.value)?.marketing === true
+  const attribution = marketing ? parseAttributionCookie(jar.get(ATTR_COOKIE)?.value) : null
   // Provider errors can echo recipients or submitted values: log only the error kind/status/code.
   const log = (e: unknown) => {
     const err = e as { name?: unknown; status?: unknown; statusCode?: unknown; code?: unknown } | null
@@ -59,7 +68,20 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
       await payload.create({
         collection: 'contacts',
         overrideAccess: true,
-        data: { ...rest, privacyAccepted: privacy, ndaRequested: nda, status: 'new' },
+        data: {
+          ...rest,
+          privacyAccepted: privacy,
+          ndaRequested: nda,
+          status: 'new',
+          ...(attribution && {
+            utmSource: attribution.utmSource,
+            utmMedium: attribution.utmMedium,
+            utmCampaign: attribution.utmCampaign,
+            utmContent: attribution.utmContent,
+            utmTerm: attribution.utmTerm,
+            fbclid: attribution.fbclid,
+          }),
+        },
       })
     },
     notify: async (input) => {
@@ -70,9 +92,32 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
         send({ to: input.email, ...client }),
       ])
     },
+    afterSave: async (input, eventId) => {
+      await afterSaveLead(
+        { ...input, marketingConsent: marketing },
+        eventId,
+        {
+          ip: ip ?? undefined,
+          userAgent: h.get('user-agent') ?? '',
+          fbp: jar.get('_fbp')?.value,
+          fbcCookie: jar.get('_fbc')?.value,
+          attribution,
+          sourceUrl: `${env.SITE_URL}${input.sourcePath.startsWith('/') ? input.sourcePath : '/'}`,
+          nowSeconds: Math.floor(Date.now() / 1000),
+        },
+        (event) =>
+          sendCapiEvent(event, capiConfigFromEnv(process.env), {
+            log: (message) => (env.isProduction ? payload.logger.error(message) : payload.logger.info(message)),
+          }),
+      )
+    },
   })
 
   if (result.status === 'ok') {
+    // Proof of a real submission for the thank-you page (honeypot hits are not saved, so get no cookie).
+    if (result.saved) {
+      jar.set(LEAD_COOKIE, result.eventId, { maxAge: LEAD_COOKIE_MAX_AGE_S, path: '/', sameSite: 'lax', httpOnly: false, secure: env.SITE_URL.startsWith('https:') })
+    }
     const requested = String(raw.locale)
     const locale: Locale = (locales as readonly string[]).includes(requested) ? (requested as Locale) : 'es'
     redirect(`${buildPath('/contact/thanks', locale)}?e=${encodeURIComponent(result.eventId)}`)
