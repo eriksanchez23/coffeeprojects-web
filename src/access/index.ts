@@ -7,6 +7,11 @@ const roleOf = (user: unknown): Role | undefined => (user as MaybeUser)?.role
 
 export const isAdmin: Access = ({ req: { user } }) => roleOf(user) === 'admin'
 export const isTeam: Access = ({ req: { user } }) => Boolean(user)
+export const isAdminOrSelf: Access = ({ req: { user } }) => {
+  if (!user) return false
+  if (roleOf(user) === 'admin') return true
+  return { id: { equals: user.id } }
+}
 export const nobody: Access = () => false
 export const isAdminField: FieldAccess = ({ req: { user } }) => roleOf(user) === 'admin'
 

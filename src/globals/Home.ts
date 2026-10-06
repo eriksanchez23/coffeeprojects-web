@@ -1,11 +1,11 @@
 import type { GlobalConfig } from 'payload'
-import { isTeam } from '@/access'
+import { isTeam, publishedOrTeam } from '@/access'
 
 export const Home: GlobalConfig = {
   slug: 'home',
   admin: { group: 'Content' },
   versions: { drafts: true },
-  access: { read: () => true, update: isTeam },
+  access: { read: publishedOrTeam, readVersions: isTeam, update: isTeam },
   fields: [
     {
       name: 'hero',

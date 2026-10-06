@@ -11,7 +11,7 @@ export const Services: CollectionConfig = {
   admin: { useAsTitle: 'title', defaultColumns: ['title', 'typicalTime', 'order', '_status'], group: 'Content' },
   versions: { drafts: true },
   defaultSort: 'order',
-  access: { read: publishedOrTeam, create: isTeam, update: isTeam, delete: isTeam },
+  access: { read: publishedOrTeam, readVersions: isTeam, create: isTeam, update: isTeam, delete: isTeam },
   fields: [
     { name: 'title', type: 'text', required: true, localized: true },
     slugField('title'),

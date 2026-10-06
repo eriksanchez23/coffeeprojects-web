@@ -8,7 +8,7 @@ export const TeamMembers: CollectionConfig = {
   admin: { useAsTitle: 'name', defaultColumns: ['name', 'role', 'order', '_status'], group: 'Content' },
   versions: { drafts: true },
   defaultSort: 'order',
-  access: { read: publishedOrTeam, create: isTeam, update: isTeam, delete: isTeam },
+  access: { read: publishedOrTeam, readVersions: isTeam, create: isTeam, update: isTeam, delete: isTeam },
   fields: [
     { name: 'name', type: 'text', required: true },
     slugField('name'),

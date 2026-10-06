@@ -8,7 +8,7 @@ export const Projects: CollectionConfig = {
   admin: { useAsTitle: 'title', defaultColumns: ['title', 'year', 'status', 'featured', '_status'], group: 'Content' },
   versions: { drafts: true },
   defaultSort: '-year',
-  access: { read: publishedOrTeam, create: isTeam, update: isTeam, delete: isTeam },
+  access: { read: publishedOrTeam, readVersions: isTeam, create: isTeam, update: isTeam, delete: isTeam },
   fields: [
     { name: 'title', type: 'text', required: true, localized: true },
     slugField('title'),

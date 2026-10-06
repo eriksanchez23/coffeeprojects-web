@@ -1,8 +1,9 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin, isTeam, nobody } from '@/access'
+import { isAdmin, isAdminField, isTeam, nobody } from '@/access'
 import { budgets, contactStatuses, projectTypes, timelines, toOptions } from '@/features/contact/options'
 
 const readOnly = { readOnly: true }
+const locked = { update: () => false }
 
 export const Contacts: CollectionConfig = {
   slug: 'contacts',
@@ -30,31 +31,31 @@ export const Contacts: CollectionConfig = {
       ],
     },
     { name: 'internalNotes', type: 'textarea' },
-    { name: 'name', type: 'text', required: true, admin: readOnly },
-    { name: 'email', type: 'email', required: true, admin: readOnly },
-    { name: 'phone', type: 'text', admin: readOnly },
-    { name: 'projectType', type: 'select', required: true, options: toOptions(projectTypes), admin: readOnly },
-    { name: 'budget', type: 'select', options: toOptions(budgets), admin: readOnly },
-    { name: 'timeline', type: 'select', options: toOptions(timelines), admin: readOnly },
-    { name: 'message', type: 'textarea', required: true, admin: readOnly },
-    { name: 'howFound', type: 'text', admin: readOnly },
-    { name: 'ndaRequested', type: 'checkbox', admin: readOnly },
-    { name: 'privacyAccepted', type: 'checkbox', required: true, admin: readOnly },
-    { name: 'marketingConsent', type: 'checkbox', admin: readOnly },
-    { name: 'locale', type: 'select', options: toOptions(['es', 'en', 'fr']), admin: readOnly },
-    { name: 'sourcePath', type: 'text', admin: readOnly },
+    { name: 'name', type: 'text', required: true, admin: readOnly, access: locked },
+    { name: 'email', type: 'email', required: true, admin: readOnly, access: locked },
+    { name: 'phone', type: 'text', admin: readOnly, access: locked },
+    { name: 'projectType', type: 'select', required: true, options: toOptions(projectTypes), admin: readOnly, access: locked },
+    { name: 'budget', type: 'select', options: toOptions(budgets), admin: readOnly, access: locked },
+    { name: 'timeline', type: 'select', options: toOptions(timelines), admin: readOnly, access: locked },
+    { name: 'message', type: 'textarea', required: true, admin: readOnly, access: locked },
+    { name: 'howFound', type: 'text', admin: readOnly, access: locked },
+    { name: 'ndaRequested', type: 'checkbox', admin: readOnly, access: locked },
+    { name: 'privacyAccepted', type: 'checkbox', required: true, admin: readOnly, access: locked },
+    { name: 'marketingConsent', type: 'checkbox', admin: readOnly, access: locked },
+    { name: 'locale', type: 'select', options: toOptions(['es', 'en', 'fr']), admin: readOnly, access: locked },
+    { name: 'sourcePath', type: 'text', admin: readOnly, access: locked },
     {
       type: 'collapsible',
       label: 'Attribution (Meta Ads / UTM)',
       fields: [
-        { name: 'utmSource', type: 'text', admin: readOnly },
-        { name: 'utmMedium', type: 'text', admin: readOnly },
-        { name: 'utmCampaign', type: 'text', admin: readOnly },
-        { name: 'utmContent', type: 'text', admin: readOnly },
-        { name: 'utmTerm', type: 'text', admin: readOnly },
-        { name: 'fbclid', type: 'text', admin: readOnly },
+        { name: 'utmSource', type: 'text', admin: readOnly, access: locked },
+        { name: 'utmMedium', type: 'text', admin: readOnly, access: locked },
+        { name: 'utmCampaign', type: 'text', admin: readOnly, access: locked },
+        { name: 'utmContent', type: 'text', admin: readOnly, access: locked },
+        { name: 'utmTerm', type: 'text', admin: readOnly, access: locked },
+        { name: 'fbclid', type: 'text', admin: readOnly, access: locked },
       ],
     },
-    { name: 'ipHash', type: 'text', index: true, admin: { hidden: true } },
+    { name: 'ipHash', type: 'text', index: true, admin: { hidden: true }, access: { read: isAdminField, update: () => false } },
   ],
 }
