@@ -129,3 +129,12 @@ test.describe('mobile menu', () => {
     await expect(page.locator('#mobile-menu')).toHaveCount(0)
   })
 })
+
+test('draft legal pages show the review note and stay out of the sitemap', async ({ page, request }) => {
+  // The seeded legal texts still carry [PENDIENTE] markers (company data), so they are drafts.
+  await page.goto('/privacidad')
+  await expect(page.getByText('[PENDIENTE: revisión]')).toBeVisible()
+  const sitemap = await (await request.get('/sitemap.xml')).text()
+  expect(sitemap).toContain('/presupuestos')
+  for (const path of ['/aviso-legal', '/privacidad', '/cookies']) expect(sitemap).not.toContain(`${path}<`)
+})

@@ -6,14 +6,22 @@ import { LegalPage } from '@/components/sections/legal-page'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import { getLegal } from '@/lib/cms/queries'
+import { hasPendingMarkers } from '@/lib/legal'
 import { buildMetadata } from '@/lib/seo/metadata'
 
 export const revalidate = 3600
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = (await params).locale as Locale
-  const t = await getTranslations({ locale, namespace: 'footer' })
-  return buildMetadata({ locale, paths: localizedPaths('/legal-notice'), title: t('legal'), description: t('legalDescription') })
+  const [legal, t] = await Promise.all([getLegal(locale), getTranslations({ locale, namespace: 'footer' })])
+  return buildMetadata({
+    locale,
+    paths: localizedPaths('/legal-notice'),
+    title: t('legal'),
+    description: t('legalDescription'),
+    // Draft text (company data or decisions still pending) is never indexed.
+    noindex: hasPendingMarkers(legal.legalNotice),
+  })
 }
 
 export default async function LegalNoticePage({ params }: { params: Promise<{ locale: string }> }) {

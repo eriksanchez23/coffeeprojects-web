@@ -3,13 +3,11 @@ import { defaultLocale } from '@/i18n/locales'
 import { type Locale, locales } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import type { AppPathname } from '@/i18n/routing'
-import { getAllSlugs } from '@/lib/cms/queries'
+import { getAllSlugs, getLegal } from '@/lib/cms/queries'
+import { legalPagesToIndex } from '@/lib/legal'
 import { absoluteUrl } from '@/lib/seo/metadata'
 
 export const revalidate = 3600
-
-// Legal pages exist (T15); keep this guard in case they are ever removed.
-const LEGAL_PAGES_LIVE = true
 
 function entries(paths: Record<Locale, string>, priority: number, lastModified?: string): MetadataRoute.Sitemap {
   const languages: Record<string, string> = Object.fromEntries(locales.map((l) => [l, absoluteUrl(paths[l])]))
@@ -39,9 +37,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ['/team', 0.7],
     ['/projects', 0.7],
     ['/contact', 0.8],
-    ...(LEGAL_PAGES_LIVE ? ([['/legal-notice', 0.1], ['/privacy', 0.1], ['/cookies', 0.1]] as [AppPathname, number][]) : []),
   ]
-  const [services, team, projects] = await Promise.all([safeSlugs('services'), safeSlugs('team-members'), safeSlugs('projects')])
+  const [services, team, projects, legalPages] = await Promise.all([
+    safeSlugs('services'),
+    safeSlugs('team-members'),
+    safeSlugs('projects'),
+    // Legal pages are listed only once their text is final in every locale (they are noindex until then).
+    Promise.all(locales.map((l) => getLegal(l)))
+      .then(legalPagesToIndex)
+      .catch(() => []),
+  ])
+  for (const p of legalPages) staticPages.push([p, 0.1])
   return [
     ...staticPages.flatMap(([p, prio]) => entries(localizedPaths(p), prio)),
     ...services.flatMap((s) => entries(localizedPaths('/services/[slug]', s.slugs), 0.9, s.updatedAt)),
