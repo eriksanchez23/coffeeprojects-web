@@ -4,6 +4,8 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { en } from 'payload/i18n/en'
+import { es } from 'payload/i18n/es'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { Contacts } from './collections/Contacts'
@@ -23,9 +25,15 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     user: Users.slug,
+    theme: 'dark',
     importMap: { baseDir: path.resolve(dirname) },
-    meta: { titleSuffix: ' · coffeeProjects admin' },
+    meta: { titleSuffix: ' · coffeeProjects admin', robots: 'noindex, nofollow' },
+    components: {
+      graphics: { Logo: '/components/admin/logo#Logo', Icon: '/components/admin/icon#Icon' },
+      beforeDashboard: ['/components/admin/inbox-banner#InboxBanner'],
+    },
   },
+  i18n: { supportedLanguages: { en, es } },
   collections: [Contacts, Services, Projects, TeamMembers, Faqs, Media, Users],
   globals: [Home, SiteSettings, Legal],
   localization: {

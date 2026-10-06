@@ -1,0 +1,18 @@
+// Brand the Payload admin with the coffee + terminal palette (mirrors the T02 tokens).
+:root {
+  --theme-success-500: #6ee7b7;
+}
+
+[data-theme='dark'] {
+  --theme-bg: #0b0706;
+  --theme-elevation-0: #0b0706;
+  --theme-elevation-50: #120c09;
+  --theme-elevation-100: #1a1310;
+  --theme-elevation-150: #241812;
+  --theme-elevation-1000: #fff7e8;
+}
+
+.btn--style-primary {
+  background-color: #f5a742;
+  color: #0b0706;
+}

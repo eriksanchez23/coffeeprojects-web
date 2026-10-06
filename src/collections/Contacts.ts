@@ -13,6 +13,7 @@ export const Contacts: CollectionConfig = {
     defaultColumns: ['name', 'email', 'projectType', 'status', 'utmCampaign', 'createdAt'],
     listSearchableFields: ['name', 'email', 'message'],
     group: 'Inbox',
+    components: { beforeListTable: ['/components/admin/default-new-filter#DefaultNewFilter'] },
   },
   defaultSort: '-createdAt',
   access: {
@@ -26,7 +27,14 @@ export const Contacts: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'status', type: 'select', required: true, defaultValue: 'new', options: toOptions(contactStatuses) },
+        {
+          name: 'status',
+          type: 'select',
+          required: true,
+          defaultValue: 'new',
+          options: toOptions(contactStatuses),
+          admin: { components: { Cell: '/components/admin/status-cell#StatusCell' } },
+        },
         { name: 'assignedTo', type: 'relationship', relationTo: 'users' },
       ],
     },
