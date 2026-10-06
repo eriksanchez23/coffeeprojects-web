@@ -13,6 +13,7 @@ export function MobileCtaBar({ label }: { label: string }) {
   return (
     <div
       aria-hidden={!visible}
+      data-mobile-cta
       className={`fixed inset-x-3 bottom-3 z-40 transition-transform duration-500 md:hidden ${visible ? 'translate-y-0' : 'translate-y-[150%]'}`}
     >
       <Button href="/contact" size="lg" className="w-full" tabIndex={visible ? 0 : -1}>

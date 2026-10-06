@@ -30,8 +30,8 @@ export function MobileMenu({ links, ctaLabel, navLabel, openLabel, closeLabel }:
     wasOpen.current = true
     // The panel is portaled to <body>, outside the blurred header (backdrop-filter would otherwise become the
     // containing block of the fixed panel). Background content is made inert while it is open.
-    const background = [document.getElementById('main'), document.querySelector<HTMLElement>('body footer')].filter(
-      (el): el is HTMLElement => el !== null,
+    const background = Array.from(
+      document.querySelectorAll<HTMLElement>('#main, body footer, [data-skip-link], [data-mobile-cta]'),
     )
     for (const el of background) el.inert = true
     document.body.style.overflow = 'hidden'
@@ -39,9 +39,18 @@ export function MobileMenu({ links, ctaLabel, navLabel, openLabel, closeLabel }:
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpenPath(null)
     }
+    // Past the md breakpoint the menu is hidden, so close it to avoid leaving inert/scroll-lock behind.
+    const mql = window.matchMedia('(min-width: 768px)')
+    const closeIfDesktop = () => {
+      if (mql.matches) setOpenPath(null)
+    }
     document.addEventListener('keydown', onKey)
+    mql.addEventListener('change', closeIfDesktop)
+    window.addEventListener('resize', closeIfDesktop)
     return () => {
       document.removeEventListener('keydown', onKey)
+      mql.removeEventListener('change', closeIfDesktop)
+      window.removeEventListener('resize', closeIfDesktop)
       for (const el of background) el.inert = false
       document.body.style.overflow = ''
     }

@@ -16,8 +16,8 @@
     "closeMenu": "Close menu",
     "language": "Language",
     "home": "Home",
-    "mainNav": "Main",
-    "mobileNav": "Mobile"
+    "mainNav": "Main navigation",
+    "mobileNav": "Mobile navigation"
   },
   "common": {
     "from": "From",
@@ -130,7 +130,7 @@
     "cookies": "Cookies",
     "manageCookies": "Cookie settings",
     "remote": "We work remotely with clients all over the world.",
-    "legalNav": "Legal",
+    "legalNav": "Legal information",
     "chat": "Chat"
   },
   "notFound": {

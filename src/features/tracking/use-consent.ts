@@ -60,5 +60,5 @@ export function useConsent() {
     if (consent !== null) setReopened(false)
   }, [consent])
 
-  return { consent, setMarketing, dismiss, reopen: openConsentSettings, isOpen }
+  return { consent, setMarketing, dismiss, reopen: openConsentSettings, isOpen, reopened: isReopened }
 }

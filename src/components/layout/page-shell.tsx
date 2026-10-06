@@ -23,6 +23,7 @@ export async function PageShell({
     <AlternatesProvider value={alternates}>
       <a
         href="#main"
+        data-skip-link
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded-full focus:bg-amber focus:px-4 focus:py-2 focus:text-bg-0"
       >
         {t('skip')}

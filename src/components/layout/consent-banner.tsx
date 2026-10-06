@@ -6,12 +6,13 @@ import { useConsent } from '@/features/tracking/use-consent'
 import { Link } from '@/i18n/navigation'
 
 export function ConsentBanner() {
-  const { isOpen } = useConsent()
+  const { isOpen, reopened } = useConsent()
   // The dialog is mounted only while open, so its draft state (configuring, marketing) resets on every close.
-  return isOpen ? <ConsentDialog /> : null
+  return isOpen ? <ConsentDialog focusOnOpen={reopened} /> : null
 }
 
-function ConsentDialog() {
+// Focus is taken only when the user reopened the dialog; the first-visit auto-open must not steal it from the skip link.
+function ConsentDialog({ focusOnOpen }: { focusOnOpen: boolean }) {
   const t = useTranslations('consent')
   const { consent, setMarketing, dismiss } = useConsent()
   const [configuring, setConfiguring] = useState(false)
@@ -19,12 +20,14 @@ function ConsentDialog() {
   const titleId = useId()
   const bodyId = useId()
   const ref = useRef<HTMLDivElement>(null)
+  const [shouldFocus] = useState(focusOnOpen)
 
   useEffect(() => {
+    if (!shouldFocus) return
     const previous = document.activeElement as HTMLElement | null
     ref.current?.focus()
     return () => previous?.focus?.()
-  }, [])
+  }, [shouldFocus])
 
   return (
     <div

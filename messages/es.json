@@ -16,8 +16,8 @@
     "closeMenu": "Cerrar menú",
     "language": "Idioma",
     "home": "Inicio",
-    "mainNav": "Principal",
-    "mobileNav": "Móvil"
+    "mainNav": "Navegación principal",
+    "mobileNav": "Navegación móvil"
   },
   "common": {
     "from": "Desde",
@@ -130,7 +130,7 @@
     "cookies": "Cookies",
     "manageCookies": "Configurar cookies",
     "remote": "Trabajamos en remoto con clientes de todo el mundo.",
-    "legalNav": "Legal",
+    "legalNav": "Información legal",
     "chat": "Chat"
   },
   "notFound": {
