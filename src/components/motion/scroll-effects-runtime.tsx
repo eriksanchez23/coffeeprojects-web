@@ -95,7 +95,12 @@ export default function ScrollEffectsRuntime() {
         // Web fonts change line heights and trigger positions once they load.
         void document.fonts?.ready.then(() => ScrollTrigger.refresh())
 
-        return () => restore.forEach((r) => r())
+        // Ready marker (E2E): effects are set up for this route.
+        document.documentElement.dataset.scrollEffects = 'ready'
+        return () => {
+          delete document.documentElement.dataset.scrollEffects
+          restore.forEach((r) => r())
+        }
       })
 
       // 4. Process: step-by-step progress on desktop; pinned only when the whole section fits the viewport
