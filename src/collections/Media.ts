@@ -6,7 +6,8 @@ export const Media: CollectionConfig = {
   admin: { group: 'Content' },
   access: { read: () => true, create: isTeam, update: isTeam, delete: isTeam },
   upload: {
-    mimeTypes: ['image/*'],
+    // Raster only: SVG can carry scripts and is served from our origin.
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'],
     focalPoint: true,
     imageSizes: [
       { name: 'card', width: 800 },
