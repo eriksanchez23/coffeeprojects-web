@@ -25,7 +25,10 @@ class SceneBoundary extends Component<{ onError: () => void; children: ReactNode
 function supportsWebGL(): boolean {
   try {
     const canvas = document.createElement('canvas')
-    return Boolean(canvas.getContext('webgl2') ?? canvas.getContext('webgl'))
+    const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl')
+    // Release the probe context right away so it doesn't coexist with the scene's own context.
+    gl?.getExtension('WEBGL_lose_context')?.loseContext()
+    return Boolean(gl)
   } catch {
     return false
   }
