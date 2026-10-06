@@ -18,11 +18,11 @@ export function SiteFooter({ email, chatUrl }: { email: string; chatUrl?: string
         <div className="flex flex-col gap-2">
           <a href={`mailto:${email}`} className="text-ink-0 hover:text-amber">{email}</a>
           {chatUrl && (
-            <a href={chatUrl} target="_blank" rel="noopener noreferrer" className="hover:text-amber">Chat</a>
+            <a href={chatUrl} target="_blank" rel="noopener noreferrer" className="hover:text-amber">{t('chat')}</a>
           )}
           <LanguageSwitcher className="mt-2" />
         </div>
-        <nav aria-label="Legal" className="flex flex-col gap-2 md:items-end">
+        <nav aria-label={t('legalNav')} className="flex flex-col gap-2 md:items-end">
           <Link href="/legal-notice" className="hover:text-ink-0">{t('legal')}</Link>
           <Link href="/privacy" className="hover:text-ink-0">{t('privacy')}</Link>
           <Link href="/cookies" className="hover:text-ink-0">{t('cookies')}</Link>

@@ -21,6 +21,12 @@ export async function PageShell({
   const [settings, t] = await Promise.all([getSettings(locale), getTranslations('nav')])
   return (
     <AlternatesProvider value={alternates}>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded-full focus:bg-amber focus:px-4 focus:py-2 focus:text-bg-0"
+      >
+        {t('skip')}
+      </a>
       <SiteHeader />
       <main id="main" tabIndex={-1} className="outline-none">
         {children}

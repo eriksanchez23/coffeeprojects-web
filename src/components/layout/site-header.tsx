@@ -19,7 +19,7 @@ export async function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-line bg-bg-0/70 backdrop-blur-xl">
       <Container className="flex h-16 items-center justify-between gap-6">
         <Logo />
-        <nav aria-label="Main" className="hidden items-center gap-7 text-sm md:flex">
+        <nav aria-label={t('mainNav')} className="hidden items-center gap-7 text-sm md:flex">
           {links.map((l) => (
             <Link key={l.label} href={l.href} className="text-ink-2 transition-colors hover:text-ink-0">
               {l.label}
@@ -30,7 +30,7 @@ export async function SiteHeader() {
           <LanguageSwitcher />
           <Button href="/contact">{t('cta')}</Button>
         </div>
-        <MobileMenu links={links} ctaLabel={t('cta')} openLabel={t('openMenu')} closeLabel={t('closeMenu')} />
+        <MobileMenu links={links} ctaLabel={t('cta')} navLabel={t('mobileNav')} openLabel={t('openMenu')} closeLabel={t('closeMenu')} />
       </Container>
     </header>
   )

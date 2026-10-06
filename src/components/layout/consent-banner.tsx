@@ -1,30 +1,48 @@
 'use client'
 import { useTranslations } from 'next-intl'
-import { useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useConsent } from '@/features/tracking/use-consent'
 import { Link } from '@/i18n/navigation'
 
 export function ConsentBanner() {
+  const { isOpen } = useConsent()
+  // The dialog is mounted only while open, so its draft state (configuring, marketing) resets on every close.
+  return isOpen ? <ConsentDialog /> : null
+}
+
+function ConsentDialog() {
   const t = useTranslations('consent')
-  const { consent, setMarketing, isOpen } = useConsent()
+  const { consent, setMarketing, dismiss } = useConsent()
   const [configuring, setConfiguring] = useState(false)
   const [marketing, setMarketingDraft] = useState(consent?.marketing ?? false)
   const titleId = useId()
+  const bodyId = useId()
+  const ref = useRef<HTMLDivElement>(null)
 
-  if (!isOpen) return null
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null
+    ref.current?.focus()
+    return () => previous?.focus?.()
+  }, [])
 
   return (
     <div
+      ref={ref}
       role="dialog"
       aria-modal="false"
       aria-labelledby={titleId}
-      className="fixed inset-x-3 bottom-3 z-[70] mx-auto max-w-xl rounded-[var(--radius-lg)] border border-line-hi bg-bg-1/95 p-5 shadow-[var(--shadow-soft)] backdrop-blur-xl sm:bottom-6"
+      aria-describedby={bodyId}
+      tabIndex={-1}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') dismiss()
+      }}
+      className="fixed inset-x-3 bottom-3 z-[70] mx-auto max-w-xl rounded-[var(--radius-lg)] border border-line-hi bg-bg-1/95 p-5 shadow-[var(--shadow-soft)] outline-none backdrop-blur-xl sm:bottom-6"
     >
       <h2 id={titleId} className="text-lg font-semibold">
         {t('title')}
       </h2>
-      <p className="mt-2 text-sm text-ink-2">
+      <p id={bodyId} className="mt-2 text-sm text-ink-2">
         {t('body')}{' '}
         <Link href="/cookies" className="text-amber underline">
           {t('policy')}

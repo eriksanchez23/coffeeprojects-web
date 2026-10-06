@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 import { CONSENT_COOKIE, type Consent, consentCookieString, parseConsent } from './consent'
 
 export const CONSENT_CHANGED = 'cp:consent-changed'
@@ -20,19 +20,33 @@ function subscribe(onChange: () => void) {
   return () => window.removeEventListener(CONSENT_CHANGED, onChange)
 }
 
+// "Reopened" is module-level so every useConsent() instance (banner shell, dialog, footer) agrees on it.
+let reopened = false
+const reopenListeners = new Set<() => void>()
+
+function setReopened(value: boolean) {
+  if (reopened === value) return
+  reopened = value
+  for (const l of reopenListeners) l()
+}
+
+function subscribeReopened(onChange: () => void) {
+  reopenListeners.add(onChange)
+  const onOpen = () => setReopened(true)
+  window.addEventListener(CONSENT_OPEN, onOpen)
+  return () => {
+    reopenListeners.delete(onChange)
+    window.removeEventListener(CONSENT_OPEN, onOpen)
+  }
+}
+
 export function useConsent() {
   // null on the server and during hydration: nothing is rendered until the cookie has been read.
   const raw = useSyncExternalStore(subscribe, readRawCookie, () => null)
-  const [reopened, setReopened] = useState(false)
-
-  useEffect(() => {
-    const onOpen = () => setReopened(true)
-    window.addEventListener(CONSENT_OPEN, onOpen)
-    return () => window.removeEventListener(CONSENT_OPEN, onOpen)
-  }, [])
+  const isReopened = useSyncExternalStore(subscribeReopened, () => reopened, () => false)
 
   const consent = raw === null ? null : parseConsent(raw)
-  const isOpen = raw !== null && (consent === null || reopened)
+  const isOpen = raw !== null && (consent === null || isReopened)
 
   const setMarketing = useCallback((granted: boolean) => {
     const next: Consent = { v: 1, marketing: granted, ts: Date.now() }
@@ -41,5 +55,10 @@ export function useConsent() {
     window.dispatchEvent(new CustomEvent(CONSENT_CHANGED, { detail: next }))
   }, [])
 
-  return { consent, setMarketing, reopen: openConsentSettings, isOpen }
+  // Closing without a choice is only allowed when a valid choice already exists; it never grants anything.
+  const dismiss = useCallback(() => {
+    if (consent !== null) setReopened(false)
+  }, [consent])
+
+  return { consent, setMarketing, dismiss, reopen: openConsentSettings, isOpen }
 }

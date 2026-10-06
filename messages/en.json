@@ -15,7 +15,9 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "language": "Language",
-    "home": "Home"
+    "home": "Home",
+    "mainNav": "Main",
+    "mobileNav": "Mobile"
   },
   "common": {
     "from": "From",
@@ -127,7 +129,9 @@
     "privacy": "Privacy",
     "cookies": "Cookies",
     "manageCookies": "Cookie settings",
-    "remote": "We work remotely with clients all over the world."
+    "remote": "We work remotely with clients all over the world.",
+    "legalNav": "Legal",
+    "chat": "Chat"
   },
   "notFound": {
     "command": "$ cd /this-page",

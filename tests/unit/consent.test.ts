@@ -3,8 +3,9 @@ import { consentCookieString, parseConsent, serializeConsent } from '@/features/
 
 describe('consent', () => {
   it('round-trips a consent value', () => {
-    const c = { v: 1 as const, marketing: true, ts: 1_700_000_000_000 }
-    expect(parseConsent(serializeConsent({ ...c, ts: Date.now() }))).toEqual({ ...c, ts: expect.any(Number) })
+    const now = Date.now()
+    const c = { v: 1 as const, marketing: true, ts: now }
+    expect(parseConsent(serializeConsent(c))).toEqual({ v: 1, marketing: true, ts: now })
   })
   it('returns null for missing or malformed cookies', () => {
     expect(parseConsent(undefined)).toBeNull()
@@ -14,6 +15,12 @@ describe('consent', () => {
   it('expires after 6 months', () => {
     const old = { v: 1 as const, marketing: true, ts: Date.now() - 1000 * 60 * 60 * 24 * 190 }
     expect(parseConsent(serializeConsent(old))).toBeNull()
+  })
+  it('rejects timestamps in the future beyond a one-day skew', () => {
+    const far = { v: 1 as const, marketing: true, ts: Date.now() + 1000 * 60 * 60 * 24 * 3 }
+    const near = { v: 1 as const, marketing: true, ts: Date.now() + 1000 * 60 * 60 }
+    expect(parseConsent(serializeConsent(far))).toBeNull()
+    expect(parseConsent(serializeConsent(near))).not.toBeNull()
   })
   it('builds a 6-month, lax, path=/ cookie', () => {
     const s = consentCookieString({ v: 1, marketing: false, ts: Date.now() })
