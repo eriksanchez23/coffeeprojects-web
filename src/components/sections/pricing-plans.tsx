@@ -43,7 +43,7 @@ export async function PricingPlans({ pricing, locale }: Props) {
                 <div>
                   <dt className="font-mono text-xs uppercase tracking-widest text-ink-3">{tc('from')}</dt>
                   <dd className="mt-1 flex items-baseline gap-2 md:justify-end">
-                    <span className="font-display text-4xl text-ink-0 sm:text-5xl">{formatEuro(custom.fromPrice, locale)}</span>
+                    <span className="font-display text-4xl text-ink-0 sm:text-5xl">{formatEuro(custom.fromPrice, locale)}</span>{' '}
                     <span className="text-sm text-ink-2">{vat}</span>
                   </dd>
                 </div>
@@ -110,7 +110,7 @@ function PackageCard({
           <dd className="mt-1 flex items-baseline gap-2">
             <span className={cn('font-display text-5xl', pkg.featured ? 'text-amber-hi' : 'text-ink-0')}>
               {formatEuro(pkg.initialPrice, locale)}
-            </span>
+            </span>{' '}
             <span className="text-sm text-ink-2">{vat}</span>
           </dd>
         </div>
