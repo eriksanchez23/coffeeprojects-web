@@ -146,7 +146,8 @@
     "heroCommand": "brew --team",
     "statsLabel": "coffeeProjects en cifras",
     "servicesList": "Lista de servicios",
-    "team": "// equipo"
+    "team": "// equipo",
+    "projects": "// proyectos"
   },
   "notFound": {
     "command": "$ cd /esta-pagina",

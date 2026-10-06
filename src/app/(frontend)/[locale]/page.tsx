@@ -4,6 +4,7 @@ import { CtaBand } from '@/components/sections/cta-band'
 import { FaqList } from '@/components/sections/faq-list'
 import { Hero } from '@/components/sections/hero'
 import { ProcessSteps } from '@/components/sections/process-steps'
+import { ProjectsPreview } from '@/components/sections/projects-preview'
 import { ServicesGrid } from '@/components/sections/services-grid'
 import { StackMarquee } from '@/components/sections/stack-marquee'
 import { StatsBento } from '@/components/sections/stats-bento'
@@ -38,7 +39,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <WhyUs title={home.sections.whyTitle} items={home.whyUs ?? []} />
       <ProcessSteps title={home.sections.processTitle} steps={home.process ?? []} />
       <TeamPreview locale={locale} title={home.sections.teamTitle} lead={home.sections.teamLead} />
-      {/* T10: <ProjectsPreview /> slots in here */}
+      <ProjectsPreview locale={locale} title={home.sections.projectsTitle} lead={home.sections.projectsLead} />
       <StackMarquee title={home.sections.stackTitle} items={home.stack ?? []} />
       <FaqList title={t('faqTitle')} items={faqs} />
       <CtaBand />
