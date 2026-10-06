@@ -47,6 +47,7 @@
     "seeStore": "Ver tienda",
     "custom": "A medida",
     "perMonth": "/mes",
+    "plusVat": "+ IVA",
     "price": "Precio",
     "socials": "Redes"
   },
@@ -120,7 +121,8 @@
     "notIncluded": "No incluido:",
     "viewAll": "Ver presupuestos",
     "selectedPlan": "Paquete elegido",
-    "selectedPlanHint": "Lo tendremos en cuenta al preparar tu propuesta."
+    "selectedPlanHint": "Lo tendremos en cuenta al preparar tu propuesta.",
+    "seePackages": "Ver paquetes y precios"
   },
   "thanks": {
     "title": "¡Recibido! Ya estamos preparando el café.",

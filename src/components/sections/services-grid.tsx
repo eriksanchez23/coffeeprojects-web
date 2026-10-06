@@ -9,7 +9,7 @@ import { ServiceIcon } from './service-icon'
 
 export async function ServicesGrid({ services, locale }: { services: Service[]; locale: Locale }) {
   const t = await getTranslations('common')
-  const labels = { from: t('from'), perMonth: t('perMonth'), custom: t('custom'), seeStore: t('seeStore') }
+  const labels = { from: t('from'), perMonth: t('perMonth'), custom: t('custom'), seeStore: t('seeStore'), vat: t('plusVat') }
   return (
     <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" data-reveal-group>
       {services.map((s, i) => (

@@ -73,12 +73,12 @@
 
 | Servicio | Promesa (landing hero) | Desde | Plazo típico |
 |----------|------------------------|-------|--------------|
-| Webs & landing pages | Una web rápida, bonita y pensada para traer clientes. | 600 € | 1-2 semanas |
+| Webs & landing pages | Una web rápida, bonita y pensada para traer clientes. | 300 € + IVA (ver paquetes, docs/05-pricing-es.md) | 1-2 semanas |
 | Tiendas online | Vende online con una tienda segura, rápida y fácil de gestionar. | 2.500 € | 4-8 semanas |
 | Scripts FiveM | Recursos optimizados para que tu servidor RP destaque. | Ver tienda | Días |
 | Servidores FiveM llave en mano | Tu servidor completo, configurado y listo para tu comunidad. | 800 € | 1 semana |
 | Bots de Discord | Automatiza y protege tu comunidad con un bot a medida. | 120 € | 1-2 semanas |
-| Mantenimiento web mensual | Tu web siempre rápida, segura y actualizada, la hayamos hecho nosotros o no. | 35 €/mes | Respuesta 24h laborables |
+| Mantenimiento web mensual | Tu web siempre rápida, segura y actualizada, la hayamos hecho nosotros o no. | 20 €/mes + IVA (ver paquetes, docs/05-pricing-es.md) | Respuesta 24h laborables |
 | Desarrollo a medida | Software hecho a tu medida: automatizaciones, integraciones y dashboards. | A medida | 2-12 semanas |
 
 > Note: the current site says "1-2 sem" for webs but the FAQ says "Una tienda: 3-5 semanas" while the card says "4-8 sem". **Team must confirm the real timeline for online stores** before migrating.

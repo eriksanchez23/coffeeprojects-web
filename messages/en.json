@@ -47,6 +47,7 @@
     "seeStore": "See store",
     "custom": "Custom quote",
     "perMonth": "/month",
+    "plusVat": "+ VAT",
     "price": "Price",
     "socials": "Links"
   },
@@ -120,7 +121,8 @@
     "notIncluded": "Not included:",
     "viewAll": "See pricing",
     "selectedPlan": "Selected package",
-    "selectedPlanHint": "We will take it into account when preparing your proposal."
+    "selectedPlanHint": "We will take it into account when preparing your proposal.",
+    "seePackages": "See packages and pricing"
   },
   "thanks": {
     "title": "Got it! We're already brewing the coffee.",

@@ -22,7 +22,7 @@ type ServiceLocalized = {
 
 export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
   {
-    shared: { icon: 'globe', contactType: 'web', pricing: { mode: 'one-off', amount: 600 }, tags: ['Astro', 'Next.js', 'Tailwind', 'GSAP', 'Vercel'], order: 1 },
+    shared: { icon: 'globe', contactType: 'web', pricing: { mode: 'one-off', amount: 300 }, tags: ['Astro', 'Next.js', 'Tailwind', 'GSAP', 'Vercel'], order: 1 },
     localized: {
       es: {
         title: 'Webs & landing pages',
@@ -30,7 +30,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
         promise: 'Una web rápida, bonita y pensada para traer clientes.',
         summary: 'Sitios rápidos, orientados a conversión y optimizados para SEO, con stack moderno y despliegue incluido.',
         typicalTime: '1-2 semanas',
-        note: 'Plan de mantenimiento post-venta opcional.',
+        note: 'Mantenimiento mensual desde 20 €/mes + IVA, según el paquete.',
         features: [
           { text: 'Landing de producto o campaña' },
           { text: 'Web corporativa' },
@@ -42,7 +42,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: '¿Cuánto tarda una web?', answer: 'Una landing sencilla suele estar lista en 1-2 semanas. Tras la primera llamada te damos un plazo concreto según el alcance real.' },
           { question: '¿Podré editar los textos yo mismo?', answer: 'Sí. Si lo necesitas, incluimos un panel de gestión para que cambies textos e imágenes sin tocar código.' },
         ],
-        seo: { title: 'Diseño de páginas web y landing pages', description: 'Webs y landing pages rápidas, optimizadas para SEO y orientadas a conseguir clientes. Desde 600 €, listas en 1-2 semanas.' },
+        seo: { title: 'Diseño de páginas web y landing pages', description: 'Webs y landing pages rápidas, optimizadas para SEO y orientadas a conseguir clientes. Desde 300 € + IVA, listas en 1-2 semanas.' },
       },
       en: {
         title: 'Websites & landing pages',
@@ -50,7 +50,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
         promise: 'A fast, beautiful website built to bring you clients.',
         summary: 'Fast, conversion-focused, SEO-optimized websites with a modern stack and deployment included.',
         typicalTime: '1-2 weeks',
-        note: 'Optional post-launch maintenance plan.',
+        note: 'Monthly maintenance from €20/month + VAT, depending on the package.',
         features: [
           { text: 'Product or campaign landing page' },
           { text: 'Corporate website' },
@@ -62,7 +62,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: 'How long does a website take?', answer: 'A simple landing page is usually ready in 1-2 weeks. After the first call we give you a concrete timeline based on the real scope.' },
           { question: 'Will I be able to edit the content myself?', answer: 'Yes. If you need it, we include an admin panel so you can change text and images without touching code.' },
         ],
-        seo: { title: 'Website and landing page design', description: 'Fast, SEO-optimized websites and landing pages built to win clients. From €600, ready in 1-2 weeks.' },
+        seo: { title: 'Website and landing page design', description: 'Fast, SEO-optimized websites and landing pages built to win clients. From €300 + VAT, ready in 1-2 weeks.' },
       },
       fr: {
         title: 'Sites web & landing pages',
@@ -70,7 +70,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
         promise: 'Un site rapide, élégant et pensé pour vous apporter des clients.',
         summary: 'Des sites rapides, orientés conversion et optimisés pour le SEO, avec une stack moderne et la mise en ligne incluse.',
         typicalTime: '1 à 2 semaines',
-        note: 'Formule de maintenance après livraison en option.',
+        note: 'Maintenance mensuelle à partir de 20 €/mois + TVA, selon la formule.',
         features: [
           { text: 'Landing page produit ou campagne' },
           { text: "Site vitrine d'entreprise" },
@@ -82,7 +82,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: 'Combien de temps faut-il pour un site ?', answer: 'Une landing page simple est généralement prête en 1 à 2 semaines. Après le premier appel, nous vous donnons un délai précis selon le périmètre réel.' },
           { question: 'Pourrai-je modifier les contenus moi-même ?', answer: "Oui. Si besoin, nous incluons un panneau d'administration pour modifier textes et images sans toucher au code." },
         ],
-        seo: { title: 'Création de sites web et landing pages', description: 'Sites web et landing pages rapides, optimisés pour le SEO et pensés pour gagner des clients. À partir de 600 €, prêts en 1 à 2 semaines.' },
+        seo: { title: 'Création de sites web et landing pages', description: 'Sites web et landing pages rapides, optimisés pour le SEO et pensés pour gagner des clients. À partir de 300 € + TVA, prêts en 1 à 2 semaines.' },
       },
     },
   },
@@ -308,7 +308,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
     },
   },
   {
-    shared: { icon: 'wrench', contactType: 'maintenance', pricing: { mode: 'monthly', amount: 35 }, tags: ['Backups', 'Updates', 'Monitoring'], order: 6 },
+    shared: { icon: 'wrench', contactType: 'maintenance', pricing: { mode: 'monthly', amount: 20 }, tags: ['Backups', 'Updates', 'Monitoring'], order: 6 },
     localized: {
       es: {
         title: 'Mantenimiento web mensual',
@@ -324,7 +324,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { text: 'Cambios menores y soporte' },
         ],
         faq: [],
-        seo: { title: 'Mantenimiento web mensual', description: 'Mantenimiento web con actualizaciones, copias de seguridad, monitorización y soporte. Para cualquier web. Desde 35 €/mes.' },
+        seo: { title: 'Mantenimiento web mensual', description: 'Mantenimiento web con actualizaciones, copias de seguridad, monitorización y soporte. Para cualquier web. Desde 20 €/mes + IVA.' },
       },
       en: {
         title: 'Monthly website maintenance',
@@ -340,7 +340,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { text: 'Minor changes and support' },
         ],
         faq: [],
-        seo: { title: 'Monthly website maintenance', description: 'Website maintenance with updates, backups, monitoring and support. For any website. From €35/month.' },
+        seo: { title: 'Monthly website maintenance', description: 'Website maintenance with updates, backups, monitoring and support. For any website. From €20/month + VAT.' },
       },
       fr: {
         title: 'Maintenance web mensuelle',
@@ -356,7 +356,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { text: 'Petites modifications et support' },
         ],
         faq: [],
-        seo: { title: 'Maintenance web mensuelle', description: 'Maintenance de site avec mises à jour, sauvegardes, surveillance et support. Pour tout site. À partir de 35 €/mois.' },
+        seo: { title: 'Maintenance web mensuelle', description: 'Maintenance de site avec mises à jour, sauvegardes, surveillance et support. Pour tout site. À partir de 20 €/mois + TVA.' },
       },
     },
   },

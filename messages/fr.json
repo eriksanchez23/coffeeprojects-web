@@ -47,6 +47,7 @@
     "seeStore": "Voir la boutique",
     "custom": "Sur devis",
     "perMonth": "/mois",
+    "plusVat": "+ TVA",
     "price": "Prix",
     "socials": "Réseaux"
   },
@@ -120,7 +121,8 @@
     "notIncluded": "Non inclus :",
     "viewAll": "Voir les tarifs",
     "selectedPlan": "Formule choisie",
-    "selectedPlanHint": "Nous en tiendrons compte pour préparer votre proposition."
+    "selectedPlanHint": "Nous en tiendrons compte pour préparer votre proposition.",
+    "seePackages": "Voir les formules et tarifs"
   },
   "thanks": {
     "title": "Bien reçu ! Le café est déjà en préparation.",

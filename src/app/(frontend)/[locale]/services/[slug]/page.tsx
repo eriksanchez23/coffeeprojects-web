@@ -14,6 +14,7 @@ import { GlassCard } from '@/components/ui/glass-card'
 import { RichText } from '@/components/ui/rich-text'
 import { Section } from '@/components/ui/section'
 import { type Locale } from '@/i18n/locales'
+import { Link } from '@/i18n/navigation'
 import { localizedPaths } from '@/i18n/paths'
 import { getAllSlugs, getFaqs, getService, getServices } from '@/lib/cms/queries'
 import { contactHref, formatPriceParts } from '@/lib/format'
@@ -51,14 +52,15 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
   if (!found) notFound()
   const { doc: s, slugs } = found
 
-  const [all, faqs, t, ts, tn] = await Promise.all([
+  const [all, faqs, t, ts, tn, tp] = await Promise.all([
     getServices(locale),
     getFaqs(locale),
     getTranslations('common'),
     getTranslations('sections'),
     getTranslations('nav'),
+    getTranslations('pricing'),
   ])
-  const labels = { from: t('from'), perMonth: t('perMonth'), custom: t('custom'), seeStore: t('seeStore') }
+  const labels = { from: t('from'), perMonth: t('perMonth'), custom: t('custom'), seeStore: t('seeStore'), vat: t('plusVat') }
   const serviceFaq = (s.faq ?? []).map((f, i) => ({ id: f.id ?? i, question: f.question, answer: f.answer }))
   const faqItems = serviceFaq.length > 0 ? serviceFaq : faqs.slice(0, 4)
   const storeUrl = s.pricing.mode === 'store' ? s.pricing.storeUrl : null
@@ -104,7 +106,10 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
             <dl className="grid gap-6">
               <div>
                 <dt className={price.prefix ? 'text-xs uppercase tracking-widest text-ink-3' : 'sr-only'}>{price.prefix ?? t('price')}</dt>
-                <dd className="font-display text-4xl text-amber-hi">{price.figure}</dd>
+                <dd className="font-display text-4xl text-amber-hi">
+                  {price.figure}
+                  {price.vat && <span className="ml-2 font-sans text-sm text-ink-2">{' '}{price.vat}</span>}
+                </dd>
               </div>
               <div>
                 <dt className="text-xs uppercase tracking-widest text-ink-3">{t('typicalTime')}</dt>
@@ -119,6 +124,12 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
               </div>
             )}
             {s.note && <p className="text-sm text-ink-2">{s.note}</p>}
+            {/* Web and maintenance are priced as packages on /pricing (S14). */}
+            {(s.contactType === 'web' || s.contactType === 'maintenance') && (
+              <Link href="/pricing" className="text-sm font-medium text-amber hover:text-amber-hi">
+                {tp('seePackages')} <span aria-hidden>→</span>
+              </Link>
+            )}
           </GlassCard>
         </Container>
       </section>

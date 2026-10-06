@@ -43,6 +43,18 @@ describe('formatPriceParts', () => {
   })
 })
 
+describe('VAT note', () => {
+  const withVat = { ...labels, vat: '+ IVA' }
+  it('follows numeric one-off and monthly prices', () => {
+    expect(formatPrice({ mode: 'one-off', amount: 300 }, 'es', withVat)).toBe(`Desde 300${NBSP}€ + IVA`)
+    expect(formatPriceParts({ mode: 'monthly', amount: 20 }, 'es', withVat)).toEqual({ prefix: 'Desde', figure: `20${NBSP}€/mes`, vat: '+ IVA' })
+  })
+  it('is never attached to custom or store pricing', () => {
+    expect(formatPrice({ mode: 'custom' }, 'es', withVat)).toBe('A medida')
+    expect(formatPriceParts({ mode: 'store', storeUrl: 'https://x' }, 'es', withVat)).toEqual({ figure: 'Ver tienda' })
+  })
+})
+
 describe('contactHref', () => {
   it('carries the project type', () => {
     expect(contactHref('ecommerce')).toEqual({ pathname: '/contact', query: { type: 'ecommerce' } })

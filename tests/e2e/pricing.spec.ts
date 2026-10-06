@@ -101,3 +101,21 @@ test('home teaser and navigation link to the pricing page', async ({ page, isMob
     await expect(page.getByRole('navigation', { name: 'Navegación principal' }).getByRole('link', { name: 'Presupuestos' })).toHaveAttribute('href', '/presupuestos')
   }
 })
+
+test('web and maintenance services show the price sheet prices and link to the packages', async ({ page }) => {
+  for (const [path, price] of [
+    ['/servicios/webs-y-landing-pages', '300 € + IVA'],
+    ['/servicios/mantenimiento-web', '20 €/mes + IVA'],
+  ]) {
+    await page.goto(path)
+    expect(norm(await page.locator('main').textContent()), path).toContain(price)
+    await expect(page.getByRole('link', { name: 'Ver paquetes y precios' })).toHaveAttribute('href', '/presupuestos')
+  }
+})
+
+test('the services list shows the re-priced services with the VAT note', async ({ page }) => {
+  await page.goto('/servicios')
+  const main = norm(await page.locator('main').textContent())
+  expect(main).toContain('Desde 300 € + IVA')
+  expect(main).toContain('Desde 20 €/mes + IVA')
+})

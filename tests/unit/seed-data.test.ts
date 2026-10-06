@@ -99,3 +99,11 @@ describe('pricing seed (docs/05-pricing-es.md)', () => {
     expect(pricing.localized.fr.vatNote).toBe('+ TVA')
   })
 })
+
+describe('service prices follow the price sheet', () => {
+  it('web starts at the Básico package and maintenance at its monthly fee', () => {
+    const byType = Object.fromEntries(services.map((s) => [s.shared.contactType, s.shared.pricing]))
+    expect(byType.web).toEqual({ mode: 'one-off', amount: pricing.shared.packages[0].initialPrice })
+    expect(byType.maintenance).toEqual({ mode: 'monthly', amount: pricing.shared.packages[0].monthlyPrice })
+  })
+})
