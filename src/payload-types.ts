@@ -67,8 +67,13 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    contacts: Contact;
+    services: Service;
+    projects: Project;
+    'team-members': TeamMember;
+    faqs: Faq;
     media: Media;
+    users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,8 +81,13 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    contacts: ContactsSelect<false> | ContactsSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    faqs: FaqsSelect<false> | FaqsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -86,10 +96,18 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
-  locale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('es' | 'en' | 'fr') | ('es' | 'en' | 'fr')[];
+  globals: {
+    home: Home;
+    'site-settings': SiteSetting;
+    legal: Legal;
+  };
+  globalsSelect: {
+    home: HomeSelect<false> | HomeSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    legal: LegalSelect<false> | LegalSelect<true>;
+  };
+  locale: 'es' | 'en' | 'fr';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -119,10 +137,44 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contacts".
+ */
+export interface Contact {
+  id: number;
+  status: 'new' | 'in-progress' | 'answered' | 'archived';
+  assignedTo?: (number | null) | User;
+  internalNotes?: string | null;
+  name: string;
+  email: string;
+  phone?: string | null;
+  projectType: 'web' | 'ecommerce' | 'fivem-script' | 'fivem-server' | 'discord-bot' | 'maintenance' | 'custom';
+  budget?: ('lt500' | '500-1500' | '1500-3000' | '3000-6000' | 'gt6000' | 'tbd') | null;
+  timeline?: ('flexible' | 'lt1m' | '1-2m' | '2-4m' | 'gt4m') | null;
+  message: string;
+  howFound?: string | null;
+  ndaRequested?: boolean | null;
+  privacyAccepted: boolean;
+  marketingConsent?: boolean | null;
+  locale?: ('es' | 'en' | 'fr') | null;
+  sourcePath?: string | null;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+  utmContent?: string | null;
+  utmTerm?: string | null;
+  fbclid?: string | null;
+  ipHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
+  name: string;
+  role: 'admin' | 'editor';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -145,6 +197,76 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  /**
+   * URL segment. Generated from the title if left empty.
+   */
+  slug: string;
+  /**
+   * Landing hero headline
+   */
+  promise: string;
+  summary: string;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  icon: 'globe' | 'shopping-cart' | 'code' | 'server' | 'bot' | 'wrench' | 'sparkles';
+  /**
+   * Pre-selects this project type in the contact form
+   */
+  contactType: 'web' | 'ecommerce' | 'fivem-script' | 'fivem-server' | 'discord-bot' | 'maintenance' | 'custom';
+  pricing: {
+    mode: 'one-off' | 'monthly' | 'custom' | 'store';
+    amount?: number | null;
+    storeUrl?: string | null;
+  };
+  typicalTime: string;
+  tags?: string[] | null;
+  features?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  note?: string | null;
+  faq?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  order?: number | null;
+  /**
+   * Search engine and social preview. Leave empty to use defaults.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
@@ -161,6 +283,133 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  title: string;
+  /**
+   * URL segment. Generated from the title if left empty.
+   */
+  slug: string;
+  category: string;
+  summary: string;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  cover?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  stack?: string[] | null;
+  year: number;
+  status: 'live' | 'in-progress';
+  url?: string | null;
+  nda?: boolean | null;
+  featured?: boolean | null;
+  team?: (number | TeamMember)[] | null;
+  /**
+   * Search engine and social preview. Leave empty to use defaults.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  name: string;
+  /**
+   * URL segment. Generated from the title if left empty.
+   */
+  slug: string;
+  role: string;
+  location: string;
+  since: number;
+  shortBio: string;
+  bio: string;
+  photo?: (number | null) | Media;
+  skills?: string[] | null;
+  available?: boolean | null;
+  order?: number | null;
+  github?: {
+    username?: string | null;
+    /**
+     * Shown if the GitHub API is unavailable.
+     */
+    fallbackRepos?: number | null;
+    fallbackStars?: number | null;
+  };
+  socials?:
+    | {
+        network: 'github' | 'linkedin' | 'twitch' | 'x' | 'instagram' | 'website' | 'email';
+        url: string;
+        handle?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Search engine and social preview. Leave empty to use defaults.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  answer: string;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -187,12 +436,32 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'contacts';
+        value: number | Contact;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'faqs';
+        value: number | Faq;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -238,26 +507,164 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "contacts_select".
  */
-export interface UsersSelect<T extends boolean = true> {
+export interface ContactsSelect<T extends boolean = true> {
+  status?: T;
+  assignedTo?: T;
+  internalNotes?: T;
+  name?: T;
+  email?: T;
+  phone?: T;
+  projectType?: T;
+  budget?: T;
+  timeline?: T;
+  message?: T;
+  howFound?: T;
+  ndaRequested?: T;
+  privacyAccepted?: T;
+  marketingConsent?: T;
+  locale?: T;
+  sourcePath?: T;
+  utmSource?: T;
+  utmMedium?: T;
+  utmCampaign?: T;
+  utmContent?: T;
+  utmTerm?: T;
+  fbclid?: T;
+  ipHash?: T;
   updatedAt?: T;
   createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  resetPasswordRequestedAt?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  promise?: T;
+  summary?: T;
+  body?: T;
+  icon?: T;
+  contactType?: T;
+  pricing?:
     | T
     | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
+        mode?: T;
+        amount?: T;
+        storeUrl?: T;
       };
+  typicalTime?: T;
+  tags?: T;
+  features?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  note?: T;
+  faq?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  order?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  category?: T;
+  summary?: T;
+  body?: T;
+  cover?: T;
+  gallery?: T;
+  stack?: T;
+  year?: T;
+  status?: T;
+  url?: T;
+  nda?: T;
+  featured?: T;
+  team?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  role?: T;
+  location?: T;
+  since?: T;
+  shortBio?: T;
+  bio?: T;
+  photo?: T;
+  skills?: T;
+  available?: T;
+  order?: T;
+  github?:
+    | T
+    | {
+        username?: T;
+        fallbackRepos?: T;
+        fallbackStars?: T;
+      };
+  socials?:
+    | T
+    | {
+        network?: T;
+        url?: T;
+        handle?: T;
+        id?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs_select".
+ */
+export interface FaqsSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -276,6 +683,55 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  resetPasswordRequestedAt?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -316,6 +772,239 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home".
+ */
+export interface Home {
+  id: number;
+  hero: {
+    eyebrow: string;
+    headline: string;
+    subheadline: string;
+    trustLine: string;
+  };
+  stats?:
+    | {
+        value: number;
+        prefix?: string | null;
+        suffix?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  whyUs?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  process?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  sections: {
+    servicesTitle: string;
+    servicesLead?: string | null;
+    whyTitle: string;
+    processTitle: string;
+    teamTitle: string;
+    teamLead?: string | null;
+    projectsTitle: string;
+    projectsLead?: string | null;
+    stackTitle: string;
+  };
+  /**
+   * Technologies shown in the marquee
+   */
+  stack?: string[] | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  contactEmail: string;
+  tagline: string;
+  /**
+   * Optional "Open chat" link (Discord/WhatsApp). Hidden when empty (spec Q4).
+   */
+  chatUrl?: string | null;
+  socials?:
+    | {
+        network: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  defaultSeo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal".
+ */
+export interface Legal {
+  id: number;
+  /**
+   * Tick only when legal name, NIF/CIF and address are filled in (spec Q3). Production promotion is blocked until true.
+   */
+  companyComplete?: boolean | null;
+  legalNotice?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  privacyPolicy?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  cookiePolicy?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home_select".
+ */
+export interface HomeSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        subheadline?: T;
+        trustLine?: T;
+      };
+  stats?:
+    | T
+    | {
+        value?: T;
+        prefix?: T;
+        suffix?: T;
+        label?: T;
+        id?: T;
+      };
+  whyUs?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  process?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  sections?:
+    | T
+    | {
+        servicesTitle?: T;
+        servicesLead?: T;
+        whyTitle?: T;
+        processTitle?: T;
+        teamTitle?: T;
+        teamLead?: T;
+        projectsTitle?: T;
+        projectsLead?: T;
+        stackTitle?: T;
+      };
+  stack?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  contactEmail?: T;
+  tagline?: T;
+  chatUrl?: T;
+  socials?:
+    | T
+    | {
+        network?: T;
+        url?: T;
+        id?: T;
+      };
+  defaultSeo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "legal_select".
+ */
+export interface LegalSelect<T extends boolean = true> {
+  companyComplete?: T;
+  legalNotice?: T;
+  privacyPolicy?: T;
+  cookiePolicy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

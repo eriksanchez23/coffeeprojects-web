@@ -1,12 +1,21 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import path from 'path'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
 import sharp from 'sharp'
-
-import { Users } from './collections/Users'
+import { Contacts } from './collections/Contacts'
+import { Faqs } from './collections/Faqs'
 import { Media } from './collections/Media'
+import { Projects } from './collections/Projects'
+import { Services } from './collections/Services'
+import { TeamMembers } from './collections/TeamMembers'
+import { Users } from './collections/Users'
+import { Home } from './globals/Home'
+import { Legal } from './globals/Legal'
+import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -14,21 +23,40 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     user: Users.slug,
-    importMap: {
-      baseDir: path.resolve(dirname),
-    },
+    importMap: { baseDir: path.resolve(dirname) },
+    meta: { titleSuffix: ' · coffeeProjects admin' },
   },
-  collections: [Users, Media],
+  collections: [Contacts, Services, Projects, TeamMembers, Faqs, Media, Users],
+  globals: [Home, SiteSettings, Legal],
+  localization: {
+    locales: [
+      { code: 'es', label: 'Español' },
+      { code: 'en', label: 'English' },
+      { code: 'fr', label: 'Français' },
+    ],
+    defaultLocale: 'es',
+    fallback: true,
+  },
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
-  typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
-  },
+  typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
-    pool: {
-      connectionString: process.env.DATABASE_URL || '',
-    },
+    pool: { connectionString: process.env.DATABASE_URL || '' },
+    migrationDir: path.resolve(dirname, 'migrations'),
   }),
+  email: process.env.RESEND_API_KEY
+    ? resendAdapter({
+        apiKey: process.env.RESEND_API_KEY,
+        defaultFromAddress: process.env.EMAIL_FROM_ADDRESS || 'hola@coffeeprojects.es',
+        defaultFromName: 'coffeeProjects',
+      })
+    : undefined,
   sharp,
-  plugins: [],
+  plugins: [
+    vercelBlobStorage({
+      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      collections: { media: true },
+      token: process.env.BLOB_READ_WRITE_TOKEN || '',
+    }),
+  ],
 })
