@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef } from 'react'
+import { TURNSTILE_ACTION } from '@/features/contact/turnstile-check'
 
 type TurnstileApi = {
   render(el: HTMLElement, options: Record<string, unknown>): string
@@ -44,7 +45,7 @@ export function TurnstileWidget({ siteKey, locale }: { siteKey: string; locale: 
     loadScript()
       .then((api) => {
         if (cancelled) return
-        widgetId = api.render(el, { sitekey: siteKey, theme: 'dark', language: locale, size: 'flexible' })
+        widgetId = api.render(el, { sitekey: siteKey, action: TURNSTILE_ACTION, theme: 'dark', language: locale, size: 'flexible' })
       })
       .catch(() => console.error('Turnstile failed to load'))
     return () => {
