@@ -2,10 +2,26 @@ import type { CollectionConfig } from 'payload'
 import { isTeam, publishedOrTeam } from '@/access'
 import { seoField } from '@/fields/seo'
 import { slugField } from '@/fields/slug'
+import { revalidateCollection, revalidateCollectionDelete } from '@/hooks/revalidate'
+import { buildPath } from '@/i18n/build-path'
+import type { Locale } from '@/i18n/locales'
 
 export const Projects: CollectionConfig = {
   slug: 'projects',
-  admin: { useAsTitle: 'title', defaultColumns: ['title', 'year', 'status', 'featured', '_status'], group: 'Content' },
+  admin: {
+    useAsTitle: 'title',
+    defaultColumns: ['title', 'year', 'status', 'featured', '_status'],
+    group: 'Content',
+    preview: (doc, { locale }) => {
+      const slug = typeof doc?.slug === 'string' ? doc.slug : ''
+      const path = buildPath('/projects/[slug]', (locale as Locale) ?? 'es', slug)
+      return `${process.env.NEXT_PUBLIC_SITE_URL}/next/preview?path=${encodeURIComponent(path)}&secret=${process.env.PREVIEW_SECRET}`
+    },
+  },
+  hooks: {
+    afterChange: [revalidateCollection('projects')],
+    afterDelete: [revalidateCollectionDelete('projects')],
+  },
   versions: { drafts: true },
   defaultSort: '-year',
   access: { read: publishedOrTeam, readVersions: isTeam, create: isTeam, update: isTeam, delete: isTeam },

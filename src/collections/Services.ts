@@ -3,12 +3,28 @@ import { isTeam, publishedOrTeam } from '@/access'
 import { projectTypes, toOptions } from '@/features/contact/options'
 import { seoField } from '@/fields/seo'
 import { slugField } from '@/fields/slug'
+import { revalidateCollection, revalidateCollectionDelete } from '@/hooks/revalidate'
+import { buildPath } from '@/i18n/build-path'
+import type { Locale } from '@/i18n/locales'
 
 export const serviceIcons = ['globe', 'shopping-cart', 'code', 'server', 'bot', 'wrench', 'sparkles'] as const
 
 export const Services: CollectionConfig = {
   slug: 'services',
-  admin: { useAsTitle: 'title', defaultColumns: ['title', 'typicalTime', 'order', '_status'], group: 'Content' },
+  admin: {
+    useAsTitle: 'title',
+    defaultColumns: ['title', 'typicalTime', 'order', '_status'],
+    group: 'Content',
+    preview: (doc, { locale }) => {
+      const slug = typeof doc?.slug === 'string' ? doc.slug : ''
+      const path = buildPath('/services/[slug]', (locale as Locale) ?? 'es', slug)
+      return `${process.env.NEXT_PUBLIC_SITE_URL}/next/preview?path=${encodeURIComponent(path)}&secret=${process.env.PREVIEW_SECRET}`
+    },
+  },
+  hooks: {
+    afterChange: [revalidateCollection('services')],
+    afterDelete: [revalidateCollectionDelete('services')],
+  },
   versions: { drafts: true },
   defaultSort: 'order',
   access: { read: publishedOrTeam, readVersions: isTeam, create: isTeam, update: isTeam, delete: isTeam },

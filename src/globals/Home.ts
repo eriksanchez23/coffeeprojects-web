@@ -1,9 +1,19 @@
 import type { GlobalConfig } from 'payload'
 import { isTeam, publishedOrTeam } from '@/access'
+import { revalidateGlobal } from '@/hooks/revalidate'
+import { buildPath } from '@/i18n/build-path'
+import type { Locale } from '@/i18n/locales'
 
 export const Home: GlobalConfig = {
   slug: 'home',
-  admin: { group: 'Content' },
+  admin: {
+    group: 'Content',
+    preview: (_, { locale }) => {
+      const path = buildPath('/', (locale as Locale) ?? 'es')
+      return `${process.env.NEXT_PUBLIC_SITE_URL}/next/preview?path=${encodeURIComponent(path)}&secret=${process.env.PREVIEW_SECRET}`
+    },
+  },
+  hooks: { afterChange: [revalidateGlobal('global:home')] },
   versions: { drafts: true },
   access: { read: publishedOrTeam, readVersions: isTeam, update: isTeam },
   fields: [
