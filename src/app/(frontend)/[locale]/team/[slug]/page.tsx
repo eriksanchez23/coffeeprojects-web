@@ -15,7 +15,11 @@ export const revalidate = 3600
 export const dynamicParams = true
 
 export async function generateStaticParams({ params }: { params: { locale: string } }) {
-  return (await getAllSlugs('team-members')).map((s) => ({ slug: s[params.locale as Locale] }))
+  const all = await getAllSlugs('team-members')
+  return all.flatMap((s) => {
+    const slug = s[params.locale as Locale]
+    return slug ? [{ slug }] : []
+  })
 }
 
 export default async function MemberPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {

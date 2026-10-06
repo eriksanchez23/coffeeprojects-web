@@ -47,6 +47,27 @@ describe('getGithubStats', () => {
   })
 })
 
+describe('getGithubStats with malformed payloads', () => {
+  it('uses the fallback when the user endpoint returns malformed JSON', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(async (url: string) =>
+        url.includes('/repos') ? Response.json(raw) : new Response('{not json', { status: 200 }),
+      ),
+    )
+    expect(await getGithubStats('someone', { repos: 3 })).toEqual({ repos: 3, stars: 0, top: [], source: 'fallback' })
+  })
+  it('uses the fallback when the repos payload is not an array', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(async (url: string) =>
+        url.includes('/repos') ? Response.json({ message: 'oops' }) : Response.json({ public_repos: 12 }),
+      ),
+    )
+    expect(await getGithubStats('someone', { repos: 3 })).toEqual({ repos: 3, stars: 0, top: [], source: 'fallback' })
+  })
+})
+
 describe('visibleStats', () => {
   it('never exposes zero values', () => {
     expect(visibleStats({ repos: 3, stars: 0, top: [], source: 'fallback' })).toEqual([{ key: 'repos', value: 3 }])

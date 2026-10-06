@@ -2,6 +2,8 @@ export type Repo = { name: string; description: string | null; stars: number; la
 export type GithubStats = { repos: number; stars: number; top: Repo[]; source: 'live' | 'fallback' }
 type RawRepo = { name: string; description: string | null; stargazers_count: number; language: string | null; html_url: string; fork: boolean }
 
+type NextFetchInit = RequestInit & { next?: { revalidate?: number; tags?: string[] } }
+
 const TWELVE_HOURS = 60 * 60 * 12
 const TIMEOUT_MS = 5000
 
@@ -30,7 +32,7 @@ export async function getGithubStats(
   if (!username) return fromFallback(fallback)
   const headers: Record<string, string> = { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
   if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`
-  const init = { headers, signal: AbortSignal.timeout(TIMEOUT_MS), next: { revalidate: TWELVE_HOURS, tags: ['github'] } } as RequestInit
+  const init: NextFetchInit = { headers, signal: AbortSignal.timeout(TIMEOUT_MS), next: { revalidate: TWELVE_HOURS, tags: ['github'] } }
   const user = encodeURIComponent(username)
   try {
     const [userRes, reposRes] = await Promise.all([
