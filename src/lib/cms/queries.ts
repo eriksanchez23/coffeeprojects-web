@@ -1,5 +1,6 @@
 import 'server-only'
 import { draftMode } from 'next/headers'
+import { unstable_rethrow } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
 import type { Faq, Home, Legal, Project, Service, SiteSetting, TeamMember } from '@/payload-types'
 import type { Locale } from '@/i18n/locales'
@@ -12,7 +13,8 @@ const REVALIDATE = 3600
 async function isDraft(): Promise<boolean> {
   try {
     return (await draftMode()).isEnabled
-  } catch {
+  } catch (err) {
+    unstable_rethrow(err) // keep Next.js control-flow errors intact
     return false // called outside a request (build-time generateStaticParams)
   }
 }
@@ -30,7 +32,7 @@ async function listCollection<T>(collection: Slugged | 'faqs', locale: Locale, e
   return read([collection, locale, JSON.stringify(extraWhere)], [collection], async (draft) => {
     const payload = await payloadClient()
     const where = collection === 'faqs' || draft ? extraWhere : { and: [published, extraWhere] }
-    const res = await payload.find({ collection, locale, draft, depth: 1, limit: 100, where, pagination: false })
+    const res = await payload.find({ collection, locale, draft, depth: 1, limit: 100, where, pagination: false, overrideAccess: draft })
     return res.docs as T[]
   })
 }
@@ -46,6 +48,7 @@ async function findBySlug<T extends { id: number | string }>(collection: Slugged
         draft,
         depth: 1,
         limit: 1,
+        overrideAccess: draft,
         where: { and: [{ slug: { equals: slug } }, ...statusFilter] },
       })
 
@@ -53,11 +56,11 @@ async function findBySlug<T extends { id: number | string }>(collection: Slugged
     if (!found && locale !== 'es') {
       // The translation may not have its own slug yet: match the ES slug, render in the requested locale.
       const es = (await query('es')).docs[0]
-      if (es) found = (await payload.findByID({ collection, id: es.id, locale, draft, depth: 1 })) as unknown as T
+      if (es) found = (await payload.findByID({ collection, id: es.id, locale, draft, depth: 1, overrideAccess: draft })) as unknown as T
     }
     if (!found) return null
 
-    const all = await payload.findByID({ collection, id: found.id, locale: 'all', draft, depth: 0, select: { slug: true } })
+    const all = await payload.findByID({ collection, id: found.id, locale: 'all', draft, depth: 0, select: { slug: true }, overrideAccess: draft })
     return { doc: found, slugs: toLocaleSlugs((all as { slug?: unknown }).slug) }
   })
 }
@@ -80,6 +83,7 @@ export async function getAllSlugs(collection: Slugged): Promise<Record<Locale, s
       locale: 'all',
       depth: 0,
       pagination: false,
+      overrideAccess: false,
       where: published,
       select: { slug: true },
     })
@@ -90,7 +94,7 @@ export async function getAllSlugs(collection: Slugged): Promise<Record<Locale, s
 function getGlobal<T>(slug: 'home' | 'site-settings' | 'legal', locale: Locale): Promise<T> {
   return read([`global:${slug}`, locale], [`global:${slug}`], async (draft) => {
     const payload = await payloadClient()
-    return (await payload.findGlobal({ slug, locale, draft, depth: 1 })) as T
+    return (await payload.findGlobal({ slug, locale, draft, depth: 1, overrideAccess: draft })) as T
   })
 }
 

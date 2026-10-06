@@ -6,6 +6,7 @@ import { slugField } from '@/fields/slug'
 import { revalidateCollection, revalidateCollectionDelete } from '@/hooks/revalidate'
 import { buildPath } from '@/i18n/build-path'
 import type { Locale } from '@/i18n/locales'
+import { previewUrl } from '@/lib/cms/preview-url'
 
 export const serviceIcons = ['globe', 'shopping-cart', 'code', 'server', 'bot', 'wrench', 'sparkles'] as const
 
@@ -17,8 +18,8 @@ export const Services: CollectionConfig = {
     group: 'Content',
     preview: (doc, { locale }) => {
       const slug = typeof doc?.slug === 'string' ? doc.slug : ''
-      const path = buildPath('/services/[slug]', (locale as Locale) ?? 'es', slug)
-      return `${process.env.NEXT_PUBLIC_SITE_URL}/next/preview?path=${encodeURIComponent(path)}&secret=${process.env.PREVIEW_SECRET}`
+      if (!slug) return null
+      return previewUrl(buildPath('/services/[slug]', (locale as Locale) ?? 'es', slug))
     },
   },
   hooks: {

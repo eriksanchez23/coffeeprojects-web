@@ -3,14 +3,14 @@ import { isTeam, publishedOrTeam } from '@/access'
 import { revalidateGlobal } from '@/hooks/revalidate'
 import { buildPath } from '@/i18n/build-path'
 import type { Locale } from '@/i18n/locales'
+import { previewUrl } from '@/lib/cms/preview-url'
 
 export const Home: GlobalConfig = {
   slug: 'home',
   admin: {
     group: 'Content',
     preview: (_, { locale }) => {
-      const path = buildPath('/', (locale as Locale) ?? 'es')
-      return `${process.env.NEXT_PUBLIC_SITE_URL}/next/preview?path=${encodeURIComponent(path)}&secret=${process.env.PREVIEW_SECRET}`
+      return previewUrl(buildPath('/', (locale as Locale) ?? 'es'))
     },
   },
   hooks: { afterChange: [revalidateGlobal('global:home')] },

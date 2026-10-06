@@ -5,6 +5,7 @@ import { seoField } from '@/fields/seo'
 import { revalidateCollection, revalidateCollectionDelete } from '@/hooks/revalidate'
 import { buildPath } from '@/i18n/build-path'
 import type { Locale } from '@/i18n/locales'
+import { previewUrl } from '@/lib/cms/preview-url'
 
 export const TeamMembers: CollectionConfig = {
   slug: 'team-members',
@@ -14,8 +15,8 @@ export const TeamMembers: CollectionConfig = {
     group: 'Content',
     preview: (doc, { locale }) => {
       const slug = typeof doc?.slug === 'string' ? doc.slug : ''
-      const path = buildPath('/team/[slug]', (locale as Locale) ?? 'es', slug)
-      return `${process.env.NEXT_PUBLIC_SITE_URL}/next/preview?path=${encodeURIComponent(path)}&secret=${process.env.PREVIEW_SECRET}`
+      if (!slug) return null
+      return previewUrl(buildPath('/team/[slug]', (locale as Locale) ?? 'es', slug))
     },
   },
   hooks: {
