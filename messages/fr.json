@@ -52,6 +52,7 @@
   "contact": {
     "title": "Parlez-nous de votre projet",
     "lead": "Envoyez-nous les détails et nous vous répondrons en moins de 24 heures avec une première proposition, sans engagement.",
+    "eyebrow": "Contact",
     "name": "Nom",
     "email": "E-mail",
     "phone": "Téléphone (facultatif)",
@@ -62,6 +63,8 @@
     "messageHint": "Plus vous êtes précis, plus notre devis sera juste.",
     "howFound": "Comment nous avez-vous connus ? (facultatif)",
     "nda": "Je souhaite signer un NDA avant de partager des détails",
+    "moreDetails": "Plus de détails (facultatif)",
+    "honeypot": "Laissez ce champ vide",
     "privacy": "J'ai lu et j'accepte la <link>politique de confidentialité</link>.",
     "submit": "Envoyer la demande",
     "sending": "Envoi…",

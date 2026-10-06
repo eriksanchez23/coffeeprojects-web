@@ -52,6 +52,7 @@
   "contact": {
     "title": "Tell us about your project",
     "lead": "Send us the details and we'll get back to you within 24 hours with an initial, no-obligation proposal.",
+    "eyebrow": "Contact",
     "name": "Name",
     "email": "Email",
     "phone": "Phone (optional)",
@@ -62,6 +63,8 @@
     "messageHint": "The more specific you are, the more accurate our quote will be.",
     "howFound": "How did you hear about us? (optional)",
     "nda": "I want to sign an NDA before sharing details",
+    "moreDetails": "More details (optional)",
+    "honeypot": "Leave this field empty",
     "privacy": "I have read and accept the <link>privacy policy</link>.",
     "submit": "Send request",
     "sending": "Sending…",
