@@ -133,6 +133,15 @@
     "legalNav": "Mentions légales",
     "chat": "Chat"
   },
+  "sections": {
+    "services": "// services",
+    "why": "// pourquoi nous",
+    "process": "// processus",
+    "stack": "// stack",
+    "faq": "// faq",
+    "includes": "// inclus",
+    "more": "// plus"
+  },
   "notFound": {
     "command": "$ cd /cette-page",
     "error": "error 404: coffee not found",

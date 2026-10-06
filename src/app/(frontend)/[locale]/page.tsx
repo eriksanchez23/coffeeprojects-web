@@ -1,17 +1,45 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { PageShell } from '@/components/layout/page-shell'
+import { CtaBand } from '@/components/sections/cta-band'
+import { FaqList } from '@/components/sections/faq-list'
+import { Hero } from '@/components/sections/hero'
+import { ProcessSteps } from '@/components/sections/process-steps'
+import { ServicesGrid } from '@/components/sections/services-grid'
+import { StackMarquee } from '@/components/sections/stack-marquee'
+import { StatsBento } from '@/components/sections/stats-bento'
+import { WhyUs } from '@/components/sections/why-us'
+import { Section } from '@/components/ui/section'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
+import { getFaqs, getHome, getServices } from '@/lib/cms/queries'
 
-export default async function HomeStub({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params
+export const revalidate = 3600
+
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: raw } = await params
+  const locale = raw as Locale
   setRequestLocale(locale)
-  const t = await getTranslations({ locale, namespace: 'meta' })
+  const [home, services, faqs, t, ts] = await Promise.all([
+    getHome(locale),
+    getServices(locale),
+    getFaqs(locale),
+    getTranslations('common'),
+    getTranslations('sections'),
+  ])
+
   return (
-    <PageShell locale={locale as Locale} alternates={localizedPaths('/')}>
-      <div className="p-10">
-        <h1 className="text-4xl">{t('defaultTitle')}</h1>
-      </div>
+    <PageShell locale={locale} alternates={localizedPaths('/')}>
+      <Hero hero={home.hero} />
+      <StatsBento stats={home.stats ?? []} />
+      <Section id="services" eyebrow={ts('services')} title={home.sections.servicesTitle} lead={home.sections.servicesLead}>
+        <ServicesGrid services={services} locale={locale} />
+      </Section>
+      <WhyUs title={home.sections.whyTitle} items={home.whyUs ?? []} />
+      <ProcessSteps title={home.sections.processTitle} steps={home.process ?? []} />
+      {/* T09: <TeamPreview /> and T10: <ProjectsPreview /> slot in here */}
+      <StackMarquee title={home.sections.stackTitle} items={home.stack ?? []} />
+      <FaqList title={t('faqTitle')} items={faqs} />
+      <CtaBand />
     </PageShell>
   )
 }
