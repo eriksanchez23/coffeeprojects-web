@@ -5,6 +5,8 @@ const password = process.env.E2E_ADMIN_PASSWORD!
 
 test.describe('admin panel', () => {
   test.skip(!email || !password, 'E2E admin credentials not configured')
+  // Both tests sign in as the same team member; run them one after the other.
+  test.describe.configure({ mode: 'serial' })
 
   test('team member logs in, sees new requests and changes a status', async ({ page }) => {
     await page.goto('/admin/login')
@@ -26,6 +28,21 @@ test.describe('admin panel', () => {
     await page.getByRole('option', { name: 'in-progress' }).click()
     await page.getByRole('button', { name: /save|guardar/i }).click()
     await expect(page.getByText(/updated successfully|actualizado/i)).toBeVisible()
+  })
+
+  test('the pricing global is editable in every locale', async ({ page }) => {
+    // API login sets the auth cookie on this context (the UI login flow is covered by the test above).
+    const login = await page.request.post('/api/users/login', { data: { email, password } })
+    expect(login.ok()).toBe(true)
+    for (const [locale, title] of [
+      ['es', 'Propuesta de tarifas — Landing Pages y Mantenimiento'],
+      ['en', 'Pricing — Landing Pages & Maintenance'],
+      ['fr', 'Nos tarifs — Landing pages et maintenance'],
+    ]) {
+      await page.goto(`/admin/globals/pricing?locale=${locale}`)
+      await expect(page.locator('#field-title')).toHaveValue(title)
+      await expect(page.locator('#field-title')).toBeEditable()
+    }
   })
 })
 
