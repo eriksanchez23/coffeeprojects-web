@@ -19,7 +19,8 @@ export default defineConfig({
   use: { baseURL, trace: 'on-first-retry' },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    // The admin spec edits shared inbox rows; running it in one project avoids two runs racing on the same row.
+    { name: 'mobile', use: { ...devices['Pixel 7'] }, testIgnore: /admin\.spec\.ts/ },
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined

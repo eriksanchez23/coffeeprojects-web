@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test'
 // Reduced motion keeps below-the-fold reveals in their final, visible state for axe.
 test.use({ contextOptions: { reducedMotion: 'reduce' } })
 
-const pages = ['/', '/en/services', '/fr/services/boutiques-en-ligne', '/equipo', '/proyectos', '/contacto', '/privacidad']
+const pages = ['/', '/en/services', '/fr/services/boutiques-en-ligne', '/equipo', '/proyectos', '/contacto', '/presupuestos', '/privacidad']
 
 for (const path of pages) {
   test(`no serious a11y violations on ${path}`, async ({ page }) => {
