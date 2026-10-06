@@ -12,7 +12,7 @@ export const revalidate = 3600
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = (await params).locale as Locale
   const t = await getTranslations({ locale, namespace: 'footer' })
-  return buildMetadata({ locale, paths: localizedPaths('/legal-notice'), title: t('legal'), description: t('legal') })
+  return buildMetadata({ locale, paths: localizedPaths('/legal-notice'), title: t('legal'), description: t('legalDescription') })
 }
 
 export default async function LegalNoticePage({ params }: { params: Promise<{ locale: string }> }) {

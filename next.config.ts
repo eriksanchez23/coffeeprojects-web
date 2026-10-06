@@ -3,7 +3,7 @@ import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { responseHeaders } from './src/lib/http-headers'
+import { legacyRedirects, responseHeaders } from './src/lib/http-headers'
 
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
@@ -29,10 +29,7 @@ const nextConfig: NextConfig = {
   },
   // Old-site URLs. next.config redirects run before the next-intl proxy, so the locale proxy never rewrites them first.
   async redirects() {
-    return [
-      { source: '/legal', destination: '/aviso-legal', statusCode: 301 },
-      { source: '/en/legal', destination: '/en/legal-notice', statusCode: 301 },
-    ]
+    return legacyRedirects
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {

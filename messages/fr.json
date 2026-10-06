@@ -136,7 +136,10 @@
     "manageCookies": "Gérer les cookies",
     "remote": "Nous travaillons à distance avec des clients du monde entier.",
     "legalNav": "Mentions légales",
-    "chat": "Chat"
+    "chat": "Chat",
+    "legalDescription": "Informations légales sur l'éditeur de coffeeprojects.es et conditions d'utilisation du site.",
+    "privacyDescription": "Comment coffeeProjects traite vos données personnelles, vos droits et la manière de les exercer.",
+    "cookiesDescription": "Quels cookies coffeeprojects.es utilise, à quoi ils servent et comment gérer votre consentement."
   },
   "sections": {
     "services": "// services",

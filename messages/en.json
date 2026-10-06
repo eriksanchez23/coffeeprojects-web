@@ -136,7 +136,10 @@
     "manageCookies": "Cookie settings",
     "remote": "We work remotely with clients all over the world.",
     "legalNav": "Legal information",
-    "chat": "Chat"
+    "chat": "Chat",
+    "legalDescription": "Owner details of coffeeprojects.es and the terms of use of this website.",
+    "privacyDescription": "How coffeeProjects handles your personal data, which rights you have and how to exercise them.",
+    "cookiesDescription": "Which cookies coffeeprojects.es uses, what they are for and how to manage your consent."
   },
   "sections": {
     "services": "// services",

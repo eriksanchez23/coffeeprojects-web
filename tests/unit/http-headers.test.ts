@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { responseHeaders } from '@/lib/http-headers'
 
 const all = (env: 'staging' | 'production') => responseHeaders(env).flatMap((r) => r.headers)
@@ -25,11 +25,20 @@ describe('security headers', () => {
     const admin = rules.find((r) => r.source === '/admin/:path*')
     expect(admin?.headers.map((h) => h.key)).not.toContain('Content-Security-Policy')
   })
-  it('only allows eval in the development CSP', () => {
-    const csp = (env: 'development' | 'staging' | 'production') =>
-      responseHeaders(env).find((r) => r.source === '/((?!admin).*)')?.headers.find((h) => h.key === 'Content-Security-Policy')?.value ?? ''
-    expect(csp('development')).toContain("'unsafe-eval'")
-    expect(csp('staging')).not.toContain("'unsafe-eval'")
-    expect(csp('production')).not.toContain("'unsafe-eval'")
+  it('only allows eval when running the dev server, so staging and production share the strict CSP', () => {
+    const csp = (nodeEnv: string, env: 'development' | 'staging' | 'production') => {
+      vi.stubEnv('NODE_ENV', nodeEnv)
+      return responseHeaders(env).find((r) => r.source === '/((?!admin).*)')?.headers.find((h) => h.key === 'Content-Security-Policy')?.value ?? ''
+    }
+    expect(csp('development', 'development')).toContain("'unsafe-eval'")
+    const prod = csp('production', 'production')
+    expect(csp('production', 'staging')).toBe(prod)
+    expect(csp('production', 'development')).toBe(prod)
+    expect(prod).not.toContain("'unsafe-eval'")
+    vi.unstubAllEnvs()
+  })
+  it('sends HSTS without preload', () => {
+    const hsts = responseHeaders('production').flatMap((r) => r.headers).find((h) => h.key === 'Strict-Transport-Security')
+    expect(hsts?.value).toBe('max-age=63072000; includeSubDomains')
   })
 })
