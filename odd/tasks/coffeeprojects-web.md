@@ -19,29 +19,31 @@ Plan: `docs/03-implementation-plan.md` + `docs/plan/T00..T18` · Spec: `docs/01-
 - **S11** — "quiero que primero hagamos un prototipo CALCADO al resultado FINAL para poder subir luego a un repositorio privado para el equipo y poder subir a vercel a ver el resultado y ver si tenemos que modificar cosas antes de mandar a producción y publicarla. Y ver si todo el panel funciona en la web o hay que tocar algunas cositas". Acceptance: T18 staging deploy + `docs/04-staging-checklist.md`.
 - **S12** — "Opción 1, una evolución clara a algo más premium con las últimas tecnologias" (evolve current coffee + terminal brand). Acceptance: spec §6, T02 tokens.
 - **S13** — "Vamos con la opción A" (Next.js + Payload CMS). Acceptance: T01/T04.
+- **S14** — "quiero que crees además un apartado de presupuestos y quiero que sean estos los presupuestos más lo que incluyen, NO TIENES que copiar el estilo, eso es cosa tuya en base a como estas haciendo la web" (source: C:UsersEricDocumentsTarifas_Coffee_Projects.pdf — Básico 300 € + 20 €/mes, Estándar 400 € + 30 €/mes, Profesional 1.000 € + 50 €/mes, Servicio personalizado desde 500 € + 20 €/mes; all + IVA; contents per package as in the PDF). Acceptance: T19 pricing section in es/en/fr, editable from the panel, prices and inclusions exactly as the PDF, styled with the site design system. Services "Webs y landing pages" → desde 300 € and "Mantenimiento" → desde 20 €/mes to match the sheet (L22).
 
 ## Tasks
 
 | ID | Specs | Route | Status | Evidence / commit |
 |----|-------|-------|--------|-------------------|
 | T00 accounts & secrets | S11 | human | pending | — |
-| T01 scaffold | S2, S10, S13 | delegated (writer) | pending | — |
-| T02 design system | S1, S12 | delegated (writer) | pending | — |
-| T03 i18n | S7 | delegated (writer) | pending | — |
-| T04 CMS model | S3, S7 | delegated (writer) | pending | — |
-| T05 seed content | S7, S8, S9 | delegated (writer) | pending | — |
-| T06 data layer | S3 | delegated (writer) | pending | — |
-| T07 shell + consent | S1, S6 | delegated (writer) | pending | — |
-| T08 home + services | S1, S6, S9 | delegated (writer) | pending | — |
-| T09 team | S8, S9 | delegated (writer) | pending | — |
-| T10 projects | S9 | delegated (writer) | pending | — |
-| T11 contact | S4 | delegated (writer) | pending | — |
-| T12 Meta Ads | S6 | delegated (writer) | pending | — |
-| T13 SEO | S5 | delegated (writer) | pending | — |
-| T14 motion & 3D | S1, S2, S9 | delegated (writer) | pending | — |
-| T15 legal/404/security | S5 | delegated (writer) | pending | — |
-| T16 admin UX | S3 | delegated (writer) | pending | — |
-| T17 quality gates | S5, S11 | delegated (writer) | pending | — |
+| T01 scaffold | S2, S10, S13 | delegated (writer) | done | 07aba82..b26819e (review clean) |
+| T02 design system | S1, S12 | delegated (writer) | done | 0d22503..5fe2f57 (1 fix round) |
+| T03 i18n | S7 | delegated (writer) | done | 6a77d70 (review clean) |
+| T04 CMS model | S3, S7 | delegated (writer) | done | e0fa963..c59d680 (2 fix rounds: enum collision, access control) |
+| T05 seed content | S7, S8, S9 | delegated (writer) | done | 5839e2c..2ee0065 (non-destructive seed) |
+| T06 data layer | S3 | delegated (writer) | done | d2af4eb..820f5ce (preview hardened) |
+| T07 shell + consent | S1, S6 | delegated (writer) | done | e295b52..8d5beb0 (2 fix rounds: mobile menu portal + a11y) |
+| T08 home + services | S1, S6, S9 | delegated (writer) | done | ef8daca..8e58c16 (1 fix round; R21 no PII in URL) |
+| T09 team | S8, S9 | delegated (writer) | done | 3f3a54d..62ad6d7 (1 fix round) |
+| T10 projects | S9 | delegated (writer) | done | e1dcf41 (review clean) |
+| T11 contact | S4 | delegated (writer) | done | a112287..566af5d (1 fix round: loud misconfig, PII-free logs) |
+| T12 Meta Ads | S6 | delegated (writer) | done | 528195f..e7aee9b (1 fix round: CAPI timeout, no double PageView) |
+| T13 SEO | S5 | delegated (writer) | done | 4bb87f6..c751fe6 (approved; 1 polish round) |
+| T14 motion & 3D | S1, S2, S9 | delegated (writer, opus) | done | bb21431..716c416 (1 fix round: WebGL fallback, R24 no above-fold re-animate) |
+| T15 legal/404/security | S5 | delegated (writer) | done | 49bdcd5..d888745 (approved; 1 polish round) |
+| T16 admin UX | S3 | delegated (writer) | done | c5e6d3c..318b311 (approved; 1 polish round) |
+| T17 quality gates | S5, S11 | delegated (writer, opus) | done | 7a799d1..75123c9 (1 fix round; R27/R28 Lighthouse gate) |
+| T19 pricing section | S14 | delegated (writer, opus) | done | adfbc41..a355d52 (approved; 1 polish round; R29 plan field, R30 badge) |
 | T18 staging deploy | S11 | human + agent | pending | — |
 
 Route evidence: large task (resume test fails: multi-session, external accounts, separate deliverables) → Writer trigger: one bounded writer per task.
@@ -55,4 +57,21 @@ Route evidence: large task (resume test fails: multi-session, external accounts,
 - **L5 (2026-10-06, user):** "Vamos con la opción A, en la carpeta que estas vinculado puedes guardar archivos .md que te hagan falta para la planificación para la hora de implementar solo tener que ejecutar las instrucciones de los .md"
 - **L6 (2026-10-06, user):** "Los apruebo, en caso de que haya cambiar algo después de la implementación te lo digo y ya esta, Tienes mi aprobación para empezar con la implementación" (spec + content approved; implementation authorized)
 - **L7 (2026-10-06):** Plan written (`docs/03-implementation-plan.md`, 19 task files). Decisions during planning: fonts switched to Bricolage Grotesque + Geist via `next/font/google` (spec §6 updated; avoids manual font downloads); contact submission via Server Action (avoids clash with Payload's `/api/[...slug]`); Meta Pixel not loaded at all without consent (stricter than revoke); FAQ #10 states ES/EN service only until Q9 is answered. Verified with Context7: Next.js 16 `proxy.ts`, `revalidateTag(tag, 'max')`, Payload 3.85 adapters, next-intl 4 routing.
-- **Next step:** user reviews the plan and chooses the execution method; humans complete T00 (accounts, Neon `dev` DB URL) before T01 Step 11.
+
+- **L8 (2026-10-06):** User: "Como recomiendes" → subagent-driven execution. Environment: Docker engine would not start → dev DB is an embedded Postgres in `C:\Users\Eric\Desktop\Claude\cp-devdb` (`node start.mjs`, postgres://postgres:postgres@localhost:5432/coffeeprojects); SWC needs `SWC_NATIVE_BINDING_CACHE=C:/Users/Eric/.swc-cache` for `pnpm dev`/`build` on this machine. Remote Control enabled at user's request.
+- **L9 (2026-10-06):** T01–T06 done on `staging` (HEAD 820f5ce, 60 unit tests green). Notable rulings: spec access rules override plan (Users update admin-or-self, Home drafts hidden, Contacts submitted fields immutable); seed non-destructive unless SEED_OVERWRITE=1; preview route hardened; revalidateTag(tag, { expire: 0 }). Full ledger: .superpowers/sdd/03-implementation-plan/progress.md.
+- **L10 (2026-10-06):** T07 done (e295b52..8d5beb0): shell, consent (useSyncExternalStore, default-deny), mobile menu portaled + inert a11y.
+- **L11 (2026-10-06):** T08 done (ef8daca..8e58c16): home, services index, localized service landings with type-preserving CTA; R21 no personal data in CTA URLs.
+- **L12 (2026-10-06):** T09 done (3f3a54d..62ad6d7): team page, member profiles, GitHub stats with CMS fallback (5s timeout, 12h cache).
+- **L13 (2026-10-06):** T10 done (e1dcf41): portfolio index + detail, NDA-safe, gradient covers when no media.
+- **L14 (2026-10-06):** T11 done (a112287..566af5d): contact Server Action, Turnstile fail-closed, HMAC ipHash, rate limit, PII-free logs, thanks page ?e=eventId. E2E submit verified locally with Turnstile test keys.
+- **L15 (2026-10-06):** T12 done (528195f..e7aee9b): consent-gated Pixel (never loaded pre-consent), CAPI Lead dedup via eventId with 4s timeout, attribution cookie after consent, R22 proof-of-submission for Lead. Real Meta Test Events check pending (needs T00 credentials).
+- **L16 (2026-10-06):** T13 done (4bb87f6..c751fe6): metadata+hreflang (x-default→es), sitemap, robots, JSON-LD, OG images, staging noindex. Old-site audit: only /legal and /en/legal need 301s (T15).
+- **L17 (2026-10-06):** T14 done (bb21431..716c416): Lenis + GSAP (lazy), 3D hero lazy with WebGL probe/error boundary/context-loss fallback, React canary ViewTransition (Next 16.3 removed the flag). Home first-load 215KB gz > 200KB budget → T17.
+- **L18 (2026-10-06):** T15 done (49bdcd5..d888745): legal pages, real-404 branded catch-all, strict CSP (non-dev), security headers (HSTS without preload, R25), 301s for /legal and /en/legal, AI-crawler robots parity.
+- **L19 (2026-10-06):** T16 done (c5e6d3c..318b311): branded dark admin, inbox banner (overrideAccess:false), status badges, default new filter, es admin language via Accept-Language. Admin E2E 2/2 locally with local test users (creds in .env.local).
+- **L20 (2026-10-06, user, verbatim):** "Serias capaz de meterle animaciones brutales como las del estilo de esta pagina web pero sin hacerlo tan tan exagerado para que no agobie pero si llame mucho la atencion?. Solo te preogunto si eres capaz, primero quiero que terminemos todo lo que estamos haciendo y en caso de que puedas hacerlo y no me convezca la web te dire de implementar esas tecnologias y eres capaz, pero solo UNA VEZ TERMINADO TODO LO QUE TENEMOS PLANEADO y CON MI VALIDACION despues de ver toda la web en vercel y dejando esto de lado quiero que crees además un apartado de presupuestos y quiero que sean estos los presupuestos más lo que incluyen, NO TIENES que copiar el estilo, eso es cosa tuya en base a como estas haciendo la web" — Decision: animation upgrade is a question only, NOT authorized (gated on finishing everything + user validation on Vercel; reference site link not provided yet). Pricing section authorized → S14 / T19 (after T17, before T18).
+- **L21 (2026-10-07):** T17 done (7a799d1..75123c9): Playwright 63 pass/3 skip/0 fail (desktop+mobile), axe, Lighthouse CI (a11y/BP/SEO 100; perf: inner pages 94, home 63–66 local mobile → warn + regression floors, R27), home first-load JS 196.5 KB gz, CI e2e job written (not pushed). Pending user decision: performance budget with Vercel numbers.
+- **L22 (2026-10-07, user, verbatim):** "Ajustalos si" — answer to: adjust the service cards (Webs desde 600 €, Mantenimiento 35 €/mes) to match the PDF? → Webs y landing pages desde 300 €, Mantenimiento desde 20 €/mes; other services unchanged. Folded into T19.
+- **L23 (2026-10-07):** T19 done (adfbc41..a355d52): Pricing global (es/en/fr) + migration + seed verbatim from the price sheet, /presupuestos /en/pricing /fr/tarifs, plan hand-off to contact (validated, locked), nav + home teaser, services re-priced (web desde 300 €, mantenimiento desde 20 €/mes), site-wide grouped euro format. T18 must run payload migrate on staging and re-price services if the DB is non-empty.
+- **Next step:** final whole-branch review (base d158048), then T18 (needs T00 accounts + user authorization for push/deploy).
