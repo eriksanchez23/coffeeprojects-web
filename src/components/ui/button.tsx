@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import type { ComponentProps, ReactNode } from 'react'
+import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 
 type Variant = 'primary' | 'ghost' | 'outline'
@@ -29,7 +29,7 @@ type ButtonProps = {
   className?: string
   children: ReactNode
 } & (
-  | ({ href: string } & Omit<ComponentProps<typeof Link>, 'href' | 'className' | 'children'>)
+  | ({ href: ComponentProps<typeof Link>['href'] } & Omit<ComponentProps<typeof Link>, 'href' | 'className' | 'children'>)
   | ({ href?: undefined } & Omit<ComponentProps<'button'>, 'className' | 'children'>)
 )
 

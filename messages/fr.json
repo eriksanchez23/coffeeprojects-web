@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "siteName": "coffeeProjects",
+    "defaultTitle": "coffeeProjects — Développement web, boutiques en ligne et logiciels sur mesure depuis l'Espagne",
+    "defaultDescription": "Studio de développement en Espagne : sites web, boutiques en ligne, bots Discord, serveurs et scripts FiveM, et maintenance de sites. Une proposition personnalisée en moins de 24 heures."
+  },
+  "nav": {
+    "services": "Services",
+    "team": "Équipe",
+    "projects": "Projets",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "cta": "Demander un devis",
+    "skip": "Aller au contenu",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "language": "Langue",
+    "home": "Accueil"
+  },
+  "common": {
+    "from": "À partir de",
+    "typicalTime": "Délai habituel",
+    "learnMore": "Voir les détails",
+    "requestQuote": "Demander un devis",
+    "viewServices": "Voir les services",
+    "viewProjects": "Voir les projets",
+    "viewProfile": "Voir le profil",
+    "backHome": "Retour à l'accueil",
+    "nda": "Sous NDA",
+    "live": "En ligne",
+    "inProgress": "En cours",
+    "available": "Disponible pour de nouveaux projets",
+    "since": "Depuis",
+    "repos": "Dépôts",
+    "stars": "Étoiles",
+    "topRepos": "Dépôts phares",
+    "location": "Localisation",
+    "stack": "Stack",
+    "year": "Année",
+    "visit": "Visiter",
+    "deliverables": "Ce qui est inclus",
+    "faqTitle": "Questions fréquentes",
+    "otherServices": "Autres services",
+    "seeStore": "Voir la boutique",
+    "custom": "Sur devis",
+    "perMonth": "/mois"
+  },
+  "contact": {
+    "title": "Parlez-nous de votre projet",
+    "lead": "Envoyez-nous les détails et nous vous répondrons en moins de 24 heures avec une première proposition, sans engagement.",
+    "name": "Nom",
+    "email": "E-mail",
+    "phone": "Téléphone (facultatif)",
+    "projectType": "Type de projet",
+    "budget": "Budget estimé",
+    "timeline": "Délai souhaité",
+    "message": "Parlez-nous de votre projet",
+    "messageHint": "Plus vous êtes précis, plus notre devis sera juste.",
+    "howFound": "Comment nous avez-vous connus ? (facultatif)",
+    "nda": "Je souhaite signer un NDA avant de partager des détails",
+    "privacy": "J'ai lu et j'accepte la <link>politique de confidentialité</link>.",
+    "submit": "Envoyer la demande",
+    "sending": "Envoi…",
+    "required": "Obligatoire",
+    "guarantees": "Réponse < 24 h · Sans spam ni engagement · Données protégées (RGPD)",
+    "replyBy": "Erik, votre interlocuteur, vous répondra avec le spécialiste le plus adapté à votre projet.",
+    "quickTitle": "On parle de votre projet ?",
+    "quickLead": "Partagez votre idée et recevez une première proposition en moins de 24 heures, sans engagement.",
+    "quickCta": "Recevoir ma proposition",
+    "projectTypes": {
+      "web": "Site web / landing page",
+      "ecommerce": "Boutique en ligne",
+      "fivem-script": "Script FiveM",
+      "fivem-server": "Serveur FiveM",
+      "discord-bot": "Bot Discord",
+      "maintenance": "Maintenance de site",
+      "custom": "Développement sur mesure"
+    },
+    "budgets": {
+      "lt500": "Moins de 500 €",
+      "500-1500": "500 € – 1 500 €",
+      "1500-3000": "1 500 € – 3 000 €",
+      "3000-6000": "3 000 € – 6 000 €",
+      "gt6000": "Plus de 6 000 €",
+      "tbd": "À définir"
+    },
+    "timelines": {
+      "flexible": "Flexible",
+      "lt1m": "Moins d'un mois",
+      "1-2m": "1 à 2 mois",
+      "2-4m": "2 à 4 mois",
+      "gt4m": "Plus de 4 mois"
+    },
+    "errors": {
+      "required": "Ce champ est obligatoire.",
+      "invalidEmail": "Veuillez saisir un e-mail valide.",
+      "tooShort": "Dites-nous-en un peu plus (20 caractères minimum).",
+      "tooLong": "Le texte est trop long.",
+      "privacy": "Vous devez accepter la politique de confidentialité.",
+      "captcha": "Nous n'avons pas pu vérifier que vous n'êtes pas un robot. Veuillez réessayer.",
+      "rateLimited": "Vous avez envoyé plusieurs demandes d'affilée. Patientez un peu ou écrivez-nous à contact@coffeeprojects.es.",
+      "generic": "Une erreur est survenue. Réessayez ou écrivez-nous à contact@coffeeprojects.es."
+    }
+  },
+  "thanks": {
+    "title": "Bien reçu ! Le café est déjà en préparation.",
+    "body": "Nous avons bien reçu votre demande. Nous vous écrirons en moins de 24 heures avec une première proposition.",
+    "cta": "En attendant, découvrez nos projets"
+  },
+  "consent": {
+    "title": "Nous utilisons des cookies",
+    "body": "Nous utilisons des cookies strictement nécessaires et, uniquement avec votre accord, des cookies marketing (Meta) pour mesurer nos campagnes. Vous pouvez modifier votre choix à tout moment.",
+    "accept": "Tout accepter",
+    "reject": "Refuser",
+    "configure": "Personnaliser",
+    "save": "Enregistrer",
+    "necessary": "Nécessaires",
+    "necessaryDesc": "Indispensables au fonctionnement du site. Toujours actifs.",
+    "marketing": "Marketing",
+    "marketingDesc": "Nous permettent de mesurer l'efficacité de nos publicités sur Meta (Facebook et Instagram).",
+    "policy": "Politique de cookies"
+  },
+  "footer": {
+    "tagline": "Pas de café, pas de code.",
+    "rights": "Tous droits réservés.",
+    "legal": "Mentions légales",
+    "privacy": "Confidentialité",
+    "cookies": "Cookies",
+    "manageCookies": "Gérer les cookies",
+    "remote": "Nous travaillons à distance avec des clients du monde entier."
+  },
+  "notFound": {
+    "command": "$ cd /cette-page",
+    "error": "error 404: coffee not found",
+    "body": "Cette page est à court de café. Retournons à l'accueil.",
+    "cta": "Retour à l'accueil"
+  }
+}

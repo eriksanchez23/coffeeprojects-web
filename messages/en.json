@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "siteName": "coffeeProjects",
+    "defaultTitle": "coffeeProjects — Web development, online stores and custom software from Spain",
+    "defaultDescription": "Development studio in Spain: websites, online stores, Discord bots, FiveM servers and scripts, and website maintenance. A tailored proposal in under 24 hours."
+  },
+  "nav": {
+    "services": "Services",
+    "team": "Team",
+    "projects": "Projects",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "cta": "Get a quote",
+    "skip": "Skip to content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": "Language",
+    "home": "Home"
+  },
+  "common": {
+    "from": "From",
+    "typicalTime": "Typical timeline",
+    "learnMore": "See details",
+    "requestQuote": "Get a quote",
+    "viewServices": "View services",
+    "viewProjects": "View projects",
+    "viewProfile": "View profile",
+    "backHome": "Back to home",
+    "nda": "Under NDA",
+    "live": "Live",
+    "inProgress": "In progress",
+    "available": "Available for projects",
+    "since": "Since",
+    "repos": "Repos",
+    "stars": "Stars",
+    "topRepos": "Featured repos",
+    "location": "Location",
+    "stack": "Stack",
+    "year": "Year",
+    "visit": "Visit",
+    "deliverables": "What's included",
+    "faqTitle": "Frequently asked questions",
+    "otherServices": "Other services",
+    "seeStore": "See store",
+    "custom": "Custom quote",
+    "perMonth": "/month"
+  },
+  "contact": {
+    "title": "Tell us about your project",
+    "lead": "Send us the details and we'll get back to you within 24 hours with an initial, no-obligation proposal.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "projectType": "Project type",
+    "budget": "Estimated budget",
+    "timeline": "Desired timeline",
+    "message": "Tell us about your project",
+    "messageHint": "The more specific you are, the more accurate our quote will be.",
+    "howFound": "How did you hear about us? (optional)",
+    "nda": "I want to sign an NDA before sharing details",
+    "privacy": "I have read and accept the <link>privacy policy</link>.",
+    "submit": "Send request",
+    "sending": "Sending…",
+    "required": "Required",
+    "guarantees": "Reply < 24h · No spam, no obligation · Data protected (GDPR)",
+    "replyBy": "Erik, your point of contact, will reply together with the specialist who best fits your project.",
+    "quickTitle": "Shall we talk about your project?",
+    "quickLead": "Tell us your idea and you'll have an initial proposal within 24 hours, no strings attached.",
+    "quickCta": "Get my proposal",
+    "projectTypes": {
+      "web": "Website / landing page",
+      "ecommerce": "Online store",
+      "fivem-script": "FiveM script",
+      "fivem-server": "FiveM server",
+      "discord-bot": "Discord bot",
+      "maintenance": "Website maintenance",
+      "custom": "Custom development"
+    },
+    "budgets": {
+      "lt500": "Under €500",
+      "500-1500": "€500 – €1,500",
+      "1500-3000": "€1,500 – €3,000",
+      "3000-6000": "€3,000 – €6,000",
+      "gt6000": "Over €6,000",
+      "tbd": "To be defined"
+    },
+    "timelines": {
+      "flexible": "Flexible",
+      "lt1m": "Under 1 month",
+      "1-2m": "1 – 2 months",
+      "2-4m": "2 – 4 months",
+      "gt4m": "Over 4 months"
+    },
+    "errors": {
+      "required": "This field is required.",
+      "invalidEmail": "Please enter a valid email.",
+      "tooShort": "Tell us a bit more (at least 20 characters).",
+      "tooLong": "The text is too long.",
+      "privacy": "You must accept the privacy policy.",
+      "captcha": "We couldn't verify you're not a robot. Please try again.",
+      "rateLimited": "You've sent several requests in a row. Please wait a moment or email us at contact@coffeeprojects.es.",
+      "generic": "Something went wrong. Please try again or email us at contact@coffeeprojects.es."
+    }
+  },
+  "thanks": {
+    "title": "Got it! We're already brewing the coffee.",
+    "body": "We've received your request. We'll write back within 24 hours with a first proposal.",
+    "cta": "Meanwhile, check out our projects"
+  },
+  "consent": {
+    "title": "We use cookies",
+    "body": "We use strictly necessary cookies and, only with your permission, marketing cookies (Meta) to measure our campaigns. You can change your choice at any time.",
+    "accept": "Accept all",
+    "reject": "Reject",
+    "configure": "Customize",
+    "save": "Save preferences",
+    "necessary": "Necessary",
+    "necessaryDesc": "Required for the website to work. Always on.",
+    "marketing": "Marketing",
+    "marketingDesc": "Let us measure how well our ads on Meta (Facebook and Instagram) perform.",
+    "policy": "Cookie policy"
+  },
+  "footer": {
+    "tagline": "No coffee, no code.",
+    "rights": "All rights reserved.",
+    "legal": "Legal notice",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "manageCookies": "Cookie settings",
+    "remote": "We work remotely with clients all over the world."
+  },
+  "notFound": {
+    "command": "$ cd /this-page",
+    "error": "error 404: coffee not found",
+    "body": "This page ran out of coffee. Let's head back home.",
+    "cta": "Back to home"
+  }
+}
