@@ -14,3 +14,48 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test
+  e2e:
+    needs: checks
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: coffeeprojects }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/coffeeprojects
+      PAYLOAD_SECRET: ci-secret-not-for-production-0123456789
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_PUBLIC_SITE_ENV: production
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+      TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+      # Dummy Pixel ID: lets the consent E2E exercise the Pixel; fbevents.js is stubbed in the tests, nothing reaches Meta.
+      NEXT_PUBLIC_META_PIXEL_ID: '1234567890123456'
+      IP_HASH_SALT: ci-salt
+      PREVIEW_SECRET: ci-preview
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version-file: .nvmrc, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm payload migrate
+      - run: pnpm seed
+      # Without the secrets the admin spec skips itself, so there is no test user to create.
+      - if: env.E2E_ADMIN_EMAIL != ''
+        run: NEXT_PUBLIC_SITE_ENV=staging pnpm e2e:user
+      - run: pnpm build
+      - run: pnpm test:e2e
+        env: { E2E_BASE_URL: '' }
+      - run: pnpm lhci
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: playwright-report, path: playwright-report }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: lighthouse-reports, path: .lighthouseci, include-hidden-files: true }
