@@ -10,7 +10,7 @@
 - Consumes: everything from T01–T17.
 - Produces: a protected, `noindex` staging URL on the `staging` branch backed by the Neon `staging` branch, and a signed checklist.
 
-- [ ] **Step 1 [AGENT]: `vercel.json`**
+- [x] **Step 1 [AGENT]: `vercel.json`** (committed; `pnpm deploy:build` = `node scripts/deploy-build.mjs`)
 
 ```json
 {
@@ -21,6 +21,10 @@
   "regions": ["fra1"]
 }
 ```
+
+> `pnpm deploy:build` runs, in order: a preflight check (fails if the database was ever schema-pushed in dev mode, because `payload migrate` would then stop at an interactive prompt and exit 0 without applying anything), `payload migrate` (with `DATABASE_URL_UNPOOLED` when set, else `DATABASE_URL`; no stdin, 20 min limit), a postflight check that every file in `src/migrations` is recorded, and `next build`. Any failure fails the deploy.
+>
+> The Drizzle dev schema push runs only under `next dev` (`NODE_ENV=development`, `src/lib/db/push.ts`). Builds, `pnpm seed` and other `payload run` scripts never push, so never point `pnpm dev` at a staging/production database.
 
 > `fra1` (Frankfurt) matches a Neon database in `aws-eu-central-1`; create the Neon project in that region in T00 so DB round-trips stay in-region.
 
@@ -43,6 +47,7 @@ git push -u origin staging
 | Variable | Preview (branch `staging` only) | Production |
 |----------|-------------------------------|------------|
 | `DATABASE_URL` | Neon **staging** branch (pooled) | Neon **main** branch (pooled) |
+| `DATABASE_URL_UNPOOLED` | Neon **staging** branch (direct; set by the Neon integration) — used only for migrations | Neon **main** branch (direct) |
 | `PAYLOAD_SECRET` | own random value | different random value |
 | `NEXT_PUBLIC_SITE_URL` | `https://staging.coffeeprojects.es` (or preview URL) | `https://coffeeprojects.es` |
 | `NEXT_PUBLIC_SITE_ENV` | `staging` | `production` |
@@ -55,7 +60,8 @@ git push -u origin staging
 | `GITHUB_TOKEN` | optional | optional |
 
 - [ ] **Step 5 [HUMAN]: First staging deploy**
-  - Push to `staging` (or "Redeploy"). The build runs `payload migrate && next build` against the Neon staging branch.
+  - Push to `staging` (or "Redeploy"). The build runs `pnpm deploy:build` (preflight → `payload migrate` → verify → `next build`) against the Neon staging branch.
+  - Order: **migrate (inside the build) → seed (Step 6) → redeploy**. The first build runs against an empty database on purpose: pages tolerate empty globals (translated fallbacks; pricing and legal pages 404 until seeded), so it succeeds; the redeploy after seeding prerenders the real content.
   - Open `https://staging.coffeeprojects.es/admin` → **create the first user** (becomes `admin`) → create the other team accounts as `editor` or `admin`.
 
 - [ ] **Step 6 [HUMAN, or AGENT with explicit authorization]: Seed staging content**
@@ -63,6 +69,8 @@ git push -u origin staging
 ```bash
 DATABASE_URL="<neon staging pooled url>" PAYLOAD_SECRET="<staging secret>" NEXT_PUBLIC_SITE_URL="https://staging.coffeeprojects.es" NEXT_PUBLIC_SITE_ENV=staging pnpm seed
 ```
+
+The seed never pushes the schema (no `NODE_ENV=development`), so it only works on a database that `payload migrate` already brought up to date (Step 5). It is non-destructive: existing content is kept unless `SEED_OVERWRITE=1` is set (which overwrites every seeded document).
 
 Then trigger a redeploy (or publish any doc in the admin) so ISR pages pick up the content.
 
