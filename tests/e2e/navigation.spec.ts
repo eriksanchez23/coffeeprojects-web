@@ -27,6 +27,12 @@ test('translated slug-less fallback still resolves (ES slug under /en)', async (
   expect(res?.status()).toBe(200)
 })
 
+test('hreflang comes only from the page head, never from a Link header', async ({ page }) => {
+  const res = await page.goto('/servicios/tiendas-online')
+  expect(res?.headers()['link'] ?? '').not.toContain('hreflang')
+  await expect(page.locator('link[rel="alternate"][hreflang="en"]')).toHaveAttribute('href', /\/en\/services\/online-stores$/)
+})
+
 test('unknown pages return a branded 404', async ({ page }) => {
   const res = await page.goto('/esto-no-existe')
   expect(res?.status()).toBe(404)

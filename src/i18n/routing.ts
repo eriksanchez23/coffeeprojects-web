@@ -7,6 +7,8 @@ export const routing = defineRouting({
   localePrefix: 'as-needed',
   // Ads land on a specific language; never auto-redirect based on Accept-Language.
   localeDetection: false,
+  // hreflang lives in each page's metadata (slug-aware); next-intl's Link header would duplicate/contradict it.
+  alternateLinks: false,
   pathnames: {
     '/': '/',
     '/services': { es: '/servicios', en: '/services', fr: '/services' },
