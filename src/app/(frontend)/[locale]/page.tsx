@@ -7,6 +7,7 @@ import { ProcessSteps } from '@/components/sections/process-steps'
 import { ServicesGrid } from '@/components/sections/services-grid'
 import { StackMarquee } from '@/components/sections/stack-marquee'
 import { StatsBento } from '@/components/sections/stats-bento'
+import { TeamPreview } from '@/components/sections/team-preview'
 import { WhyUs } from '@/components/sections/why-us'
 import { Section } from '@/components/ui/section'
 import type { Locale } from '@/i18n/locales'
@@ -36,7 +37,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </Section>
       <WhyUs title={home.sections.whyTitle} items={home.whyUs ?? []} />
       <ProcessSteps title={home.sections.processTitle} steps={home.process ?? []} />
-      {/* T09: <TeamPreview /> and T10: <ProjectsPreview /> slot in here */}
+      <TeamPreview locale={locale} title={home.sections.teamTitle} lead={home.sections.teamLead} />
+      {/* T10: <ProjectsPreview /> slots in here */}
       <StackMarquee title={home.sections.stackTitle} items={home.stack ?? []} />
       <FaqList title={t('faqTitle')} items={faqs} />
       <CtaBand />

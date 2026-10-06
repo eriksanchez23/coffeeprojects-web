@@ -46,7 +46,8 @@
     "seeStore": "Ver tienda",
     "custom": "A medida",
     "perMonth": "/mes",
-    "price": "Precio"
+    "price": "Precio",
+    "socials": "Redes"
   },
   "contact": {
     "title": "Cuéntanos tu proyecto",
@@ -144,7 +145,8 @@
     "more": "// más",
     "heroCommand": "brew --team",
     "statsLabel": "coffeeProjects en cifras",
-    "servicesList": "Lista de servicios"
+    "servicesList": "Lista de servicios",
+    "team": "// equipo"
   },
   "notFound": {
     "command": "$ cd /esta-pagina",
