@@ -2,6 +2,12 @@
 
 This template comes configured with the bare minimum to get started on anything you need.
 
+## Local development
+
+- `pnpm dev`, `pnpm build`, `pnpm start` — app (Next.js + Payload). Tests: `pnpm test` (Vitest), `pnpm test:e2e` (Playwright, builds and starts the app if nothing runs on :3000), `pnpm lhci` (Lighthouse CI against `pnpm start`).
+- E2E data: `pnpm e2e:user` (local database only) creates the admin test user from `E2E_ADMIN_EMAIL`/`E2E_ADMIN_PASSWORD` and the admin-inbox contacts; the suite cleans up the contacts it submits.
+- **Windows:** if `next dev`/`build`/`start` fails with `ERR_SWC_NATIVE_CACHE` (SWC refuses the ACL of `AppData\Local\swc`), point the native binding cache elsewhere for that command, e.g. `SWC_NATIVE_BINDING_CACHE="C:/Users/<you>/.swc-cache" pnpm build`. `next start` needs it too, because the next-intl plugin loads `@swc/core` when reading `next.config.ts`.
+
 ## Quick start
 
 This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
