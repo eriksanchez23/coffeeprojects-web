@@ -45,3 +45,5 @@ next-env.d.ts
 
 # payload local media
 /media
+
+.vercel
