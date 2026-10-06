@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './support/client-ip'
 import { setConsent } from './support/consent'
 import { e2eContactEmail } from './support/contacts'
 

@@ -1,4 +1,5 @@
-import { expect, type Page, test } from '@playwright/test'
+import type { Page } from '@playwright/test'
+import { expect, test } from './support/client-ip'
 import { FBEVENTS_STUB, type FbqCall, setConsent } from './support/consent'
 import { e2eContactEmail } from './support/contacts'
 
