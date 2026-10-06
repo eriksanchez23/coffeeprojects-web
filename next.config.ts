@@ -27,6 +27,13 @@ const nextConfig: NextConfig = {
     const siteEnv = process.env.NEXT_PUBLIC_SITE_ENV
     return responseHeaders(siteEnv === 'production' || siteEnv === 'staging' ? siteEnv : 'development')
   },
+  // Old-site URLs. next.config redirects run before the next-intl proxy, so the locale proxy never rewrites them first.
+  async redirects() {
+    return [
+      { source: '/legal', destination: '/aviso-legal', statusCode: 301 },
+      { source: '/en/legal', destination: '/en/legal-notice', statusCode: 301 },
+    ]
+  },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

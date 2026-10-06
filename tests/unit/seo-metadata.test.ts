@@ -50,3 +50,18 @@ describe('non-production environments', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_ENV', 'production')
   })
 })
+
+describe('robots in production', () => {
+  it('allows AI crawlers explicitly and keeps private paths disallowed', async () => {
+    vi.resetModules()
+    vi.stubEnv('NEXT_PUBLIC_SITE_ENV', 'production')
+    const robots = (await import('@/app/robots')).default
+    const r = robots()
+    const rules = Array.isArray(r.rules) ? r.rules : [r.rules]
+    const disallow = ['/admin', '/api', '/next']
+    expect(rules.find((x) => x.userAgent === '*')).toEqual({ userAgent: '*', allow: '/', disallow })
+    const ai = ['GPTBot', 'ChatGPT-User', 'OAI-SearchBot', 'ClaudeBot', 'Claude-Web', 'PerplexityBot', 'Google-Extended']
+    for (const bot of ai) expect(rules.find((x) => x.userAgent === bot)).toEqual({ userAgent: bot, allow: '/', disallow })
+    expect(r.sitemap).toMatch(/[/]sitemap[.]xml$/)
+  })
+})

@@ -8,8 +8,8 @@ import { absoluteUrl } from '@/lib/seo/metadata'
 
 export const revalidate = 3600
 
-// Flip to true once the legal pages exist (T15); listing routes that 404 would hurt crawling.
-const LEGAL_PAGES_LIVE = false
+// Legal pages exist (T15); keep this guard in case they are ever removed.
+const LEGAL_PAGES_LIVE = true
 
 function entries(paths: Record<Locale, string>, priority: number): MetadataRoute.Sitemap {
   const languages: Record<string, string> = Object.fromEntries(locales.map((l) => [l, absoluteUrl(paths[l])]))
