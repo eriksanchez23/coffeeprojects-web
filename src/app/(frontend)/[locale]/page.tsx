@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { PageShell } from '@/components/layout/page-shell'
 import { CtaBand } from '@/components/sections/cta-band'
@@ -13,9 +14,23 @@ import { WhyUs } from '@/components/sections/why-us'
 import { Section } from '@/components/ui/section'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
-import { getFaqs, getHome, getServices } from '@/lib/cms/queries'
+import { getFaqs, getHome, getServices, getSettings } from '@/lib/cms/queries'
+import { JsonLd } from '@/components/seo/json-ld'
+import { buildMetadata } from '@/lib/seo/metadata'
+import { faqLd } from '@/lib/seo/jsonld'
 
 export const revalidate = 3600
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = (await params).locale as Locale
+  const [settings, t] = await Promise.all([getSettings(locale), getTranslations({ locale, namespace: 'meta' })])
+  return buildMetadata({
+    locale,
+    paths: localizedPaths('/'),
+    title: settings.defaultSeo?.title || t('defaultTitle'),
+    description: settings.defaultSeo?.description || t('defaultDescription'),
+  })
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params
@@ -31,6 +46,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <PageShell locale={locale} alternates={localizedPaths('/')}>
+      {faqs.length > 0 && <JsonLd data={faqLd(faqs)} />}
       <Hero hero={home.hero} />
       <StatsBento stats={home.stats ?? []} />
       <Section id="services" eyebrow={ts('services')} title={home.sections.servicesTitle} lead={home.sections.servicesLead}>

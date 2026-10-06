@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ContactForm } from '@/components/contact/contact-form'
 import { PageShell } from '@/components/layout/page-shell'
@@ -7,6 +8,15 @@ import { projectTypes } from '@/features/contact/options'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import { getSettings } from '@/lib/cms/queries'
+import { JsonLd } from '@/components/seo/json-ld'
+import { breadcrumbLd } from '@/lib/seo/jsonld'
+import { absoluteUrl, buildMetadata } from '@/lib/seo/metadata'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = (await params).locale as Locale
+  const t = await getTranslations({ locale, namespace: 'contact' })
+  return buildMetadata({ locale, paths: localizedPaths('/contact'), title: t('title'), description: t('lead') })
+}
 
 export default async function ContactPage({
   params,
@@ -21,11 +31,17 @@ export default async function ContactPage({
   // R21: the CTA band only ever sends ?type=; personal data never travels in URLs.
   const rawType = Array.isArray(sp.type) ? sp.type[0] : sp.type
   const type = projectTypes.find((p) => p === rawType)
-  const [t, settings] = await Promise.all([getTranslations('contact'), getSettings(locale)])
+  const [t, tn, settings] = await Promise.all([getTranslations('contact'), getTranslations('nav'), getSettings(locale)])
   const alternates = localizedPaths('/contact')
 
   return (
     <PageShell locale={locale} alternates={alternates} hideMobileCta>
+      <JsonLd
+        data={breadcrumbLd([
+          { name: tn('home'), url: absoluteUrl(localizedPaths('/')[locale]) },
+          { name: tn('contact'), url: absoluteUrl(alternates[locale]) },
+        ])}
+      />
       <section className="steam-glow pt-20 pb-24">
         <Container className="grid gap-12 lg:grid-cols-[1fr_1.4fr]">
           <div>

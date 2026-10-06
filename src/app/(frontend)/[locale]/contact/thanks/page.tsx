@@ -6,8 +6,13 @@ import { Button } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
+import { buildMetadata } from '@/lib/seo/metadata'
 
-export const metadata: Metadata = { robots: { index: false, follow: false } }
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = (await params).locale as Locale
+  const t = await getTranslations({ locale, namespace: 'thanks' })
+  return buildMetadata({ locale, paths: localizedPaths('/contact/thanks'), title: t('title'), description: t('body'), noindex: true })
+}
 
 export default async function ThanksPage({
   params,

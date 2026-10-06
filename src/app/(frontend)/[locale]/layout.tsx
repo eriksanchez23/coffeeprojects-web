@@ -3,14 +3,19 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
+import { JsonLd } from '@/components/seo/json-ld'
 import { ConsentBanner } from '@/components/layout/consent-banner'
 import { AttributionCapture } from '@/components/tracking/attribution-capture'
 import { MetaPixel } from '@/components/tracking/meta-pixel'
+import type { Locale } from '@/i18n/locales'
 import { routing } from '@/i18n/routing'
 import { env } from '@/lib/env'
+import { getSettings } from '@/lib/cms/queries'
 import { fontVariables } from '@/lib/fonts'
+import { organizationLd, websiteLd } from '@/lib/seo/jsonld'
 
 // Logged once per server process; constant message, nothing user-specific.
 let warnedMissingPixel = false
@@ -18,6 +23,12 @@ function warnIfPixelMissing(pixelId: string | undefined) {
   if (!env.isProduction || pixelId || warnedMissingPixel) return
   warnedMissingPixel = true
   console.warn('NEXT_PUBLIC_META_PIXEL_ID is not set in production: Meta Pixel is disabled')
+}
+
+export const metadata: Metadata = {
+  metadataBase: new URL(env.SITE_URL),
+  // Covers pages without their own buildMetadata (e.g. 404); staging is never indexable.
+  ...(env.isProduction ? {} : { robots: { index: false, follow: false } }),
 }
 
 export function generateStaticParams() {
@@ -34,6 +45,7 @@ export default async function LocaleLayout({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
   setRequestLocale(locale)
+  const settings = await getSettings(locale as Locale)
 
   const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID
   warnIfPixelMissing(pixelId)
@@ -41,6 +53,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={fontVariables} suppressHydrationWarning>
       <body className="grain bg-bg-0 text-ink-1">
+        <JsonLd data={[organizationLd(settings.contactEmail), websiteLd(locale as Locale)]} />
         <NextIntlClientProvider>
           {children}
           <ConsentBanner />

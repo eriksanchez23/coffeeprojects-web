@@ -3,6 +3,7 @@ import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { responseHeaders } from './src/lib/http-headers'
 
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
@@ -21,6 +22,10 @@ const nextConfig: NextConfig = {
         pathname: '/api/media/file/**',
       },
     ],
+  },
+  async headers() {
+    const siteEnv = process.env.NEXT_PUBLIC_SITE_ENV
+    return responseHeaders(siteEnv === 'production' || siteEnv === 'staging' ? siteEnv : 'development')
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {

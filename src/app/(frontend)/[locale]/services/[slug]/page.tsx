@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { PageShell } from '@/components/layout/page-shell'
@@ -16,6 +17,9 @@ import { type Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import { getAllSlugs, getFaqs, getService, getServices } from '@/lib/cms/queries'
 import { contactHref, formatPriceParts } from '@/lib/format'
+import { JsonLd } from '@/components/seo/json-ld'
+import { breadcrumbLd, faqLd, serviceLd } from '@/lib/seo/jsonld'
+import { absoluteUrl, buildMetadata } from '@/lib/seo/metadata'
 
 export const revalidate = 3600
 export const dynamicParams = true
@@ -23,6 +27,20 @@ export const dynamicParams = true
 export async function generateStaticParams({ params }: { params: { locale: string } }) {
   const all = await getAllSlugs('services')
   return all.map((slugs) => ({ slug: slugs[params.locale as Locale] }))
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale: raw, slug } = await params
+  const locale = raw as Locale
+  const found = await getService(locale, slug)
+  if (!found) return {}
+  const { doc: s, slugs } = found
+  return buildMetadata({
+    locale,
+    paths: localizedPaths('/services/[slug]', slugs),
+    title: s.seo?.title || s.title,
+    description: s.seo?.description || s.summary,
+  })
 }
 
 export default async function ServicePage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
@@ -33,15 +51,33 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
   if (!found) notFound()
   const { doc: s, slugs } = found
 
-  const [all, faqs, t, ts] = await Promise.all([getServices(locale), getFaqs(locale), getTranslations('common'), getTranslations('sections')])
+  const [all, faqs, t, ts, tn] = await Promise.all([
+    getServices(locale),
+    getFaqs(locale),
+    getTranslations('common'),
+    getTranslations('sections'),
+    getTranslations('nav'),
+  ])
   const labels = { from: t('from'), perMonth: t('perMonth'), custom: t('custom'), seeStore: t('seeStore') }
   const serviceFaq = (s.faq ?? []).map((f, i) => ({ id: f.id ?? i, question: f.question, answer: f.answer }))
   const faqItems = serviceFaq.length > 0 ? serviceFaq : faqs.slice(0, 4)
   const storeUrl = s.pricing.mode === 'store' ? s.pricing.storeUrl : null
   const price = formatPriceParts(s.pricing, locale, labels)
+  const pageUrl = absoluteUrl(localizedPaths('/services/[slug]', slugs)[locale])
 
   return (
     <PageShell locale={locale} alternates={localizedPaths('/services/[slug]', slugs)}>
+      <JsonLd
+        data={[
+          serviceLd(s, pageUrl, locale),
+          breadcrumbLd([
+            { name: tn('home'), url: absoluteUrl(localizedPaths('/')[locale]) },
+            { name: tn('services'), url: absoluteUrl(localizedPaths('/services')[locale]) },
+            { name: s.title, url: pageUrl },
+          ]),
+          ...(faqItems.length > 0 ? [faqLd(faqItems)] : []),
+        ]}
+      />
       <TrackViewContent name={s.title} category={s.contactType} />
       <section className="steam-glow pt-20 pb-16" aria-labelledby="service-title">
         <Container className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">

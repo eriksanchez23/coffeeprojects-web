@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { PageShell } from '@/components/layout/page-shell'
@@ -10,6 +11,9 @@ import { getGithubStats } from '@/features/github/stats'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import { getAllSlugs, getMember } from '@/lib/cms/queries'
+import { JsonLd } from '@/components/seo/json-ld'
+import { breadcrumbLd, personLd } from '@/lib/seo/jsonld'
+import { absoluteUrl, buildMetadata } from '@/lib/seo/metadata'
 
 export const revalidate = 3600
 export const dynamicParams = true
@@ -22,6 +26,20 @@ export async function generateStaticParams({ params }: { params: { locale: strin
   })
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale: raw, slug } = await params
+  const locale = raw as Locale
+  const found = await getMember(locale, slug)
+  if (!found) return {}
+  const { doc: m, slugs } = found
+  return buildMetadata({
+    locale,
+    paths: localizedPaths('/team/[slug]', slugs),
+    title: m.seo?.title || `${m.name} — ${m.role}`,
+    description: m.seo?.description || m.shortBio,
+  })
+}
+
 export default async function MemberPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale: raw, slug } = await params
   const locale = raw as Locale
@@ -29,12 +47,23 @@ export default async function MemberPage({ params }: { params: Promise<{ locale:
   const found = await getMember(locale, slug)
   if (!found) notFound()
   const { doc: m, slugs } = found
-  const t = await getTranslations('common')
+  const [t, tn] = await Promise.all([getTranslations('common'), getTranslations('nav')])
+  const pageUrl = absoluteUrl(localizedPaths('/team/[slug]', slugs)[locale])
   const stats = await getGithubStats(m.github?.username, { repos: m.github?.fallbackRepos, stars: m.github?.fallbackStars })
   const socials = m.socials ?? []
 
   return (
     <PageShell locale={locale} alternates={localizedPaths('/team/[slug]', slugs)}>
+      <JsonLd
+        data={[
+          personLd(m, pageUrl),
+          breadcrumbLd([
+            { name: tn('home'), url: absoluteUrl(localizedPaths('/')[locale]) },
+            { name: tn('team'), url: absoluteUrl(localizedPaths('/team')[locale]) },
+            { name: m.name, url: pageUrl },
+          ]),
+        ]}
+      />
       <section className="steam-glow pt-20 pb-16" aria-labelledby="member-title">
         <Container className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
           <div>
