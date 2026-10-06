@@ -48,6 +48,8 @@ export default buildConfig({
     fallback: true,
   },
   editor: lexicalEditor(),
+  // Nothing uses GraphQL (site and admin read via the Local/REST API): one less public endpoint.
+  graphQL: { disable: true },
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
