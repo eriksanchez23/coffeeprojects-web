@@ -15,11 +15,11 @@ export const revalidate = 3600
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = (await params).locale as Locale
-  const [home, t] = await Promise.all([getHome(locale), getTranslations({ locale, namespace: 'meta' })])
+  const [home, t, tn] = await Promise.all([getHome(locale), getTranslations({ locale, namespace: 'meta' }), getTranslations({ locale, namespace: 'nav' })])
   return buildMetadata({
     locale,
     paths: localizedPaths('/services'),
-    title: home.sections.servicesTitle,
+    title: home.sections.servicesTitle || tn('services'),
     description: home.sections.servicesLead || t('defaultDescription'),
   })
 }
@@ -42,9 +42,9 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
           <header className="mb-14 max-w-3xl">
             <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-amber">{ts('services')}</p>
             <h1 id="services-title" className="text-5xl font-semibold sm:text-7xl">
-              {home.sections.servicesTitle}
+              {home.sections.servicesTitle || tn('services')}
             </h1>
-            <p className="mt-6 text-lg text-ink-2">{home.sections.servicesLead}</p>
+            {home.sections.servicesLead && <p className="mt-6 text-lg text-ink-2">{home.sections.servicesLead}</p>}
           </header>
           <h2 className="sr-only">{ts('servicesList')}</h2>
           <ServicesGrid services={services} locale={locale} />

@@ -5,6 +5,7 @@ import { unstable_cache } from 'next/cache'
 import type { Faq, Home, Legal, Pricing, Project, Service, SiteSetting, TeamMember } from '@/payload-types'
 import type { Locale } from '@/i18n/locales'
 import { payloadClient } from './client'
+import { withHomeDefaults, withLegalDefaults, withPricingDefaults, withSettingsDefaults } from './global-defaults'
 import { type SlugEntry, toLocaleSlugs, toSlugEntries } from './slugs'
 
 type Slugged = 'services' | 'projects' | 'team-members'
@@ -103,13 +104,14 @@ function getGlobal<T>(slug: 'home' | 'pricing' | 'site-settings' | 'legal', loca
   })
 }
 
-export const getHome = (locale: Locale) => getGlobal<Home>('home', locale)
-export const getSettings = (locale: Locale) => getGlobal<SiteSetting>('site-settings', locale)
-export const getLegal = (locale: Locale) => getGlobal<Legal>('legal', locale)
-export const getPricing = (locale: Locale) => getGlobal<Pricing>('pricing', locale)
+// Normalized so an empty (just-migrated / unseeded) database never breaks a prerender (global-defaults.ts).
+export const getHome = async (locale: Locale) => withHomeDefaults(await getGlobal<Home>('home', locale))
+export const getSettings = async (locale: Locale) => withSettingsDefaults(await getGlobal<SiteSetting>('site-settings', locale))
+export const getLegal = async (locale: Locale) => withLegalDefaults(await getGlobal<Legal>('legal', locale))
+export const getPricing = async (locale: Locale) => withPricingDefaults(await getGlobal<Pricing>('pricing', locale))
 
 /** Package slugs of the published pricing global: the only values a contact `plan` may take. */
 export async function getPlanSlugs(): Promise<string[]> {
-  const pricing = await getGlobal<Pricing>('pricing', 'es')
+  const pricing = withPricingDefaults(await getGlobal<Pricing>('pricing', 'es'))
   return (pricing.packages ?? []).map((p) => p.slug)
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { notFound } from 'next/navigation'
 import { PageShell } from '@/components/layout/page-shell'
 import { LegalPage } from '@/components/sections/legal-page'
 import type { Locale } from '@/i18n/locales'
@@ -19,6 +20,8 @@ export default async function LegalNoticePage({ params }: { params: Promise<{ lo
   const locale = (await params).locale as Locale
   setRequestLocale(locale)
   const [legal, t] = await Promise.all([getLegal(locale), getTranslations('footer')])
+  // Not seeded yet: no empty legal page.
+  if (!legal.legalNotice) notFound()
   return (
     <PageShell locale={locale} alternates={localizedPaths('/legal-notice')}>
       <LegalPage title={t('legal')} content={legal.legalNotice} />

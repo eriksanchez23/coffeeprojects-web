@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { notFound } from 'next/navigation'
 import { PageShell } from '@/components/layout/page-shell'
 import { LegalPage } from '@/components/sections/legal-page'
 import type { Locale } from '@/i18n/locales'
@@ -19,6 +20,8 @@ export default async function CookiesPage({ params }: { params: Promise<{ locale
   const locale = (await params).locale as Locale
   setRequestLocale(locale)
   const [legal, t] = await Promise.all([getLegal(locale), getTranslations('footer')])
+  // Not seeded yet: no empty legal page.
+  if (!legal.cookiePolicy) notFound()
   return (
     <PageShell locale={locale} alternates={localizedPaths('/cookies')}>
       <LegalPage title={t('cookies')} content={legal.cookiePolicy} />

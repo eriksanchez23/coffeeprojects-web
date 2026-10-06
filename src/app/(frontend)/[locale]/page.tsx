@@ -38,29 +38,34 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale: raw } = await params
   const locale = raw as Locale
   setRequestLocale(locale)
-  const [home, services, pricing, faqs, t, ts] = await Promise.all([
+  const [home, services, pricing, faqs, t, ts, tn, tm] = await Promise.all([
     getHome(locale),
     getServices(locale),
     getPricing(locale),
     getFaqs(locale),
     getTranslations('common'),
     getTranslations('sections'),
+    getTranslations('nav'),
+    getTranslations('meta'),
   ])
+  // Unseeded/unpublished home global: translated fallbacks, and lists that have no items are skipped.
+  const hero = { ...home.hero, headline: home.hero.headline || tm('defaultTitle'), subheadline: home.hero.subheadline || tm('defaultDescription') }
+  const { sections } = home
 
   return (
     <PageShell locale={locale} alternates={localizedPaths('/')}>
       {faqs.length > 0 && <JsonLd data={faqLd(faqs)} />}
-      <Hero hero={home.hero} visual={<HeroVisual />} />
-      <StatsBento stats={home.stats ?? []} />
-      <Section id="services" eyebrow={ts('services')} title={home.sections.servicesTitle} lead={home.sections.servicesLead}>
+      <Hero hero={hero} visual={<HeroVisual />} />
+      {(home.stats ?? []).length > 0 && <StatsBento stats={home.stats ?? []} />}
+      <Section id="services" eyebrow={ts('services')} title={sections.servicesTitle || tn('services')} lead={sections.servicesLead}>
         <ServicesGrid services={services} locale={locale} />
       </Section>
       <PricingTeaser pricing={pricing} locale={locale} />
-      <WhyUs title={home.sections.whyTitle} items={home.whyUs ?? []} />
-      <ProcessSteps title={home.sections.processTitle} steps={home.process ?? []} />
-      <TeamPreview locale={locale} title={home.sections.teamTitle} lead={home.sections.teamLead} />
-      <ProjectsPreview locale={locale} title={home.sections.projectsTitle} lead={home.sections.projectsLead} />
-      <StackMarquee title={home.sections.stackTitle} items={home.stack ?? []} />
+      {(home.whyUs ?? []).length > 0 && <WhyUs title={sections.whyTitle} items={home.whyUs ?? []} />}
+      {(home.process ?? []).length > 0 && <ProcessSteps title={sections.processTitle} steps={home.process ?? []} />}
+      <TeamPreview locale={locale} title={sections.teamTitle || tn('team')} lead={sections.teamLead} />
+      <ProjectsPreview locale={locale} title={sections.projectsTitle || tn('projects')} lead={sections.projectsLead} />
+      {(home.stack ?? []).length > 0 && <StackMarquee title={sections.stackTitle} items={home.stack ?? []} />}
       <FaqList title={t('faqTitle')} items={faqs} />
       <CtaBand />
     </PageShell>

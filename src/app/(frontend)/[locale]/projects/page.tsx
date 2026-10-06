@@ -14,11 +14,11 @@ export const revalidate = 3600
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = (await params).locale as Locale
-  const [home, t] = await Promise.all([getHome(locale), getTranslations({ locale, namespace: 'meta' })])
+  const [home, t, tn] = await Promise.all([getHome(locale), getTranslations({ locale, namespace: 'meta' }), getTranslations({ locale, namespace: 'nav' })])
   return buildMetadata({
     locale,
     paths: localizedPaths('/projects'),
-    title: home.sections.projectsTitle,
+    title: home.sections.projectsTitle || tn('projects'),
     description: home.sections.projectsLead || t('defaultDescription'),
   })
 }
@@ -35,7 +35,7 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
           { name: tn('projects'), url: absoluteUrl(localizedPaths('/projects')[locale]) },
         ])}
       />
-      <ProjectsPreview locale={locale} title={home.sections.projectsTitle} lead={home.sections.projectsLead} as="h1" featuredOnly={false} />
+      <ProjectsPreview locale={locale} title={home.sections.projectsTitle || tn('projects')} lead={home.sections.projectsLead} as="h1" featuredOnly={false} />
       <CtaBand />
     </PageShell>
   )
