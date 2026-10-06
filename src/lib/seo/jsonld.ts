@@ -115,7 +115,7 @@ const monthlySpec = (price: number) => ({
 })
 
 /** Pricing page: one Offer per package (initial payment + monthly fee, VAT excluded) plus the custom service ("from" price). */
-export function pricingLd(p: PricingInput, url: string, locale: Locale) {
+export function pricingLd(p: PricingInput, url: string) {
   const seller = { '@id': ORG_ID() }
   const packages = (p.packages ?? []).map((pkg) => ({
     '@type': 'Offer',
@@ -153,7 +153,6 @@ export function pricingLd(p: PricingInput, url: string, locale: Locale) {
     '@type': 'OfferCatalog',
     name: p.title,
     url,
-    inLanguage: locale,
     itemListElement: [...packages, ...custom],
   }
 }

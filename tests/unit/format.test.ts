@@ -5,8 +5,9 @@ const labels = { from: 'Desde', perMonth: '/mes', custom: 'A medida', seeStore: 
 const NBSP = ' '
 
 describe('formatPrice', () => {
+  // Always grouped, like the pricing page ("1.000 €"), so prices read the same across the site.
   it('formats one-off prices without decimals per locale, keeping non-breaking spaces', () => {
-    expect(formatPrice({ mode: 'one-off', amount: 2500 }, 'es', labels)).toBe(`Desde 2500${NBSP}€`)
+    expect(formatPrice({ mode: 'one-off', amount: 2500 }, 'es', labels)).toBe(`Desde 2.500${NBSP}€`)
     expect(formatPrice({ mode: 'one-off', amount: 2500 }, 'en', { ...labels, from: 'From' })).toBe('From €2,500')
   })
   it('formats French amounts with a plain NBSP grouping, never a narrow one', () => {
@@ -33,7 +34,7 @@ describe('formatPrice', () => {
 
 describe('formatPriceParts', () => {
   it('returns a prefix only for numeric prices', () => {
-    expect(formatPriceParts({ mode: 'one-off', amount: 2500 }, 'es', labels)).toEqual({ prefix: 'Desde', figure: `2500${NBSP}€` })
+    expect(formatPriceParts({ mode: 'one-off', amount: 2500 }, 'es', labels)).toEqual({ prefix: 'Desde', figure: `2.500${NBSP}€` })
     expect(formatPriceParts({ mode: 'monthly', amount: 35 }, 'es', labels)).toEqual({ prefix: 'Desde', figure: `35${NBSP}€/mes` })
   })
   it('has no prefix for custom, missing-amount and store pricing', () => {

@@ -60,7 +60,7 @@ export async function PricingPlans({ pricing, locale }: Props) {
               </dl>
             )}
             <Button href={contactHref('custom')} variant="outline" size="lg" className="w-full md:w-auto">
-              {custom.ctaLabel || t('viewAll')}
+              {custom.ctaLabel || t('requestCustom')}
             </Button>
           </div>
         </section>
@@ -140,7 +140,7 @@ function PackageCard({
         className="mt-8 w-full"
         aria-describedby={titleId}
       >
-        {pkg.ctaLabel || t('viewAll')}
+        {pkg.ctaLabel || t('requestPlan')}
       </Button>
     </li>
   )

@@ -41,12 +41,14 @@ describe('pricingLd', () => {
     ],
     custom: { title: 'Servicio personalizado', description: 'Para cualquier servicio.', fromPrice: 500, monthlyPrice: 20 },
   }
-  const ld = pricingLd(pricing as never, 'https://x/presupuestos', 'es')
+  const ld = pricingLd(pricing as never, 'https://x/presupuestos')
   const offers = ld.itemListElement
 
   it('is an OfferCatalog with one Offer per package plus the custom service', () => {
     expect(ld['@type']).toBe('OfferCatalog')
     expect(ld.url).toBe('https://x/presupuestos')
+    // inLanguage is not an OfferCatalog property.
+    expect(ld).not.toHaveProperty('inLanguage')
     expect(offers).toHaveLength(3)
     expect(offers.every((o) => o['@type'] === 'Offer')).toBe(true)
   })

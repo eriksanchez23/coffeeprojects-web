@@ -122,7 +122,9 @@
     "viewAll": "See pricing",
     "selectedPlan": "Selected package",
     "selectedPlanHint": "We will take it into account when preparing your proposal.",
-    "seePackages": "See packages and pricing"
+    "seePackages": "See packages and pricing",
+    "requestPlan": "Request this package",
+    "requestCustom": "Request a custom quote"
   },
   "thanks": {
     "title": "Got it! We're already brewing the coffee.",

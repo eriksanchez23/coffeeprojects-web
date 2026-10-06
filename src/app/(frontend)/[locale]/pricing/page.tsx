@@ -38,7 +38,7 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
     <PageShell locale={locale} alternates={paths}>
       <JsonLd
         data={[
-          pricingLd(pricing, pageUrl, locale),
+          pricingLd(pricing, pageUrl),
           breadcrumbLd([
             { name: tn('home'), url: absoluteUrl(localizedPaths('/')[locale]) },
             { name: tn('pricing'), url: pageUrl },

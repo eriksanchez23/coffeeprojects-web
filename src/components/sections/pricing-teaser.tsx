@@ -25,10 +25,8 @@ export async function PricingTeaser({ pricing, locale }: { pricing: Pricing; loc
               p.featured ? 'border-line-amber bg-bg-2' : 'border-line bg-bg-1',
             )}
           >
-            <h3 className="font-display text-xl font-semibold">
-              {p.name}
-              {p.featured && <span className="ml-2 align-middle font-mono text-[11px] uppercase tracking-widest text-amber">{t('recommended')}</span>}
-            </h3>
+            {p.featured && <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-amber">{t('recommended')}</p>}
+            <h3 className="font-display text-xl font-semibold">{p.name}</h3>
             <p className="mt-3 flex items-baseline gap-2">
               <span className={cn('font-display text-3xl', p.featured ? 'text-amber-hi' : 'text-ink-0')}>{formatEuro(p.initialPrice, locale)}</span>{' '}
               <span className="text-sm text-ink-2">{vat}</span>
@@ -36,7 +34,7 @@ export async function PricingTeaser({ pricing, locale }: { pricing: Pricing; loc
             {p.monthlyPrice != null && (
               <p className="mt-1 text-sm text-ink-2">
                 + {formatEuro(p.monthlyPrice, locale)}
-                {tc('perMonth')}
+                {tc('perMonth')} <span className="text-ink-3">{vat}</span>
               </p>
             )}
           </li>

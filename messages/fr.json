@@ -122,7 +122,9 @@
     "viewAll": "Voir les tarifs",
     "selectedPlan": "Formule choisie",
     "selectedPlanHint": "Nous en tiendrons compte pour préparer votre proposition.",
-    "seePackages": "Voir les formules et tarifs"
+    "seePackages": "Voir les formules et tarifs",
+    "requestPlan": "Choisir cette formule",
+    "requestCustom": "Demander un devis sur mesure"
   },
   "thanks": {
     "title": "Bien reçu ! Le café est déjà en préparation.",

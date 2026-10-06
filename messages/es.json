@@ -122,7 +122,9 @@
     "viewAll": "Ver presupuestos",
     "selectedPlan": "Paquete elegido",
     "selectedPlanHint": "Lo tendremos en cuenta al preparar tu propuesta.",
-    "seePackages": "Ver paquetes y precios"
+    "seePackages": "Ver paquetes y precios",
+    "requestPlan": "Solicitar este paquete",
+    "requestCustom": "Pedir presupuesto a medida"
   },
   "thanks": {
     "title": "¡Recibido! Ya estamos preparando el café.",
