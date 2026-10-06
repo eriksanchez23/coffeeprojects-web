@@ -43,8 +43,8 @@ test.describe('full motion', () => {
     const h1 = page.getByRole('heading', { level: 1 })
     await expect(h1).toBeVisible()
     await expect(h1).toHaveCSS('opacity', '1')
-    // Give the lazily loaded scroll-effects runtime time to run: it must leave above-the-fold content alone.
-    await page.waitForTimeout(2500)
+    // Wait until the deferred scroll-effects runtime has set itself up: it must leave above-the-fold content alone.
+    await expect(page.locator('html')).toHaveAttribute('data-scroll-effects', 'ready', { timeout: 10_000 })
     await expect(h1).toHaveCSS('opacity', '1')
     await expect(h1.locator('*')).toHaveCount(0)
     await expect(h1).toHaveCSS('visibility', 'visible')

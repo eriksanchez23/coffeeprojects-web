@@ -1,6 +1,9 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
+// Reduced motion keeps below-the-fold reveals in their final, visible state for axe.
+test.use({ contextOptions: { reducedMotion: 'reduce' } })
+
 const pages = ['/', '/en/services', '/fr/services/boutiques-en-ligne', '/equipo', '/proyectos', '/contacto', '/privacidad']
 
 for (const path of pages) {

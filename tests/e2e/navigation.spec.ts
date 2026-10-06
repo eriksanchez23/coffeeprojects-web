@@ -46,6 +46,8 @@ test('public pages send a CSP without unsafe-eval and the right indexing policy'
   const csp = res.headers()['content-security-policy'] ?? ''
   expect(csp).toContain("default-src 'self'")
   expect(csp).not.toContain('unsafe-eval')
+  // Payload's admin client hints must not force a Critical-CH retry on public pages.
+  expect(res.headers()['critical-ch']).toBeUndefined()
   const robots = await (await request.get('/robots.txt')).text()
   if (process.env.NEXT_PUBLIC_SITE_ENV === 'production') {
     expect(res.headers()['x-robots-tag']).toBeUndefined()

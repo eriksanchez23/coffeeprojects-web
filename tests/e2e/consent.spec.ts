@@ -12,8 +12,15 @@ function recordMetaRequests(page: Page): string[] {
   return urls
 }
 
+/** Records and aborts Meta requests, so a regression is caught without ever contacting Meta. */
+async function blockMeta(page: Page): Promise<string[]> {
+  const urls = recordMetaRequests(page)
+  await page.route(META, (route) => route.abort())
+  return urls
+}
+
 test('rejecting cookies loads no Meta script', async ({ page }) => {
-  const metaRequests = recordMetaRequests(page)
+  const metaRequests = await blockMeta(page)
   await page.goto('/servicios/webs-y-landing-pages?utm_source=facebook&fbclid=E2E')
   await page.getByRole('button', { name: 'Rechazar' }).click()
   await page.reload()
@@ -25,7 +32,7 @@ test('rejecting cookies loads no Meta script', async ({ page }) => {
 })
 
 test('nothing from Meta loads before a consent choice', async ({ page }) => {
-  const metaRequests = recordMetaRequests(page)
+  const metaRequests = await blockMeta(page)
   await page.goto('/?utm_source=facebook&fbclid=E2E')
   await expect(page.getByRole('dialog', { name: 'Usamos cookies' })).toBeVisible()
   await page.waitForLoadState('networkidle')

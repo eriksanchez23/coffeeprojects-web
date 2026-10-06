@@ -14,6 +14,8 @@ export default defineConfig({
   globalTeardown: './tests/e2e/support/cleanup.ts',
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
+  // CI keeps a browsable HTML report (uploaded on failure) next to the console log.
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: { baseURL, trace: 'on-first-retry' },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },

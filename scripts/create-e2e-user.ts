@@ -4,6 +4,16 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 
 if (process.env.NEXT_PUBLIC_SITE_ENV === 'production') throw new Error('Refusing to create test users in production')
+// Only ever against a local database: the dev machine, or the `postgres` service container in CI.
+const LOCAL_DB_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '[::1]', 'postgres'])
+const dbHost = (() => {
+  try {
+    return new URL(process.env.DATABASE_URL ?? '').hostname
+  } catch {
+    return ''
+  }
+})()
+if (!LOCAL_DB_HOSTS.has(dbHost)) throw new Error('Refusing to create test users: DATABASE_URL is not a local database')
 const email = process.env.E2E_ADMIN_EMAIL
 const password = process.env.E2E_ADMIN_PASSWORD
 if (!email || !password) throw new Error('E2E_ADMIN_EMAIL / E2E_ADMIN_PASSWORD missing')
