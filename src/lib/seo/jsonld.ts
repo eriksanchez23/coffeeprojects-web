@@ -15,7 +15,7 @@ export function organizationLd(email: string) {
     slogan: 'Sin café no hay código',
     areaServed: [{ '@type': 'Country', name: 'Spain' }, 'Worldwide'],
     address: { '@type': 'PostalAddress', addressCountry: 'ES' },
-    contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email, availableLanguage: ['es', 'en'] },
+    contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email, availableLanguage: ['es', 'en', 'fr'] },
     knowsAbout: ['Web development', 'E-commerce', 'Next.js', 'SEO', 'FiveM', 'Discord bots'],
   }
 }

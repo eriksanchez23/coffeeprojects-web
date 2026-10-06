@@ -37,3 +37,16 @@ describe('buildMetadata', () => {
     expect(String(m.description).length).toBeLessThanOrEqual(160)
   })
 })
+
+describe('non-production environments', () => {
+  it('buildMetadata is noindex and robots disallows everything on staging', async () => {
+    vi.resetModules()
+    vi.stubEnv('NEXT_PUBLIC_SITE_ENV', 'staging')
+    const { buildMetadata } = await import('@/lib/seo/metadata')
+    const robots = (await import('@/app/robots')).default
+    const m = buildMetadata({ locale: 'es', paths: { es: '/a', en: '/en/a', fr: '/fr/a' }, title: 't', description: 'd' })
+    expect(m.robots).toEqual({ index: false, follow: false })
+    expect(robots()).toEqual({ rules: { userAgent: '*', disallow: '/' } })
+    vi.stubEnv('NEXT_PUBLIC_SITE_ENV', 'production')
+  })
+})

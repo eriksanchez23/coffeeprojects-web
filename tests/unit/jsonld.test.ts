@@ -6,7 +6,7 @@ describe('json-ld', () => {
   it('organization is a ProfessionalService with contact point', () => {
     const o = organizationLd('contact@coffeeprojects.es')
     expect(o['@type']).toBe('ProfessionalService')
-    expect(o.contactPoint).toMatchObject({ email: 'contact@coffeeprojects.es', availableLanguage: ['es', 'en'] })
+    expect(o.contactPoint).toMatchObject({ email: 'contact@coffeeprojects.es', availableLanguage: ['es', 'en', 'fr'] })
   })
   it('service includes a price offer only when there is an amount', () => {
     const s = serviceLd({ title: 'Webs', summary: 's', pricing: { mode: 'one-off', amount: 600 } } as never, 'https://x/s', 'es')

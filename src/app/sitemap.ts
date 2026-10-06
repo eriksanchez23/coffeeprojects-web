@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { defaultLocale } from '@/i18n/locales'
 import { type Locale, locales } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import type { AppPathname } from '@/i18n/routing'
@@ -11,7 +12,8 @@ export const revalidate = 3600
 const LEGAL_PAGES_LIVE = false
 
 function entries(paths: Record<Locale, string>, priority: number): MetadataRoute.Sitemap {
-  const languages = Object.fromEntries(locales.map((l) => [l, absoluteUrl(paths[l])]))
+  const languages: Record<string, string> = Object.fromEntries(locales.map((l) => [l, absoluteUrl(paths[l])]))
+  languages['x-default'] = absoluteUrl(paths[defaultLocale])
   return locales.map((l) => ({
     url: absoluteUrl(paths[l]),
     lastModified: new Date(),
@@ -19,6 +21,16 @@ function entries(paths: Record<Locale, string>, priority: number): MetadataRoute
     priority,
     alternates: { languages },
   }))
+}
+
+// getAllSlugs throws on a doc without an es slug; keep the sitemap alive and drop that collection instead of 500ing.
+async function safeSlugs(collection: Parameters<typeof getAllSlugs>[0]): Promise<Record<Locale, string>[]> {
+  try {
+    return await getAllSlugs(collection)
+  } catch (err) {
+    console.error('sitemap: skipping collection', collection, err instanceof Error ? err.message : err)
+    return []
+  }
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -30,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ['/contact', 0.8],
     ...(LEGAL_PAGES_LIVE ? ([['/legal-notice', 0.1], ['/privacy', 0.1], ['/cookies', 0.1]] as [AppPathname, number][]) : []),
   ]
-  const [services, team, projects] = await Promise.all([getAllSlugs('services'), getAllSlugs('team-members'), getAllSlugs('projects')])
+  const [services, team, projects] = await Promise.all([safeSlugs('services'), safeSlugs('team-members'), safeSlugs('projects')])
   return [
     ...staticPages.flatMap(([p, prio]) => entries(localizedPaths(p), prio)),
     ...services.flatMap((s) => entries(localizedPaths('/services/[slug]', s), 0.9)),
