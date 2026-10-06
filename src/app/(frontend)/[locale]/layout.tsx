@@ -54,7 +54,8 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={fontVariables} suppressHydrationWarning>
-      <body className="grain bg-bg-0 text-ink-1">
+      {/* The page background lives on <html> (globals.css) so the cursor glow (z-index -10) paints behind content. */}
+      <body className="grain text-ink-1">
         <JsonLd data={[organizationLd(settings.contactEmail), websiteLd(locale as Locale)]} />
         <NextIntlClientProvider>
           <MotionProvider>

@@ -12,7 +12,8 @@ export default function SmoothScroll() {
     const lenis = new Lenis({
       autoRaf: false,
       lerp: 0.1,
-      anchors: true,
+      // In-page anchors are handled below: Lenis' own handler smooth-scrolls on top of the native jump.
+      anchors: false,
       stopInertiaOnNavigate: true,
       // The mobile menu panel keeps native scrolling even while the page is locked.
       prevent: (node) => node.id === 'mobile-menu',
@@ -28,7 +29,26 @@ export default function SmoothScroll() {
     observer.observe(document.body, { attributes: true, attributeFilter: ['style'] })
     syncLock()
 
+    // Same-page hash links: one smooth scroll, the URL hash kept, and focus moved like a native jump
+    // (the skip link must land keyboard focus on <main>).
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+      const link = e.target instanceof Element ? e.target.closest('a[href]') : null
+      if (!(link instanceof HTMLAnchorElement) || (link.target && link.target !== '_self')) return
+      const url = new URL(link.href)
+      if (url.origin !== location.origin || url.pathname !== location.pathname || !url.hash) return
+      const target = document.getElementById(decodeURIComponent(url.hash.slice(1)))
+      if (!target) return
+      e.preventDefault()
+      if (url.hash !== location.hash) history.pushState(history.state, '', url.hash)
+      lenis.scrollTo(target)
+      if (!target.matches('a[href], button, input, select, textarea, [tabindex]')) target.setAttribute('tabindex', '-1')
+      target.focus({ preventScroll: true })
+    }
+    document.addEventListener('click', onClick)
+
     return () => {
+      document.removeEventListener('click', onClick)
       observer.disconnect()
       gsap.ticker.remove(update)
       gsap.ticker.lagSmoothing(500, 33)

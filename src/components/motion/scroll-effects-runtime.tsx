@@ -10,10 +10,18 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText)
 const MOTION_OK = '(prefers-reduced-motion: no-preference)'
 
 /**
+ * Elements the visitor can already see (or has scrolled past) when effects are set up are left untouched:
+ * hiding them after the server HTML painted would flash and re-animate content (and the hero h1 is the LCP).
+ */
+function belowFold(el: Element): boolean {
+  return el.getBoundingClientRect().top >= window.innerHeight
+}
+
+/**
  * Scroll-driven effects bound to data attributes rendered by the sections.
- * Everything is set up from JS after hydration, so server HTML (and no-JS / reduced-motion visitors)
- * always shows the final, fully visible content. gsap.matchMedia reverts all of it if the visitor
- * switches to reduced motion.
+ * Everything is set up from JS after hydration and only for below-the-fold elements, so server HTML
+ * (and no-JS / reduced-motion visitors) always shows the final, fully visible content.
+ * gsap.matchMedia reverts all of it if the visitor switches to reduced motion.
  */
 export default function ScrollEffectsRuntime() {
   const pathname = usePathname()
@@ -24,57 +32,84 @@ export default function ScrollEffectsRuntime() {
 
       mm.add(MOTION_OK, () => {
         // 1. Reveal cards in batches
-        gsap.set('[data-reveal]', { autoAlpha: 0, y: 40 })
-        ScrollTrigger.batch('[data-reveal]', {
-          start: 'top 88%',
-          once: true,
-          onEnter: (els) => gsap.to(els, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08 }),
-        })
+        const reveals = gsap.utils.toArray<HTMLElement>('[data-reveal]').filter(belowFold)
+        if (reveals.length > 0) {
+          gsap.set(reveals, { autoAlpha: 0, y: 40 })
+          ScrollTrigger.batch(reveals, {
+            start: 'top 88%',
+            once: true,
+            onEnter: (els) => gsap.to(els, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08 }),
+          })
+        }
 
         // 2. Headline split reveal (SplitText keeps an aria-label with the full text)
-        document.querySelectorAll<HTMLElement>('[data-split]').forEach((el) => {
-          const split = SplitText.create(el, { type: 'words', mask: 'words' })
-          gsap.from(split.words, { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.04 })
-        })
+        gsap.utils
+          .toArray<HTMLElement>('[data-split]')
+          .filter(belowFold)
+          .forEach((el) => {
+            const split = SplitText.create(el, { type: 'words', mask: 'words' })
+            gsap.from(split.words, {
+              yPercent: 110,
+              duration: 1.1,
+              ease: 'expo.out',
+              stagger: 0.04,
+              scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+            })
+          })
 
-        // 3. Counters: the final value is in the HTML; count up from 0 only here, restore it on revert
-        const counters = gsap.utils.toArray<HTMLElement>('[data-count-to]')
-        counters.forEach((el) => {
-          const to = Number(el.dataset.countTo)
-          if (!Number.isFinite(to)) return
-          const decimals = Number.isInteger(to) ? 0 : 1
-          const obj = { v: 0 }
-          el.textContent = '0'
-          gsap.to(obj, {
-            v: to,
-            duration: 1.8,
-            ease: 'power3.out',
-            scrollTrigger: { trigger: el, start: 'top 90%', once: true },
-            onUpdate: () => {
-              el.textContent = obj.v.toFixed(decimals)
-            },
+        // 3. Counters: React's span (with the final value) stays untouched and is swapped for a JS-owned
+        //    display span that counts up; the screen-reader copy in the markup never changes.
+        const restore: (() => void)[] = []
+        gsap.utils
+          .toArray<HTMLElement>('[data-count-to]')
+          .filter(belowFold)
+          .forEach((el) => {
+            const finalText = el.dataset.countTo ?? ''
+            const to = Number(finalText)
+            if (!Number.isFinite(to)) return
+            const decimals = Number.isInteger(to) ? 0 : 1
+            const display = document.createElement('span')
+            display.setAttribute('aria-hidden', 'true')
+            display.textContent = '0'
+            el.after(display)
+            el.style.display = 'none'
+            restore.push(() => {
+              display.remove()
+              el.style.display = ''
+            })
+            const obj = { v: 0 }
+            gsap.to(obj, {
+              v: to,
+              duration: 1.8,
+              ease: 'power3.out',
+              scrollTrigger: { trigger: display, start: 'top 90%', once: true },
+              onUpdate: () => {
+                display.textContent = obj.v.toFixed(decimals)
+              },
+              onComplete: () => {
+                display.textContent = finalText
+              },
+            })
           })
-        })
-        return () =>
-          counters.forEach((el) => {
-            el.textContent = el.dataset.countTo ?? el.textContent
-          })
+
+        // Web fonts change line heights and trigger positions once they load.
+        void document.fonts?.ready.then(() => ScrollTrigger.refresh())
+
+        return () => restore.forEach((r) => r())
       })
 
-      // 4. Process: pinned step-by-step progress on desktop
+      // 4. Process: step-by-step progress on desktop; pinned only when the whole section fits the viewport
       mm.add(`${MOTION_OK} and (min-width: 1024px)`, () => {
         const list = document.querySelector<HTMLElement>('[data-process]')
-        if (!list) return
+        if (!list || !belowFold(list)) return
+        const section = list.closest('section') ?? list
+        const fits = section.getBoundingClientRect().height <= window.innerHeight * 0.9
         const steps = gsap.utils.toArray<HTMLElement>('[data-process-step]', list)
         gsap.set(steps, { opacity: 0.25 })
         const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: list,
-            start: 'top 30%',
-            end: `+=${steps.length * 220}`,
-            pin: list.closest('section') ?? list,
-            scrub: 0.6,
-          },
+          scrollTrigger: fits
+            ? { trigger: list, start: 'top 30%', end: `+=${steps.length * 220}`, pin: section, scrub: 0.6 }
+            : { trigger: list, start: 'top 80%', end: 'bottom 50%', scrub: 0.6 },
         })
         steps.forEach((s) => tl.to(s, { opacity: 1, y: -8, duration: 1 }))
       })

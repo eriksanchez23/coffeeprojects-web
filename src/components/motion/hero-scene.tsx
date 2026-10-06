@@ -160,7 +160,7 @@ function Glyphs({ count = 14 }: { count?: number }) {
 }
 
 /** Coffee cup whose steam turns into code glyphs; follows the pointer. Renders only while on screen. */
-export default function HeroScene({ onReady }: { onReady?: () => void }) {
+export default function HeroScene({ onReady, onContextLost }: { onReady?: () => void; onContextLost?: () => void }) {
   const wrap = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(true)
   useEffect(() => {
@@ -176,8 +176,12 @@ export default function HeroScene({ onReady }: { onReady?: () => void }) {
         dpr={[1, 1.75]}
         camera={{ position: [0, 0.8, 5.2], fov: 38 }}
         frameloop={visible ? 'always' : 'never'}
-        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-        onCreated={() => onReady?.()}
+        gl={{ antialias: true, alpha: true, powerPreference: 'default' }}
+        onCreated={({ gl }) => {
+          // A lost context (GPU reset, too many contexts) hands the hero back to the poster.
+          gl.domElement.addEventListener('webglcontextlost', () => onContextLost?.(), { once: true })
+          onReady?.()
+        }}
       >
         <ambientLight intensity={0.35} />
         <spotLight position={[2, 5, 3]} angle={0.5} penumbra={0.8} intensity={60} color="#f5a742" />
