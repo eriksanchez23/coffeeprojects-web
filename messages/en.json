@@ -6,6 +6,7 @@
   },
   "nav": {
     "services": "Services",
+    "pricing": "Pricing",
     "team": "Team",
     "projects": "Projects",
     "faq": "FAQ",
@@ -109,6 +110,17 @@
       "rateLimited": "You've sent several requests in a row. Please wait a moment or email us at contact@coffeeprojects.es.",
       "generic": "Something went wrong. Please try again or email us at contact@coffeeprojects.es."
     }
+  },
+  "pricing": {
+    "packagesList": "Packages",
+    "initialPayment": "Initial payment",
+    "monthlyFee": "Monthly fee",
+    "recommended": "Recommended",
+    "includes": "What {name} includes",
+    "notIncluded": "Not included:",
+    "viewAll": "See pricing",
+    "selectedPlan": "Selected package",
+    "selectedPlanHint": "We will take it into account when preparing your proposal."
   },
   "thanks": {
     "title": "Got it! We're already brewing the coffee.",

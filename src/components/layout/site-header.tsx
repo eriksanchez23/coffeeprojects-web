@@ -10,6 +10,7 @@ export async function SiteHeader() {
   const t = await getTranslations('nav')
   const links = [
     { href: '/services' as const, label: t('services') },
+    { href: '/pricing' as const, label: t('pricing') },
     { href: '/team' as const, label: t('team') },
     { href: '/projects' as const, label: t('projects') },
     { href: { pathname: '/' as const, hash: 'faq' }, label: t('faq') },

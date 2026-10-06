@@ -2,7 +2,7 @@ import 'server-only'
 import { draftMode } from 'next/headers'
 import { unstable_rethrow } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
-import type { Faq, Home, Legal, Project, Service, SiteSetting, TeamMember } from '@/payload-types'
+import type { Faq, Home, Legal, Pricing, Project, Service, SiteSetting, TeamMember } from '@/payload-types'
 import type { Locale } from '@/i18n/locales'
 import { payloadClient } from './client'
 import { type SlugEntry, toLocaleSlugs, toSlugEntries } from './slugs'
@@ -96,7 +96,7 @@ export async function getAllSlugs(collection: Slugged): Promise<SlugEntry[]> {
   })
 }
 
-function getGlobal<T>(slug: 'home' | 'site-settings' | 'legal', locale: Locale): Promise<T> {
+function getGlobal<T>(slug: 'home' | 'pricing' | 'site-settings' | 'legal', locale: Locale): Promise<T> {
   return read([`global:${slug}`, locale], [`global:${slug}`], async (draft) => {
     const payload = await payloadClient()
     return (await payload.findGlobal({ slug, locale, draft, depth: 1, overrideAccess: draft })) as T
@@ -106,3 +106,10 @@ function getGlobal<T>(slug: 'home' | 'site-settings' | 'legal', locale: Locale):
 export const getHome = (locale: Locale) => getGlobal<Home>('home', locale)
 export const getSettings = (locale: Locale) => getGlobal<SiteSetting>('site-settings', locale)
 export const getLegal = (locale: Locale) => getGlobal<Legal>('legal', locale)
+export const getPricing = (locale: Locale) => getGlobal<Pricing>('pricing', locale)
+
+/** Package slugs of the published pricing global: the only values a contact `plan` may take. */
+export async function getPlanSlugs(): Promise<string[]> {
+  const pricing = await getGlobal<Pricing>('pricing', 'es')
+  return (pricing.packages ?? []).map((p) => p.slug)
+}

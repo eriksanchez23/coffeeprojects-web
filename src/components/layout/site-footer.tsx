@@ -5,7 +5,7 @@ import { LanguageSwitcher } from './language-switcher'
 import { ManageCookiesButton } from './manage-cookies-button'
 
 export async function SiteFooter({ email, chatUrl }: { email: string; chatUrl?: string | null }) {
-  const t = await getTranslations('footer')
+  const [t, tn] = await Promise.all([getTranslations('footer'), getTranslations('nav')])
   const year = new Date().getFullYear()
   return (
     <footer className="border-t border-line py-14 text-sm text-ink-2">
@@ -16,6 +16,7 @@ export async function SiteFooter({ email, chatUrl }: { email: string; chatUrl?: 
         </div>
         <div className="flex flex-col gap-2">
           <a href={`mailto:${email}`} className="text-ink-0 hover:text-amber">{email}</a>
+          <Link href="/pricing" className="hover:text-ink-0">{tn('pricing')}</Link>
           {chatUrl && (
             <a href={chatUrl} target="_blank" rel="noopener noreferrer" className="hover:text-amber">{t('chat')}</a>
           )}

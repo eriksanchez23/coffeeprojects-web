@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { contactHref, formatPrice, formatPriceParts } from '@/lib/format'
+import { contactHref, formatEuro, formatPrice, formatPriceParts } from '@/lib/format'
 
 const labels = { from: 'Desde', perMonth: '/mes', custom: 'A medida', seeStore: 'Ver tienda' }
 const NBSP = ' '
@@ -47,7 +47,21 @@ describe('contactHref', () => {
   it('carries the project type', () => {
     expect(contactHref('ecommerce')).toEqual({ pathname: '/contact', query: { type: 'ecommerce' } })
   })
+  it('carries the pricing plan next to the type', () => {
+    expect(contactHref('web', 'estandar')).toEqual({ pathname: '/contact', query: { type: 'web', plan: 'estandar' } })
+  })
   it('omits the query without a type', () => {
     expect(contactHref()).toEqual({ pathname: '/contact' })
+  })
+})
+
+describe('formatEuro', () => {
+  it('formats whole euros per locale with non-breaking spaces only', () => {
+    // Always grouped, so the price sheet's "1.000 €" reads the same on the site.
+    expect(formatEuro(1000, 'es')).toBe(`1.000${NBSP}€`)
+    expect(formatEuro(300, 'es')).toBe(`300${NBSP}€`)
+    expect(formatEuro(1000, 'en')).toBe('€1,000')
+    expect(formatEuro(1000, 'fr')).toBe(`1${NBSP}000${NBSP}€`)
+    expect(formatEuro(1000, 'fr')).not.toContain(' ')
   })
 })

@@ -5,6 +5,7 @@ import { HeroVisual } from '@/components/motion/hero-visual'
 import { CtaBand } from '@/components/sections/cta-band'
 import { FaqList } from '@/components/sections/faq-list'
 import { Hero } from '@/components/sections/hero'
+import { PricingTeaser } from '@/components/sections/pricing-teaser'
 import { ProcessSteps } from '@/components/sections/process-steps'
 import { ProjectsPreview } from '@/components/sections/projects-preview'
 import { ServicesGrid } from '@/components/sections/services-grid'
@@ -15,7 +16,7 @@ import { WhyUs } from '@/components/sections/why-us'
 import { Section } from '@/components/ui/section'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
-import { getFaqs, getHome, getServices, getSettings } from '@/lib/cms/queries'
+import { getFaqs, getHome, getPricing, getServices, getSettings } from '@/lib/cms/queries'
 import { JsonLd } from '@/components/seo/json-ld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { faqLd } from '@/lib/seo/jsonld'
@@ -37,9 +38,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale: raw } = await params
   const locale = raw as Locale
   setRequestLocale(locale)
-  const [home, services, faqs, t, ts] = await Promise.all([
+  const [home, services, pricing, faqs, t, ts] = await Promise.all([
     getHome(locale),
     getServices(locale),
+    getPricing(locale),
     getFaqs(locale),
     getTranslations('common'),
     getTranslations('sections'),
@@ -53,6 +55,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <Section id="services" eyebrow={ts('services')} title={home.sections.servicesTitle} lead={home.sections.servicesLead}>
         <ServicesGrid services={services} locale={locale} />
       </Section>
+      <PricingTeaser pricing={pricing} locale={locale} />
       <WhyUs title={home.sections.whyTitle} items={home.whyUs ?? []} />
       <ProcessSteps title={home.sections.processTitle} steps={home.process ?? []} />
       <TeamPreview locale={locale} title={home.sections.teamTitle} lead={home.sections.teamLead} />

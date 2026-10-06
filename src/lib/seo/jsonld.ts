@@ -98,3 +98,62 @@ export function projectLd(p: Pick<Project, 'title' | 'summary' | 'year' | 'stack
     creator: { '@id': ORG_ID() },
   }
 }
+
+type PricingInput = {
+  title: string
+  packages?: { name: string; initialPrice: number; monthlyPrice?: number | null; items?: { text: string }[] | null }[] | null
+  custom?: { title: string; description?: string | null; fromPrice?: number | null; monthlyPrice?: number | null } | null
+}
+
+const exVat = { priceCurrency: 'EUR', valueAddedTaxIncluded: false } as const
+const monthlySpec = (price: number) => ({
+  '@type': 'UnitPriceSpecification',
+  price,
+  ...exVat,
+  unitCode: 'MON',
+  referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' },
+})
+
+/** Pricing page: one Offer per package (initial payment + monthly fee, VAT excluded) plus the custom service ("from" price). */
+export function pricingLd(p: PricingInput, url: string, locale: Locale) {
+  const seller = { '@id': ORG_ID() }
+  const packages = (p.packages ?? []).map((pkg) => ({
+    '@type': 'Offer',
+    name: pkg.name,
+    description: (pkg.items ?? []).map((i) => i.text).join(' · '),
+    url,
+    price: pkg.initialPrice,
+    priceCurrency: 'EUR',
+    seller,
+    priceSpecification: [
+      { '@type': 'UnitPriceSpecification', price: pkg.initialPrice, ...exVat },
+      ...(pkg.monthlyPrice != null ? [monthlySpec(pkg.monthlyPrice)] : []),
+    ] as Record<string, unknown>[],
+  }))
+  const c = p.custom
+  const custom =
+    c?.fromPrice != null
+      ? [
+          {
+            '@type': 'Offer',
+            name: c.title,
+            description: c.description ?? undefined,
+            url,
+            priceCurrency: 'EUR',
+            seller,
+            priceSpecification: [
+              { '@type': 'UnitPriceSpecification', minPrice: c.fromPrice, ...exVat },
+              ...(c.monthlyPrice != null ? [monthlySpec(c.monthlyPrice)] : []),
+            ] as Record<string, unknown>[],
+          },
+        ]
+      : []
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'OfferCatalog',
+    name: p.title,
+    url,
+    inLanguage: locale,
+    itemListElement: [...packages, ...custom],
+  }
+}

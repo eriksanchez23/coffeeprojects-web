@@ -6,6 +6,7 @@
   },
   "nav": {
     "services": "Servicios",
+    "pricing": "Presupuestos",
     "team": "Equipo",
     "projects": "Proyectos",
     "faq": "FAQ",
@@ -109,6 +110,17 @@
       "rateLimited": "Has enviado varias solicitudes seguidas. Espera un poco o escríbenos a contact@coffeeprojects.es.",
       "generic": "Algo ha fallado al enviar. Inténtalo de nuevo o escríbenos a contact@coffeeprojects.es."
     }
+  },
+  "pricing": {
+    "packagesList": "Paquetes",
+    "initialPayment": "Pago inicial",
+    "monthlyFee": "Cuota mensual",
+    "recommended": "Recomendado",
+    "includes": "Qué incluye {name}",
+    "notIncluded": "No incluido:",
+    "viewAll": "Ver presupuestos",
+    "selectedPlan": "Paquete elegido",
+    "selectedPlanHint": "Lo tendremos en cuenta al preparar tu propuesta."
   },
   "thanks": {
     "title": "¡Recibido! Ya estamos preparando el café.",
