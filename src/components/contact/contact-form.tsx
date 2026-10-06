@@ -1,6 +1,6 @@
 'use client'
 import { useTranslations } from 'next-intl'
-import { useActionState, useEffect, useRef, useState } from 'react'
+import { type FormEvent, useActionState, useEffect, useRef, useState } from 'react'
 import { buttonClasses } from '@/components/ui/button'
 import { submitContact } from '@/features/contact/action'
 import type { ContactResult } from '@/features/contact/handle-contact'
@@ -28,6 +28,33 @@ export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: 
   // so it never delays the first paint; the token is ready long before a visitor has filled the form in.
   const [verifying, setVerifying] = useState(false)
   const startVerifying = () => setVerifying(true)
+  // A submit that beats the Turnstile token waits for it here instead of failing on the server with `captcha`.
+  const [awaitingToken, setAwaitingToken] = useState(false)
+  const [tokenTimedOut, setTokenTimedOut] = useState(false)
+  const readToken = () =>
+    formRef.current?.querySelector<HTMLInputElement>('input[name="cf-turnstile-response"]')?.value ?? ''
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    if (!siteKey || readToken()) return
+    e.preventDefault()
+    setTokenTimedOut(false)
+    setVerifying(true)
+    setAwaitingToken(true)
+  }
+  useEffect(() => {
+    if (!awaitingToken) return
+    const startedAt = Date.now()
+    const id = window.setInterval(() => {
+      const token = readToken()
+      // Give up after 15 s and show the same captcha error the server would return.
+      if (token || Date.now() - startedAt > 15_000) {
+        window.clearInterval(id)
+        setAwaitingToken(false)
+        if (token) formRef.current?.requestSubmit()
+        else setTokenTimedOut(true)
+      }
+    }, 250)
+    return () => window.clearInterval(id)
+  }, [awaitingToken])
   const [state, action, pending] = useActionState<FormState, FormData>(async (prev, fd) => {
     fd.set('marketingConsent', String(readConsentFromDocument()?.marketing ?? false))
     const values: Record<string, string> = {}
@@ -40,13 +67,13 @@ export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: 
 
   const { result, values } = state
   const errors = result?.status === 'error' ? (result.fieldErrors ?? {}) : {}
-  const formError = result?.status === 'error' ? result.formError : undefined
+  const formError = tokenTimedOut ? 'captcha' : result?.status === 'error' ? result.formError : undefined
 
   // After a failed submit move focus to the first invalid field, or to the form-level alert.
   useEffect(() => {
-    if (result?.status !== 'error') return
+    if (result?.status !== 'error' && !tokenTimedOut) return
     formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"], #form-error')?.focus()
-  }, [result])
+  }, [result, tokenTimedOut])
 
   const err = (k: keyof typeof errors) =>
     errors[k] ? (
@@ -70,6 +97,7 @@ export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: 
       onFocus={startVerifying}
       onPointerDown={startVerifying}
       onTouchStart={startVerifying}
+      onSubmit={onSubmit}
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="sourcePath" value={sourcePath} />
@@ -179,8 +207,13 @@ export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: 
         </p>
       )}
 
-      <button type="submit" disabled={pending} className={clsx(buttonClasses({ size: 'lg' }), 'w-full sm:w-auto')}>
-        {pending ? t('sending') : t('submit')}
+      <button
+        type="submit"
+        disabled={pending || awaitingToken}
+        aria-busy={pending || awaitingToken}
+        className={clsx(buttonClasses({ size: 'lg' }), 'w-full sm:w-auto')}
+      >
+        {pending ? t('sending') : awaitingToken ? t('verifying') : t('submit')}
       </button>
       <p className="font-mono text-xs text-ink-3">{t('guarantees')}</p>
     </form>
