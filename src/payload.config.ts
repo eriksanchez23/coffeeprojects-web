@@ -19,6 +19,7 @@ import { Home } from './globals/Home'
 import { Legal } from './globals/Legal'
 import { Pricing } from './globals/Pricing'
 import { SiteSettings } from './globals/SiteSettings'
+import { shouldPushSchema } from './lib/db/push'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -52,6 +53,8 @@ export default buildConfig({
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URL || '' },
     migrationDir: path.resolve(dirname, 'migrations'),
+    // Dev push only under `next dev`; seeds, builds and deploys rely on migrations (src/lib/db/push.ts).
+    push: shouldPushSchema(),
   }),
   email: process.env.RESEND_API_KEY
     ? resendAdapter({
