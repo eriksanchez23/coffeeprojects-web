@@ -1,0 +1,28 @@
+import type { Attribution } from '@/features/tracking/attribution'
+import type { ContactInput } from './schema'
+
+/**
+ * The `contacts` row for a validated submission. `marketing` is the consent read server-side from the
+ * consent cookie: the form's `marketingConsent` field is client-controlled and is never stored as-is.
+ */
+export function toContactRecord(
+  data: ContactInput & { ipHash: string },
+  { marketing, attribution }: { marketing: boolean; attribution: Attribution | null },
+) {
+  const { privacy, nda, marketingConsent: _formValue, ...rest } = data
+  return {
+    ...rest,
+    marketingConsent: marketing,
+    privacyAccepted: privacy,
+    ndaRequested: nda,
+    status: 'new' as const,
+    ...(attribution && {
+      utmSource: attribution.utmSource,
+      utmMedium: attribution.utmMedium,
+      utmCampaign: attribution.utmCampaign,
+      utmContent: attribution.utmContent,
+      utmTerm: attribution.utmTerm,
+      fbclid: attribution.fbclid,
+    }),
+  }
+}

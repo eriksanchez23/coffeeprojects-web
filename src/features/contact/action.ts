@@ -16,6 +16,7 @@ import { clientEmail, teamEmail } from './emails'
 import { type ContactResult, handleContact } from './handle-contact'
 import { clientIp, hashIp } from './ip'
 import { isRateLimited } from './rate-limit'
+import { toContactRecord } from './record'
 import { formDataToObject } from './schema'
 import { verifyTurnstile } from './turnstile'
 
@@ -66,25 +67,7 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
     isRateLimited: () => isRateLimited(payload, ipHash),
     knownPlans: getPlanSlugs,
     createContact: async (data) => {
-      const { privacy, nda, ...rest } = data
-      await payload.create({
-        collection: 'contacts',
-        overrideAccess: true,
-        data: {
-          ...rest,
-          privacyAccepted: privacy,
-          ndaRequested: nda,
-          status: 'new',
-          ...(attribution && {
-            utmSource: attribution.utmSource,
-            utmMedium: attribution.utmMedium,
-            utmCampaign: attribution.utmCampaign,
-            utmContent: attribution.utmContent,
-            utmTerm: attribution.utmTerm,
-            fbclid: attribution.fbclid,
-          }),
-        },
-      })
+      await payload.create({ collection: 'contacts', overrideAccess: true, data: toContactRecord(data, { marketing, attribution }) })
     },
     notify: async (input) => {
       const team = teamEmail(input)
