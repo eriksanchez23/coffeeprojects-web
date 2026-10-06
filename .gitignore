@@ -1,4 +1,5 @@
 .superpowers/
+.atl/
 node_modules/
 
 # dependencies
