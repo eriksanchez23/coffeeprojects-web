@@ -26,7 +26,7 @@ export const dynamicParams = true
 
 export async function generateStaticParams({ params }: { params: { locale: string } }) {
   const all = await getAllSlugs('services')
-  return all.map((slugs) => ({ slug: slugs[params.locale as Locale] }))
+  return all.map((s) => ({ slug: s.slugs[params.locale as Locale] }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {

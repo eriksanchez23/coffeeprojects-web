@@ -5,7 +5,7 @@ import { unstable_cache } from 'next/cache'
 import type { Faq, Home, Legal, Project, Service, SiteSetting, TeamMember } from '@/payload-types'
 import type { Locale } from '@/i18n/locales'
 import { payloadClient } from './client'
-import { toLocaleSlugs } from './slugs'
+import { type SlugEntry, toLocaleSlugs, toSlugEntries } from './slugs'
 
 type Slugged = 'services' | 'projects' | 'team-members'
 const REVALIDATE = 3600
@@ -75,8 +75,10 @@ export const getService = (locale: Locale, slug: string) => findBySlug<Service>(
 export const getMember = (locale: Locale, slug: string) => findBySlug<TeamMember>('team-members', locale, slug)
 export const getProject = (locale: Locale, slug: string) => findBySlug<Project>('projects', locale, slug)
 
-export async function getAllSlugs(collection: Slugged): Promise<Record<Locale, string>[]> {
-  return read([collection, 'all-slugs'], [collection], async () => {
+/** Published docs' per-locale slugs plus `updatedAt` (sitemap lastModified). Docs without an ES slug are skipped. */
+export async function getAllSlugs(collection: Slugged): Promise<SlugEntry[]> {
+  // 'v2': the cached shape changed (SlugEntry); a new key keeps an old persisted data cache from being served.
+  return read([collection, 'all-slugs', 'v2'], [collection], async () => {
     const payload = await payloadClient()
     const res = await payload.find({
       collection,
@@ -85,9 +87,12 @@ export async function getAllSlugs(collection: Slugged): Promise<Record<Locale, s
       pagination: false,
       overrideAccess: false,
       where: published,
-      select: { slug: true },
+      select: { slug: true, updatedAt: true },
     })
-    return res.docs.map((d) => toLocaleSlugs((d as { slug?: unknown }).slug))
+    const { entries, skippedIds } = toSlugEntries(res.docs as { id: number | string; slug?: unknown; updatedAt?: string }[])
+    // One line per (cached) read; ids only, never document content.
+    if (skippedIds.length > 0) console.warn(`getAllSlugs(${collection}): skipped docs without an es slug: ${skippedIds.join(', ')}`)
+    return entries
   })
 }
 

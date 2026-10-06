@@ -21,7 +21,7 @@ export const dynamicParams = true
 export async function generateStaticParams({ params }: { params: { locale: string } }) {
   const all = await getAllSlugs('team-members')
   return all.flatMap((s) => {
-    const slug = s[params.locale as Locale]
+    const slug = s.slugs[params.locale as Locale]
     return slug ? [{ slug }] : []
   })
 }

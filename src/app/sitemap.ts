@@ -11,27 +11,25 @@ export const revalidate = 3600
 // Legal pages exist (T15); keep this guard in case they are ever removed.
 const LEGAL_PAGES_LIVE = true
 
-function entries(paths: Record<Locale, string>, priority: number): MetadataRoute.Sitemap {
+function entries(paths: Record<Locale, string>, priority: number, lastModified?: string): MetadataRoute.Sitemap {
   const languages: Record<string, string> = Object.fromEntries(locales.map((l) => [l, absoluteUrl(paths[l])]))
   languages['x-default'] = absoluteUrl(paths[defaultLocale])
   return locales.map((l) => ({
     url: absoluteUrl(paths[l]),
-    lastModified: new Date(),
+    // CMS docs carry their real updatedAt; static pages fall back to the (hourly) regeneration time.
+    lastModified: lastModified || new Date(),
     changeFrequency: 'weekly',
     priority,
     alternates: { languages },
   }))
 }
 
-// getAllSlugs throws on a doc without an es slug; keep the sitemap alive and drop that collection instead of 500ing.
-async function safeSlugs(collection: Parameters<typeof getAllSlugs>[0]): Promise<Record<Locale, string>[]> {
-  try {
-    return await getAllSlugs(collection)
-  } catch (err) {
+// getAllSlugs already skips bad docs; this only keeps the sitemap alive if the CMS itself is unreachable.
+const safeSlugs = (collection: Parameters<typeof getAllSlugs>[0]) =>
+  getAllSlugs(collection).catch((err: unknown) => {
     console.error('sitemap: skipping collection', collection, err instanceof Error ? err.message : err)
     return []
-  }
-}
+  })
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: [AppPathname, number][] = [
@@ -45,8 +43,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [services, team, projects] = await Promise.all([safeSlugs('services'), safeSlugs('team-members'), safeSlugs('projects')])
   return [
     ...staticPages.flatMap(([p, prio]) => entries(localizedPaths(p), prio)),
-    ...services.flatMap((s) => entries(localizedPaths('/services/[slug]', s), 0.9)),
-    ...team.flatMap((s) => entries(localizedPaths('/team/[slug]', s), 0.6)),
-    ...projects.flatMap((s) => entries(localizedPaths('/projects/[slug]', s), 0.6)),
+    ...services.flatMap((s) => entries(localizedPaths('/services/[slug]', s.slugs), 0.9, s.updatedAt)),
+    ...team.flatMap((s) => entries(localizedPaths('/team/[slug]', s.slugs), 0.6, s.updatedAt)),
+    ...projects.flatMap((s) => entries(localizedPaths('/projects/[slug]', s.slugs), 0.6, s.updatedAt)),
   ]
 }
