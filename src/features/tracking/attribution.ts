@@ -1,6 +1,8 @@
 export const ATTR_COOKIE = 'cp_attr'
 const MAX_AGE_S = 60 * 60 * 24 * 30
 const MAX_VALUE_LENGTH = 150
+// fbclid is an opaque signed token: truncating it corrupts it, so an oversized one is dropped instead.
+const MAX_FBCLID_LENGTH = 500
 
 export type Attribution = {
   utmSource?: string
@@ -27,7 +29,10 @@ export function extractAttribution(search: URLSearchParams, now: number): Attrib
   const out: Attribution = {}
   for (const [param, key] of map) {
     const v = search.get(param)?.trim()
-    if (v) out[key] = v.slice(0, MAX_VALUE_LENGTH)
+    if (!v) continue
+    if (key === 'fbclid') {
+      if (v.length <= MAX_FBCLID_LENGTH) out[key] = v
+    } else out[key] = v.slice(0, MAX_VALUE_LENGTH)
   }
   if (out.fbclid) out.fbclidTs = now
   return Object.keys(out).length ? out : null
@@ -59,9 +64,12 @@ export function parseAttributionCookie(raw: string | undefined): Attribution | n
     const out: Attribution = {}
     for (const key of STRING_KEYS) {
       const value = src[key]
-      if (typeof value === 'string' && value !== '') out[key] = value.slice(0, MAX_VALUE_LENGTH)
+      if (typeof value !== 'string' || value === '') continue
+      if (key === 'fbclid') {
+        if (value.length <= MAX_FBCLID_LENGTH) out[key] = value
+      } else out[key] = value.slice(0, MAX_VALUE_LENGTH)
     }
-    if (typeof src.fbclidTs === 'number' && Number.isFinite(src.fbclidTs)) out.fbclidTs = src.fbclidTs
+    if (out.fbclid && typeof src.fbclidTs === 'number' && Number.isFinite(src.fbclidTs)) out.fbclidTs = src.fbclidTs
     return Object.keys(out).length ? out : null
   } catch {
     return null

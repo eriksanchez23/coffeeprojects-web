@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { describe, expect, it, vi } from 'vitest'
-import { buildLeadEvent, CAPI_NOOP_MESSAGE, fbcFrom, sendCapiEvent, sha256Normalized } from '@/features/tracking/capi'
+import { buildLeadEvent, CAPI_NOOP_MESSAGE, capiConfigFromEnv, fbcFrom, sendCapiEvent, sha256Normalized } from '@/features/tracking/capi'
 
 const sha = (s: string) => createHash('sha256').update(s).digest('hex')
 
@@ -58,7 +58,30 @@ describe('capi', () => {
   })
 })
 
+describe('capi hardening', () => {
+  const lead = (o: { fbp?: string; fbc?: string }) => buildLeadEvent({ eventId: 'e', email: 'a@b.co', userAgent: 'UA', sourceUrl: 'https://x/', projectType: 'web', nowSeconds: 1, ...o })
+  it('omits malformed or oversized _fbp/_fbc', () => {
+    expect(lead({ fbp: 'evil', fbc: 'fb.1.1.' + 'x'.repeat(500) }).user_data).not.toHaveProperty('fbp')
+    expect(lead({ fbp: 'evil', fbc: 'fb.1.1.' + 'x'.repeat(500) }).user_data).not.toHaveProperty('fbc')
+    expect(lead({ fbp: 'fb.1.1.2', fbc: 'fb.1.1.ZZ' }).user_data).toMatchObject({ fbp: 'fb.1.1.2', fbc: 'fb.1.1.ZZ' })
+  })
+  it('ignores META_TEST_EVENT_CODE in production only', () => {
+    const src = { META_TEST_EVENT_CODE: 'TEST1' }
+    expect(capiConfigFromEnv(src, { isProduction: true }).testEventCode).toBeUndefined()
+    expect(capiConfigFromEnv(src, { isProduction: false }).testEventCode).toBe('TEST1')
+    expect(capiConfigFromEnv(src).testEventCode).toBe('TEST1')
+  })
+})
+
 describe('sendCapiEvent', () => {
+  it('passes an abort signal and settles within the timeout even if fetch never resolves', async () => {
+    const fetch = vi.fn().mockImplementation(() => new Promise(() => {}))
+    const started = Date.now()
+    const err = await sendCapiEvent(event, { pixelId: '1', token: 't' }, { fetch, log: vi.fn(), timeoutMs: 50 }).catch((e) => e)
+    expect(Date.now() - started).toBeLessThan(1000)
+    expect(err).toMatchObject({ name: 'CapiError', code: 'timeout' })
+    expect(fetch.mock.calls[0]![1].signal).toBeInstanceOf(AbortSignal)
+  })
   it('is a logged no-op without credentials and never touches the network', async () => {
     const fetch = vi.fn()
     const log = vi.fn()

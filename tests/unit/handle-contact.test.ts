@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import { handleContact } from '@/features/contact/handle-contact'
 import { clientIp, hashIp } from '@/features/contact/ip'
+import { sendCapiEvent } from '@/features/tracking/capi'
+import { afterSaveLead } from '@/features/tracking/lead'
 
 const base = {
   name: 'Ana',
@@ -80,6 +82,21 @@ describe('handleContact', () => {
     const d = deps({ afterSave: vi.fn().mockRejectedValue(new Error('capi')) })
     expect(await handleContact(base, d)).toEqual({ status: 'ok', saved: true, eventId: 'evt-1' })
     expect(d.log).toHaveBeenCalled()
+  })
+
+  it('is not blocked by a hung Meta endpoint: the submission completes once the CAPI timeout fires', async () => {
+    const hung = vi.fn().mockImplementation(() => new Promise(() => {}))
+    const d = deps({
+      afterSave: (input, eventId) =>
+        afterSaveLead(
+          { ...input, marketingConsent: true },
+          eventId,
+          { userAgent: 'UA', attribution: null, sourceUrl: 'https://x/', nowSeconds: 1 },
+          (e) => sendCapiEvent(e, { pixelId: '1', token: 't' }, { fetch: hung, timeoutMs: 50 }),
+        ).then(() => undefined),
+    })
+    expect(await handleContact(base, d)).toEqual({ status: 'ok', saved: true, eventId: 'evt-1' })
+    expect(d.log).toHaveBeenCalledOnce()
   })
 
   it('shows a form-level error when only non-rendered fields fail validation', async () => {

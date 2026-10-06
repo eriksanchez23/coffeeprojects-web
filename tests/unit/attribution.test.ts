@@ -13,6 +13,12 @@ describe('attribution', () => {
     const a = extractAttribution(new URLSearchParams(`utm_campaign=${'x'.repeat(300)}`), 1)
     expect(a?.utmCampaign).toHaveLength(150)
   })
+  it('drops an oversized fbclid (and its timestamp) instead of truncating it', () => {
+    expect(extractAttribution(new URLSearchParams(`fbclid=${'a'.repeat(500)}`), 1)?.fbclid).toHaveLength(500)
+    expect(extractAttribution(new URLSearchParams(`utm_source=fb&fbclid=${'a'.repeat(501)}`), 1)).toEqual({ utmSource: 'fb' })
+    expect(extractAttribution(new URLSearchParams(`fbclid=${'a'.repeat(501)}`), 1)).toBeNull()
+    expect(parseAttributionCookie(JSON.stringify({ utmSource: 's', fbclid: 'a'.repeat(501), fbclidTs: 5 }))).toEqual({ utmSource: 's' })
+  })
   it('last non-empty touch wins', () => {
     expect(mergeAttribution({ utmSource: 'a', utmCampaign: 'c1' }, { utmCampaign: 'c2' })).toEqual({ utmSource: 'a', utmCampaign: 'c2' })
   })

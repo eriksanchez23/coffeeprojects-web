@@ -15,12 +15,13 @@ export type CapiEvent = {
 
 export type CapiConfig = { pixelId?: string; token?: string; graphVersion?: string; testEventCode?: string }
 
-export function capiConfigFromEnv(source: Record<string, string | undefined>): CapiConfig {
+// The Meta test-event code reroutes events to the Test Events tab: never honour it in production.
+export function capiConfigFromEnv(source: Record<string, string | undefined>, opts: { isProduction?: boolean } = {}): CapiConfig {
   return {
     pixelId: source.NEXT_PUBLIC_META_PIXEL_ID || undefined,
     token: source.META_CAPI_TOKEN || undefined,
     graphVersion: source.META_GRAPH_VERSION || undefined,
-    testEventCode: source.META_TEST_EVENT_CODE || undefined,
+    testEventCode: opts.isProduction ? undefined : source.META_TEST_EVENT_CODE || undefined,
   }
 }
 
@@ -46,6 +47,11 @@ export function fbcFrom(fbcCookie: string | undefined, attribution: Attribution 
   return undefined
 }
 
+// _fbp/_fbc are client-writable: only well-formed values reach Meta.
+export function validFbCookie(value: string | undefined): string | undefined {
+  return value && value.startsWith('fb.') && value.length <= 500 ? value : undefined
+}
+
 export function buildLeadEvent(a: {
   eventId: string
   email: string
@@ -64,8 +70,10 @@ export function buildLeadEvent(a: {
   }
   if (a.ip) user_data.client_ip_address = a.ip
   if (a.phone) user_data.ph = [sha256Normalized(a.phone, 'phone')]
-  if (a.fbp) user_data.fbp = a.fbp
-  if (a.fbc) user_data.fbc = a.fbc
+  const fbp = validFbCookie(a.fbp)
+  const fbc = validFbCookie(a.fbc)
+  if (fbp) user_data.fbp = fbp
+  if (fbc) user_data.fbc = fbc
   return {
     event_name: 'Lead',
     event_time: a.nowSeconds,
@@ -78,9 +86,12 @@ export function buildLeadEvent(a: {
 }
 
 type SendDeps = {
-  fetch?: (url: string, init: { method: string; headers: Record<string, string>; body: string }) => Promise<{ ok: boolean; status: number }>
+  fetch?: (url: string, init: { method: string; headers: Record<string, string>; body: string; signal: AbortSignal }) => Promise<{ ok: boolean; status: number }>
   log?: (message: string) => void
+  timeoutMs?: number
 }
+
+const DEFAULT_TIMEOUT_MS = 4000
 
 // Without credentials this is a logged no-op. The token travels in the body (never the URL) and failures
 // surface only the HTTP status: the response body can echo submitted values.
@@ -93,10 +104,26 @@ export async function sendCapiEvent(event: CapiEvent, config: CapiConfig, deps: 
   const body: Record<string, unknown> = { data: [event], access_token: token }
   if (config.testEventCode) body.test_event_code = config.testEventCode
   const version = config.graphVersion || 'v24.0'
-  const res = await (deps.fetch ?? fetch)(`https://graph.facebook.com/${version}/${pixelId}/events`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+  // The submission waits for afterSave: a hung Meta endpoint must never stall the visitor. The signal aborts
+  // the request; the race guarantees we settle even if a fetch implementation ignores the signal.
+  const timeoutMs = deps.timeoutMs ?? DEFAULT_TIMEOUT_MS
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const timedOut = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(Object.assign(new Error('Meta Conversions API request timed out'), { name: 'CapiError', code: 'timeout' })), timeoutMs)
   })
+  let res: { ok: boolean; status: number }
+  try {
+    res = await Promise.race([
+      (deps.fetch ?? fetch)(`https://graph.facebook.com/${version}/${pixelId}/events`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(timeoutMs),
+      }),
+      timedOut,
+    ])
+  } finally {
+    clearTimeout(timer)
+  }
   if (!res.ok) throw Object.assign(new Error('Meta Conversions API request failed'), { name: 'CapiError', status: res.status })
 }

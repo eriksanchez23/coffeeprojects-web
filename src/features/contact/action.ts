@@ -106,7 +106,7 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
           nowSeconds: Math.floor(Date.now() / 1000),
         },
         (event) =>
-          sendCapiEvent(event, capiConfigFromEnv(process.env), {
+          sendCapiEvent(event, capiConfigFromEnv(process.env, { isProduction: env.isProduction }), {
             log: (message) => (env.isProduction ? payload.logger.error(message) : payload.logger.info(message)),
           }),
       )
@@ -114,8 +114,8 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
   })
 
   if (result.status === 'ok') {
-    // Proof of a real submission for the thank-you page (honeypot hits are not saved, so get no cookie).
-    if (result.saved) {
+    // Proof of a real submission for the thank-you page; only set when a Lead can be tracked (saved + consent).
+    if (result.saved && marketing) {
       jar.set(LEAD_COOKIE, result.eventId, { maxAge: LEAD_COOKIE_MAX_AGE_S, path: '/', sameSite: 'lax', httpOnly: false, secure: env.SITE_URL.startsWith('https:') })
     }
     const requested = String(raw.locale)
