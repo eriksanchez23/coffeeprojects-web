@@ -5,8 +5,10 @@ export const statusColors: Record<string, string> = {
   archived: '#6b5d4f',
 }
 
+const lightTextOn = new Set(['archived'])
+
 export function StatusCell({ cellData }: { cellData?: string }) {
-  const value = cellData ?? 'new'
+  const value = cellData || 'new'
   return (
     <span
       data-status={value}
@@ -16,7 +18,7 @@ export function StatusCell({ cellData }: { cellData?: string }) {
         borderRadius: 999,
         fontSize: 12,
         fontFamily: 'monospace',
-        color: '#0b0706',
+        color: lightTextOn.has(value) ? '#fff7e8' : '#0b0706',
         background: statusColors[value] ?? '#a89584',
       }}
     >

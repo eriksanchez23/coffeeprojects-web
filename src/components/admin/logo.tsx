@@ -1,7 +1,7 @@
 export function Logo() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontFamily: 'monospace', fontSize: 22, color: '#fff7e8' }}>
-      <span style={{ color: '#f5a742', fontSize: 28 }}>☕</span>
+      <span aria-hidden="true" style={{ color: '#f5a742', fontSize: 28 }}>☕</span>
       <span>
         coffee<span style={{ color: '#f5a742' }}>projects</span>
       </span>

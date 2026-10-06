@@ -6,7 +6,7 @@ type Props = {
   i18n?: { language?: string }
 }
 
-export const inboxHref = '/admin/collections/contacts?where[status][equals]=new'
+export const inboxHref = (adminRoute = '/admin') => `${adminRoute}/collections/contacts?where[status][equals]=new`
 
 export function inboxCopy(count: number, language = 'en') {
   if (language.startsWith('es')) {
@@ -44,7 +44,7 @@ export async function InboxBanner({ payload, user, i18n }: Props) {
     >
       <strong style={{ fontSize: 18 }}>{copy.title}</strong>
       <div style={{ marginTop: 8 }}>
-        <a href={inboxHref} style={{ color: '#f5a742' }}>
+        <a href={inboxHref(payload.config.routes.admin)} style={{ color: '#f5a742' }}>
           {copy.cta}
         </a>
       </div>

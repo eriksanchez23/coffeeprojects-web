@@ -15,7 +15,7 @@ export function DefaultNewFilter() {
     applied.current = true
     const hasUrlFilter = [...searchParams.keys()].some((key) => key === 'search' || key.startsWith('where'))
     if (hasUrlFilter) return
-    void refineListData({ ...query, where: { status: { equals: 'new' } } })
+    void refineListData({ ...query, where: { status: { equals: 'new' } }, page: 1 })
     // Runs once on mount: later filter changes by the user must stick.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
