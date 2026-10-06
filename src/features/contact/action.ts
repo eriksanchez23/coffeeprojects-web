@@ -6,6 +6,7 @@ import { LEAD_COOKIE, LEAD_COOKIE_MAX_AGE_S } from '@/components/tracking/lead-p
 import { buildPath } from '@/i18n/build-path'
 import { type Locale, locales } from '@/i18n/locales'
 import { payloadClient } from '@/lib/cms/client'
+import { getPlanSlugs } from '@/lib/cms/queries'
 import { env } from '@/lib/env'
 import { ATTR_COOKIE, parseAttributionCookie } from '@/features/tracking/attribution'
 import { capiConfigFromEnv, sendCapiEvent } from '@/features/tracking/capi'
@@ -63,6 +64,7 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
       return verifyTurnstile(token, ip ?? undefined)
     },
     isRateLimited: () => isRateLimited(payload, ipHash),
+    knownPlans: getPlanSlugs,
     createContact: async (data) => {
       const { privacy, nda, ...rest } = data
       await payload.create({

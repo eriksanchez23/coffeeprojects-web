@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { budgets, projectTypes, timelines } from './options'
+import { parsePlan } from './plan'
 
 // Single-line fields never legitimately hold control characters (header/log injection, invisible junk).
 const stripControl = (v: unknown) => (typeof v === 'string' ? v.replace(/\p{Cc}/gu, '') : v)
@@ -16,6 +17,8 @@ export const contactSchema = z.object({
   timeline: z.preprocess((v) => (v === '' ? undefined : v), z.enum(timelines).optional()),
   message: z.string({ message: 'required' }).trim().min(20, 'tooShort').max(2000, 'tooLong'),
   howFound: optionalText(200),
+  // Pricing package from /pricing CTAs; checked against the pricing global in handleContact.
+  plan: z.preprocess(parsePlan, z.string().optional()),
   nda: checkbox.default(false),
   privacy: checkbox.refine((v) => v === true, 'privacy'),
   marketingConsent: checkbox.default(false),

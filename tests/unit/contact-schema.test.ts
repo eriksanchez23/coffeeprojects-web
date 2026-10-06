@@ -41,3 +41,15 @@ describe('contactSchema', () => {
     expect(r.data?.message).toContain('\n')
   })
 })
+
+describe('contactSchema plan', () => {
+  it('keeps a well-formed plan slug', () => {
+    expect(contactSchema.safeParse({ ...valid, plan: 'estandar' }).data?.plan).toBe('estandar')
+  })
+  it('drops a malformed plan instead of failing the submission', () => {
+    const r = contactSchema.safeParse({ ...valid, plan: 'Estándar <b>' })
+    expect(r.success).toBe(true)
+    expect(r.data?.plan).toBeUndefined()
+    expect(contactSchema.safeParse({ ...valid, plan: '' }).data?.plan).toBeUndefined()
+  })
+})

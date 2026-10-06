@@ -8,6 +8,7 @@ export function teamEmail(i: ContactInput) {
     ['Email', i.email],
     ['Teléfono', i.phone],
     ['Tipo', i.projectType],
+    ['Paquete', i.plan],
     ['Presupuesto', i.budget],
     ['Plazo', i.timeline],
     ['Cómo nos conoció', i.howFound],

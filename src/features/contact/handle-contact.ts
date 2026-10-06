@@ -1,3 +1,4 @@
+import { resolvePlan } from './plan'
 import { type ContactInput, contactSchema } from './schema'
 
 export type ContactResult =
@@ -10,6 +11,8 @@ export type ContactDeps = {
   createContact(data: ContactInput & { ipHash: string }): Promise<void>
   notify(input: ContactInput): Promise<void>
   afterSave?(input: ContactInput, eventId: string): Promise<void>
+  /** Package slugs currently published in the pricing global; a submitted plan outside this list is dropped. */
+  knownPlans?(): Promise<string[]>
   newEventId(): string
   ipHash: string
   log(e: unknown): void
@@ -39,10 +42,11 @@ export async function handleContact(raw: Record<string, unknown>, deps: ContactD
       ...(hidden && { formError: 'generic' as const }),
     }
   }
-  const input = parsed.data
-
   if (!(await deps.verifyCaptcha(String(raw.turnstileToken ?? '')))) return { status: 'error', formError: 'captcha' }
   if (await deps.isRateLimited()) return { status: 'error', formError: 'rateLimited' }
+
+  // Looked up only for verified, non-limited submissions, so bots never cost a CMS read.
+  const input = { ...parsed.data, plan: await knownPlan(parsed.data.plan, deps) }
 
   try {
     await deps.createContact({ ...input, ipHash: deps.ipHash })
@@ -57,4 +61,15 @@ export async function handleContact(raw: Record<string, unknown>, deps: ContactD
   )
 
   return { status: 'ok', saved: true, eventId }
+}
+
+async function knownPlan(plan: string | undefined, deps: ContactDeps): Promise<string | undefined> {
+  if (!plan || !deps.knownPlans) return undefined
+  try {
+    return resolvePlan(plan, await deps.knownPlans())
+  } catch (e) {
+    // The plan is a nice-to-have: an unreadable pricing global drops it, never the lead.
+    deps.log(e)
+    return undefined
+  }
 }

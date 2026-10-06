@@ -1,6 +1,6 @@
 'use client'
 import { useTranslations } from 'next-intl'
-import { type FormEvent, useActionState, useEffect, useRef, useState } from 'react'
+import { type FormEvent, type ReactNode, useActionState, useEffect, useRef, useState } from 'react'
 import { buttonClasses } from '@/components/ui/button'
 import { submitContact } from '@/features/contact/action'
 import type { ContactResult } from '@/features/contact/handle-contact'
@@ -10,7 +10,8 @@ import { Link } from '@/i18n/navigation'
 import { clsx } from 'clsx'
 import { TurnstileWidget } from './turnstile-widget'
 
-type Prefill = { type?: string }
+// `plan` is a pricing package slug the page already validated against the pricing global.
+type Prefill = { type?: string; plan?: string }
 
 // React resets uncontrolled fields after every action, so the submitted values travel in the
 // state and feed `defaultValue`s: a failed submit never wipes what the visitor typed.
@@ -21,7 +22,20 @@ const field =
   'w-full rounded-[var(--radius-md)] border border-line-hi bg-bg-1 px-4 py-3 text-ink-0 placeholder:text-ink-3 focus:border-amber aria-[invalid=true]:border-berry'
 const label = 'mb-2 block text-sm text-ink-1'
 
-export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: string; sourcePath: string; prefill: Prefill; siteKey: string }) {
+export function ContactForm({
+  locale,
+  sourcePath,
+  prefill,
+  planNotice,
+  siteKey,
+}: {
+  locale: string
+  sourcePath: string
+  prefill: Prefill
+  /** Server-rendered summary of the chosen package, shown inside the form. */
+  planNotice?: ReactNode
+  siteKey: string
+}) {
   const t = useTranslations('contact')
   const formRef = useRef<HTMLFormElement>(null)
   // Turnstile (~140 KB incl. its challenge frame) loads on the first interaction with the form, not with the page,
@@ -101,11 +115,14 @@ export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: 
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="sourcePath" value={sourcePath} />
+      {prefill.plan && <input type="hidden" name="plan" value={prefill.plan} />}
       {/* Honeypot: hidden from humans and assistive tech */}
       <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
         <label htmlFor="cp_hp">{t('honeypot')}</label>
         <input id="cp_hp" name="cp_hp" tabIndex={-1} autoComplete="off" />
       </div>
+
+      {prefill.plan && planNotice}
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>

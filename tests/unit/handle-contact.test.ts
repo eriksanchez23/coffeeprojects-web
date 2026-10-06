@@ -142,3 +142,36 @@ describe('clientIp', () => {
     expect(clientIp(headers({}))).toBeNull()
   })
 })
+
+describe('handleContact plan', () => {
+  const knownPlans = () => vi.fn().mockResolvedValue(['basico', 'estandar', 'profesional'])
+
+  it('saves and notifies a plan that exists in the pricing global', async () => {
+    const d = deps({ knownPlans: knownPlans() })
+    await handleContact({ ...base, projectType: 'web', plan: 'estandar' }, d)
+    expect(vi.mocked(d.createContact).mock.calls[0][0].plan).toBe('estandar')
+    expect(vi.mocked(d.notify).mock.calls[0][0].plan).toBe('estandar')
+  })
+
+  it('drops an unknown plan but still saves the request', async () => {
+    const d = deps({ knownPlans: knownPlans() })
+    const r = await handleContact({ ...base, plan: 'premium' }, d)
+    expect(r).toMatchObject({ status: 'ok', saved: true })
+    expect(vi.mocked(d.createContact).mock.calls[0][0].plan).toBeUndefined()
+  })
+
+  it('drops the plan when the pricing lookup fails, logging the error', async () => {
+    const d = deps({ knownPlans: vi.fn().mockRejectedValue(new Error('db down')) })
+    const r = await handleContact({ ...base, plan: 'basico' }, d)
+    expect(r).toMatchObject({ status: 'ok', saved: true })
+    expect(vi.mocked(d.createContact).mock.calls[0][0].plan).toBeUndefined()
+    expect(d.log).toHaveBeenCalled()
+  })
+
+  it('never looks plans up when none was submitted', async () => {
+    const d = deps({ knownPlans: knownPlans() })
+    await handleContact(base, d)
+    expect(d.knownPlans).not.toHaveBeenCalled()
+    expect(vi.mocked(d.createContact).mock.calls[0][0].plan).toBeUndefined()
+  })
+})
