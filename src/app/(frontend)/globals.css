@@ -1,0 +1,90 @@
+@import 'tailwindcss';
+
+@theme inline {
+  --color-bg-0: #0b0706;
+  --color-bg-1: #120c09;
+  --color-bg-2: #1a1310;
+  --color-bg-3: #241812;
+  --color-bg-4: #2e1f16;
+  --color-amber: #f5a742;
+  --color-amber-hi: #ffc165;
+  --color-amber-deep: #c7782a;
+  --color-toast: #ff6b35;
+  --color-crema: #ffe8b5;
+  --color-latte: #c7a17a;
+  --color-mint: #6ee7b7;
+  --color-berry: #e85d75;
+  --color-sky: #7cc5ff;
+  --color-ink-0: #fff7e8;
+  --color-ink-1: #e8dcc8;
+  --color-ink-2: #a89584;
+  --color-ink-3: #6b5d4f;
+  --color-line: rgb(255 232 181 / 0.08);
+  --color-line-hi: rgb(255 232 181 / 0.16);
+  --color-line-amber: rgb(245 167 66 / 0.32);
+
+  --font-display: var(--ff-display), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--ff-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--ff-mono), ui-monospace, monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --shadow-amber: 0 0 0 1px rgb(245 167 66 / 0.3), 0 20px 60px -15px rgb(245 167 66 / 0.35);
+  --shadow-soft: 0 30px 80px -30px rgb(0 0 0 / 0.6);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-bg-0);
+    color: var(--color-ink-1);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    font-family: var(--font-sans);
+    min-height: 100dvh;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    color: var(--color-ink-0);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  ::selection { background: var(--color-amber); color: var(--color-bg-0); }
+  :focus-visible { outline: 2px solid var(--color-amber-hi); outline-offset: 3px; }
+}
+
+/* Film grain overlay used by the body wrapper */
+@utility grain {
+  position: relative;
+  &::after {
+    content: '';
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+}
+
+/* Soft amber "steam" glow */
+@utility steam-glow {
+  background:
+    radial-gradient(60% 50% at 50% 0%, rgb(245 167 66 / 0.18), transparent 70%),
+    radial-gradient(40% 40% at 80% 20%, rgb(255 107 53 / 0.08), transparent 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
