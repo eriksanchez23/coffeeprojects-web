@@ -54,7 +54,6 @@
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "1.58.2",
     "@tailwindcss/postcss": "^4.3.3",
-    "@testing-library/react": "16.3.0",
     "@types/node": "22.19.9",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
@@ -62,7 +61,6 @@
     "@vitejs/plugin-react": "4.5.2",
     "eslint": "^9.16.0",
     "eslint-config-next": "16.3.3",
-    "jsdom": "28.0.0",
     "postcss": "^8.5.29",
     "prettier": "^3.4.2",
     "tailwindcss": "^4.3.3",
@@ -73,7 +71,7 @@
   },
   "engines": {
     "node": ">=20.18.1",
-    "pnpm": "^9 || ^10 || ^11"
+    "pnpm": "^12"
   },
   "private": true,
   "packageManager": "pnpm@12.9.1"

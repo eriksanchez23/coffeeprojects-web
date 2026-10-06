@@ -18,7 +18,8 @@ const email = process.env.E2E_ADMIN_EMAIL
 const password = process.env.E2E_ADMIN_PASSWORD
 if (!email || !password) throw new Error('E2E_ADMIN_EMAIL / E2E_ADMIN_PASSWORD missing')
 
-// One per Playwright project (desktop, mobile): the admin test runs in both, in parallel.
+// The admin test (desktop project only, see playwright.config.ts) moves the first `new` contact to
+// `in-progress` on every run; the second one is a spare so a retry still finds a `new` row.
 const INBOX_CONTACT_EMAILS = ['e2e-inbox-1@example.com', 'e2e-inbox-2@example.com']
 
 const payload = await getPayload({ config })

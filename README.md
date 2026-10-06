@@ -1,73 +1,50 @@
-# Payload Blank Template
+# coffeeprojects.es
 
-This template comes configured with the bare minimum to get started on anything you need.
+Trilingual (es / en / fr) website for coffeeProjects with a team-only admin panel.
+
+## Stack
+
+- **Next.js 16** (App Router, Turbopack, ISR) + **React 19**, **Tailwind CSS 4**, GSAP / Lenis / React Three Fiber for motion and 3D.
+- **Payload 3** CMS mounted in the same app at `/admin` (Postgres via `@payloadcms/db-postgres`, Lexical rich text, Vercel Blob for media, Resend for email).
+- **next-intl** for routing and UI strings (`messages/*.json`); CMS content is localized in Payload.
+- Contact form protected by Cloudflare Turnstile and a per-IP rate limit; Meta Pixel + Conversions API only after marketing consent.
+- Tests: Vitest (`tests/unit`), Playwright + axe (`tests/e2e`), Lighthouse CI (`lighthouserc.json`).
 
 ## Local development
 
-- `pnpm dev`, `pnpm build`, `pnpm start` — app (Next.js + Payload). Tests: `pnpm test` (Vitest), `pnpm test:e2e` (Playwright, builds and starts the app if nothing runs on :3000), `pnpm lhci` (Lighthouse CI against `pnpm start`).
-- E2E data: `pnpm e2e:user` (local database only) creates the admin test user from `E2E_ADMIN_EMAIL`/`E2E_ADMIN_PASSWORD` and the admin-inbox contacts; the suite cleans up the contacts it submits.
-- **Windows:** if `next dev`/`build`/`start` fails with `ERR_SWC_NATIVE_CACHE` (SWC refuses the ACL of `AppData\Local\swc`), point the native binding cache elsewhere for that command, e.g. `SWC_NATIVE_BINDING_CACHE="C:/Users/<you>/.swc-cache" pnpm build`. `next start` needs it too, because the next-intl plugin loads `@swc/core` when reading `next.config.ts`.
+Requirements: Node `22` (`.nvmrc`), pnpm `12` (`packageManager` in `package.json`), a Postgres database.
 
-## Quick start
+1. `pnpm install`
+2. Copy `.env.example` to `.env.local` and fill it in (at least `DATABASE_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SITE_URL`). Every variable is documented there.
+3. Bring the schema up and add content:
+   - a database that `next dev` owns: just run `pnpm dev` once (the Drizzle dev schema push runs only under `next dev`), then `pnpm seed`;
+   - any other database: `pnpm payload migrate`, then `pnpm seed`. The seed is non-destructive (`SEED_OVERWRITE=1` overwrites seeded documents) and never pushes the schema.
+4. `pnpm dev` → <http://localhost:3000> (site) and <http://localhost:3000/admin> (the first user created becomes `admin`).
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+**Windows:** if `next dev` / `build` / `start` fails with `ERR_SWC_NATIVE_CACHE` (SWC rejects the ACL of `AppData\Local\swc`), point the native binding cache elsewhere for that command, e.g. `SWC_NATIVE_BINDING_CACHE="C:/Users/<you>/.swc-cache" pnpm build`. `next start` needs it too, because the next-intl plugin loads `@swc/core` when reading `next.config.ts`.
 
-## Quick Start - local setup
+Do not point `pnpm dev` at a staging or production database: dev mode pushes the schema and later migrations would refuse to run there.
 
-To spin up this template locally, follow these steps:
+## Scripts
 
-### Clone
+| Script | What it does |
+|--------|--------------|
+| `pnpm dev` / `pnpm build` / `pnpm start` | Next.js + Payload app |
+| `pnpm deploy:build` | Vercel build: preflight check → `payload migrate` → verify every migration applied → `next build` (`scripts/deploy-build.mjs`) |
+| `pnpm seed` | Non-destructive content seed (`src/seed`) |
+| `pnpm payload <cmd>` | Payload CLI (`migrate`, `migrate:create`, `generate:types`, …) |
+| `pnpm typecheck` / `pnpm lint` | TypeScript and ESLint |
+| `pnpm test` | Vitest unit tests |
+| `pnpm test:e2e` | Playwright (builds and starts the app when nothing runs on :3000) |
+| `pnpm e2e:user` | Local database only: E2E admin user (`E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD`) and inbox contacts |
+| `pnpm lhci` | Lighthouse CI against `pnpm start` |
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+Schema changes: edit the collections/globals, then `pnpm payload migrate:create <name>` and commit the generated files in `src/migrations`.
 
-### Development
+## Environment variables
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+See [`.env.example`](.env.example) for the full list with comments. Staging vs production values are listed in [`docs/plan/T18-staging-deploy.md`](docs/plan/T18-staging-deploy.md).
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+## Deploy
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
-
-#### Docker (Optional)
-
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
-
-To do so, follow these steps:
-
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
-
-## How it works
-
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
-
-### Collections
-
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
-
-- #### Users (Authentication)
-
-  Users are auth-enabled collections that have access to the admin panel.
-
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/3.x/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
-
-- #### Media
-
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
-
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+Vercel (`vercel.json`: region `fra1`, build command `pnpm deploy:build`), Neon Postgres, Vercel Blob. Branch `staging` is the protected, `noindex` prototype; `main` is production. The full runbook (env vars, first deploy, seeding, smoke checks, production promotion) is [`docs/plan/T18-staging-deploy.md`](docs/plan/T18-staging-deploy.md); the team validation checklist is `docs/04-staging-checklist.md` (created in its Step 8).
