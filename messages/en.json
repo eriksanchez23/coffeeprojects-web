@@ -45,7 +45,8 @@
     "otherServices": "Other services",
     "seeStore": "See store",
     "custom": "Custom quote",
-    "perMonth": "/month"
+    "perMonth": "/month",
+    "price": "Price"
   },
   "contact": {
     "title": "Tell us about your project",
@@ -140,7 +141,10 @@
     "stack": "// stack",
     "faq": "// faq",
     "includes": "// includes",
-    "more": "// more"
+    "more": "// more",
+    "heroCommand": "brew --team",
+    "statsLabel": "coffeeProjects in numbers",
+    "servicesList": "List of services"
   },
   "notFound": {
     "command": "$ cd /this-page",

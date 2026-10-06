@@ -6,12 +6,12 @@ import { TerminalLine } from '@/components/ui/terminal-line'
 import type { Home } from '@/payload-types'
 
 export async function Hero({ hero, visual }: { hero: Home['hero']; visual?: ReactNode }) {
-  const t = await getTranslations('common')
+  const [t, ts] = await Promise.all([getTranslations('common'), getTranslations('sections')])
   return (
     <section className="steam-glow relative isolate overflow-hidden pt-20 pb-28 sm:pt-28" aria-labelledby="hero-title">
       <Container className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
         <div>
-          <TerminalLine command="brew --team" />
+          <TerminalLine command={ts("heroCommand")} />
           <p className="mt-6 font-mono text-xs uppercase tracking-[0.2em] text-amber">{hero.eyebrow}</p>
           <h1 id="hero-title" data-split className="mt-4 text-5xl font-semibold leading-[1.02] sm:text-6xl lg:text-7xl">
             {hero.headline}

@@ -25,6 +25,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
             </h1>
             <p className="mt-6 text-lg text-ink-2">{home.sections.servicesLead}</p>
           </header>
+          <h2 className="sr-only">{ts('servicesList')}</h2>
           <ServicesGrid services={services} locale={locale} />
         </Container>
       </section>

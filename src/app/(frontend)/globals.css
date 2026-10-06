@@ -103,5 +103,10 @@
 @media (prefers-reduced-motion: reduce) {
   .marquee {
     animation: none;
+    width: auto;
+    flex-wrap: wrap;
+  }
+  .marquee [data-marquee-dup] {
+    display: none;
   }
 }

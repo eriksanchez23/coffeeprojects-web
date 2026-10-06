@@ -56,12 +56,13 @@ export async function StackMarquee({ title, items }: { title: string; items: str
   const row = [...items, ...items]
   return (
     <Section id="stack" eyebrow={t('stack')} title={title}>
-      <div className="relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
+      <div className="relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)] motion-reduce:[mask-image:none]">
         <ul className="marquee flex w-max gap-3" aria-label={title}>
           {row.map((item, i) => (
             <li
               key={`${item}-${i}`}
               aria-hidden={i >= items.length}
+              data-marquee-dup={i >= items.length ? "" : undefined}
               className="flex items-center gap-2 rounded-full border border-line-hi bg-bg-2 px-5 py-2 font-mono text-sm text-ink-1"
             >
               <Logo name={item} />

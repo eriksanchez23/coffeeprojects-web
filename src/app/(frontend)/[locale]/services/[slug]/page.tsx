@@ -14,7 +14,7 @@ import { Section } from '@/components/ui/section'
 import { type Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import { getAllSlugs, getFaqs, getService, getServices } from '@/lib/cms/queries'
-import { contactHref, formatPrice } from '@/lib/format'
+import { contactHref, formatPriceParts } from '@/lib/format'
 
 export const revalidate = 3600
 export const dynamicParams = true
@@ -37,9 +37,7 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
   const serviceFaq = (s.faq ?? []).map((f, i) => ({ id: f.id ?? i, question: f.question, answer: f.answer }))
   const faqItems = serviceFaq.length > 0 ? serviceFaq : faqs.slice(0, 4)
   const storeUrl = s.pricing.mode === 'store' ? s.pricing.storeUrl : null
-  // "From" is shown as its own label above the figure, so strip the prefix from the formatted price.
-  const price = formatPrice(s.pricing, locale, labels)
-  const priceFigure = price.startsWith(`${t('from')} `) ? price.slice(t('from').length + 1) : price
+  const price = formatPriceParts(s.pricing, locale, labels)
 
   return (
     <PageShell locale={locale} alternates={localizedPaths('/services/[slug]', slugs)}>
@@ -66,8 +64,8 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
           <GlassCard className="self-start">
             <dl className="grid gap-6">
               <div>
-                <dt className="text-xs uppercase tracking-widest text-ink-3">{t('from')}</dt>
-                <dd className="font-display text-4xl text-amber-hi">{priceFigure}</dd>
+                <dt className={price.prefix ? 'text-xs uppercase tracking-widest text-ink-3' : 'sr-only'}>{price.prefix ?? t('price')}</dt>
+                <dd className="font-display text-4xl text-amber-hi">{price.figure}</dd>
               </div>
               <div>
                 <dt className="text-xs uppercase tracking-widest text-ink-3">{t('typicalTime')}</dt>
@@ -101,7 +99,7 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
       <Section eyebrow={ts('more')} title={t('otherServices')}>
         <ServicesGrid services={all.filter((o) => o.id !== s.id).slice(0, 3)} locale={locale} />
       </Section>
-      <CtaBand />
+      <CtaBand defaultType={s.contactType} />
     </PageShell>
   )
 }

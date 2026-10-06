@@ -13,7 +13,7 @@ export async function ServicesGrid({ services, locale }: { services: Service[]; 
   return (
     <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" data-reveal-group>
       {services.map((s, i) => (
-        <li key={s.id} className={i === 0 ? 'lg:col-span-2' : ''} data-reveal>
+        <li key={s.id} className={i === 0 && services.length > 1 ? 'lg:col-span-2' : ''} data-reveal>
           <Link href={{ pathname: '/services/[slug]', params: { slug: s.slug } }} className="group block h-full">
             <GlassCard className="flex h-full flex-col">
               <ServiceIcon name={s.icon} />
