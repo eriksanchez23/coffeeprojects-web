@@ -25,7 +25,7 @@ export async function CtaBand({ defaultType = 'web' }: { defaultType?: ProjectTy
                 <option key={p} value={p}>{t(`projectTypes.${p}`)}</option>
               ))}
             </select>
-            <button type="submit" className={buttonClasses({ size: 'lg' })}>{t('quickCta')}</button>
+            <button type="submit" className={buttonClasses({ size: 'lg' })} data-magnetic>{t('quickCta')}</button>
           </form>
         </div>
       </Container>

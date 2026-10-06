@@ -12,7 +12,10 @@ export async function StatsBento({ stats }: { stats: NonNullable<Home['stats']> 
           <GlassCard key={s.id ?? i}>
             <p className="font-display text-5xl font-semibold text-ink-0">
               {s.prefix}
-              <span data-count-to={s.value}>{s.value}</span>
+              <span className="sr-only">{s.value}</span>
+              <span aria-hidden data-count-to={s.value}>
+                {s.value}
+              </span>
               {s.suffix}
             </p>
             <p className="mt-2 text-sm text-ink-2">{s.label}</p>

@@ -8,6 +8,8 @@ import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { JsonLd } from '@/components/seo/json-ld'
 import { ConsentBanner } from '@/components/layout/consent-banner'
+import { CursorGlow } from '@/components/motion/cursor-glow'
+import { MotionProvider } from '@/components/motion/motion-provider'
 import { AttributionCapture } from '@/components/tracking/attribution-capture'
 import { MetaPixel } from '@/components/tracking/meta-pixel'
 import type { Locale } from '@/i18n/locales'
@@ -55,10 +57,13 @@ export default async function LocaleLayout({
       <body className="grain bg-bg-0 text-ink-1">
         <JsonLd data={[organizationLd(settings.contactEmail), websiteLd(locale as Locale)]} />
         <NextIntlClientProvider>
-          {children}
-          <ConsentBanner />
-          <MetaPixel pixelId={pixelId} />
-          <AttributionCapture />
+          <MotionProvider>
+            {children}
+            <ConsentBanner />
+            <MetaPixel pixelId={pixelId} />
+            <AttributionCapture />
+          </MotionProvider>
+          <CursorGlow />
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

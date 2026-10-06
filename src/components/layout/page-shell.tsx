@@ -1,5 +1,7 @@
+/// <reference types="react/canary" />
 import { getTranslations } from 'next-intl/server'
-import type { ReactNode } from 'react'
+import { type ReactNode, ViewTransition } from 'react'
+import { ScrollEffects } from '@/components/motion/scroll-effects'
 import type { Locale } from '@/i18n/locales'
 import { getSettings } from '@/lib/cms/queries'
 import { AlternatesProvider } from './alternates-context'
@@ -30,10 +32,14 @@ export async function PageShell({
       </a>
       <SiteHeader />
       <main id="main" tabIndex={-1} className="outline-none">
-        {children}
+        {/* Route navigations are transitions, so the page content cross-fades between routes. */}
+        <ViewTransition>
+          <div>{children}</div>
+        </ViewTransition>
       </main>
       <SiteFooter email={settings.contactEmail} chatUrl={settings.chatUrl} />
       {!hideMobileCta && <MobileCtaBar label={t('cta')} />}
+      <ScrollEffects />
     </AlternatesProvider>
   )
 }

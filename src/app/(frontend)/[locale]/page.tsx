@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { PageShell } from '@/components/layout/page-shell'
+import { HeroVisual } from '@/components/motion/hero-visual'
 import { CtaBand } from '@/components/sections/cta-band'
 import { FaqList } from '@/components/sections/faq-list'
 import { Hero } from '@/components/sections/hero'
@@ -47,7 +48,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <PageShell locale={locale} alternates={localizedPaths('/')}>
       {faqs.length > 0 && <JsonLd data={faqLd(faqs)} />}
-      <Hero hero={home.hero} />
+      <Hero hero={home.hero} visual={<HeroVisual />} />
       <StatsBento stats={home.stats ?? []} />
       <Section id="services" eyebrow={ts('services')} title={home.sections.servicesTitle} lead={home.sections.servicesLead}>
         <ServicesGrid services={services} locale={locale} />
