@@ -8,7 +8,7 @@ export const serviceIcons = ['globe', 'shopping-cart', 'code', 'server', 'bot', 
 
 export const Services: CollectionConfig = {
   slug: 'services',
-  admin: { useAsTitle: 'title', defaultColumns: ['title', 'priceFrom', 'order', '_status'], group: 'Content' },
+  admin: { useAsTitle: 'title', defaultColumns: ['title', 'typicalTime', 'order', '_status'], group: 'Content' },
   versions: { drafts: true },
   defaultSort: 'order',
   access: { read: publishedOrTeam, create: isTeam, update: isTeam, delete: isTeam },

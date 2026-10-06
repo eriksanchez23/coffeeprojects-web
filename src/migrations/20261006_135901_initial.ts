@@ -17,6 +17,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum__services_v_version_pricing_mode" AS ENUM('one-off', 'monthly', 'custom', 'store');
   CREATE TYPE "public"."enum__services_v_version_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum__services_v_published_locale" AS ENUM('es', 'en', 'fr');
+  CREATE TYPE "public"."enum_projects_project_status" AS ENUM('live', 'in-progress');
   CREATE TYPE "public"."enum_projects_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum__projects_v_version_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum__projects_v_published_locale" AS ENUM('es', 'en', 'fr');
@@ -178,7 +179,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"id" serial PRIMARY KEY NOT NULL,
   	"cover_id" integer,
   	"year" numeric,
-  	"status" "enum_projects_status" DEFAULT 'live',
+  	"status" "enum_projects_project_status" DEFAULT 'live',
   	"url" varchar,
   	"nda" boolean DEFAULT false,
   	"featured" boolean DEFAULT true,
@@ -223,7 +224,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"parent_id" integer,
   	"version_cover_id" integer,
   	"version_year" numeric,
-  	"version_status" "enum__projects_v_version_status" DEFAULT 'live',
+  	"version_status" "enum_projects_project_status" DEFAULT 'live',
   	"version_url" varchar,
   	"version_nda" boolean DEFAULT false,
   	"version_featured" boolean DEFAULT true,
@@ -986,6 +987,7 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum__services_v_version_pricing_mode";
   DROP TYPE "public"."enum__services_v_version_status";
   DROP TYPE "public"."enum__services_v_published_locale";
+  DROP TYPE "public"."enum_projects_project_status";
   DROP TYPE "public"."enum_projects_status";
   DROP TYPE "public"."enum__projects_v_version_status";
   DROP TYPE "public"."enum__projects_v_published_locale";

@@ -1629,7 +1629,7 @@
         },
         "status": {
           "name": "status",
-          "type": "enum_projects_status",
+          "type": "enum_projects_project_status",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
@@ -2200,7 +2200,7 @@
         },
         "version_status": {
           "name": "version_status",
-          "type": "enum__projects_v_version_status",
+          "type": "enum_projects_project_status",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
@@ -7489,6 +7489,14 @@
         "fr"
       ]
     },
+    "public.enum_projects_project_status": {
+      "name": "enum_projects_project_status",
+      "schema": "public",
+      "values": [
+        "live",
+        "in-progress"
+      ]
+    },
     "public.enum_projects_status": {
       "name": "enum_projects_status",
       "schema": "public",
@@ -7609,6 +7617,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "65484687-1240-4d3b-8c2a-78528d51eb60",
+  "id": "ed782acf-c605-4e89-877a-f4ec6deeaf20",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

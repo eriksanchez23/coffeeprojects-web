@@ -22,6 +22,7 @@ export const Projects: CollectionConfig = {
     {
       name: 'status',
       type: 'select',
+      enumName: 'enum_projects_project_status',
       required: true,
       defaultValue: 'live',
       options: [
