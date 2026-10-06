@@ -1,13 +1,13 @@
 'use client'
 import { useTranslations } from 'next-intl'
-import { useActionState, useEffect, useRef } from 'react'
+import { useActionState, useEffect, useRef, useState } from 'react'
 import { buttonClasses } from '@/components/ui/button'
 import { submitContact } from '@/features/contact/action'
 import type { ContactResult } from '@/features/contact/handle-contact'
 import { budgets, projectTypes, timelines } from '@/features/contact/options'
 import { readConsentFromDocument } from '@/features/tracking/consent'
 import { Link } from '@/i18n/navigation'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 import { TurnstileWidget } from './turnstile-widget'
 
 type Prefill = { type?: string }
@@ -24,6 +24,10 @@ const label = 'mb-2 block text-sm text-ink-1'
 export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: string; sourcePath: string; prefill: Prefill; siteKey: string }) {
   const t = useTranslations('contact')
   const formRef = useRef<HTMLFormElement>(null)
+  // Turnstile (~140 KB incl. its challenge frame) loads on the first interaction with the form, not with the page,
+  // so it never delays the first paint; the token is ready long before a visitor has filled the form in.
+  const [verifying, setVerifying] = useState(false)
+  const startVerifying = () => setVerifying(true)
   const [state, action, pending] = useActionState<FormState, FormData>(async (prev, fd) => {
     fd.set('marketingConsent', String(readConsentFromDocument()?.marketing ?? false))
     const values: Record<string, string> = {}
@@ -58,7 +62,15 @@ export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: 
   const defaultType = projectTypes.find((p) => p === initialType) ?? 'web'
 
   return (
-    <form ref={formRef} action={action} noValidate className="grid gap-5">
+    <form
+      ref={formRef}
+      action={action}
+      noValidate
+      className="grid gap-5"
+      onFocus={startVerifying}
+      onPointerDown={startVerifying}
+      onTouchStart={startVerifying}
+    >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="sourcePath" value={sourcePath} />
       {/* Honeypot: hidden from humans and assistive tech */}
@@ -156,7 +168,10 @@ export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: 
         {err('privacy')}
       </div>
 
-      <TurnstileWidget key={state.attempt} siteKey={siteKey} locale={locale} />
+      {/* Space reserved for the widget so it never shifts the layout when it appears. */}
+      <div className="min-h-[65px]">
+        {verifying && <TurnstileWidget key={state.attempt} siteKey={siteKey} locale={locale} />}
+      </div>
 
       {formError && (
         <p id="form-error" role="alert" tabIndex={-1} className="rounded-[var(--radius-md)] border border-berry/50 bg-berry/10 p-4 text-sm text-ink-0">
@@ -164,7 +179,7 @@ export function ContactForm({ locale, sourcePath, prefill, siteKey }: { locale: 
         </p>
       )}
 
-      <button type="submit" disabled={pending} className={cn(buttonClasses({ size: 'lg' }), 'w-full sm:w-auto')}>
+      <button type="submit" disabled={pending} className={clsx(buttonClasses({ size: 'lg' }), 'w-full sm:w-auto')}>
         {pending ? t('sending') : t('submit')}
       </button>
       <p className="font-mono text-xs text-ink-3">{t('guarantees')}</p>

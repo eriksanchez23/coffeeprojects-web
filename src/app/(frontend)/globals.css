@@ -18,7 +18,8 @@
   --color-ink-0: #fff7e8;
   --color-ink-1: #e8dcc8;
   --color-ink-2: #a89584;
-  --color-ink-3: #6b5d4f;
+  /* WCAG AA (4.5:1) for small text on bg-0..bg-2; the old #6b5d4f measured ~3:1. */
+  --color-ink-3: #907e6c;
   --color-line: rgb(255 232 181 / 0.08);
   --color-line-hi: rgb(255 232 181 / 0.16);
   --color-line-amber: rgb(245 167 66 / 0.32);

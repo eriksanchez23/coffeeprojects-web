@@ -30,3 +30,22 @@ export const legacyRedirects = [
   { source: '/legal', destination: '/aviso-legal', statusCode: 301 as const },
   { source: '/en/legal', destination: '/en/legal-notice', statusCode: 301 as const },
 ]
+
+const CLIENT_HINT_KEYS = new Set(['accept-ch', 'critical-ch', 'vary'])
+
+/**
+ * Payload's withPayload() sends `Accept-CH`/`Critical-CH: Sec-CH-Prefers-Color-Scheme` (+ `Vary`) on every path
+ * for the admin theme. On the public site `Critical-CH` makes the browser retry each first navigation (a
+ * self-redirect costing a full round trip). Keep those hints on the admin only; every other header is untouched.
+ */
+export function scopeClientHintsToAdmin<R extends { source: string; headers: Header[] }>(rules: R[]): R[] {
+  return rules.flatMap((rule) => {
+    const hints = rule.headers.filter((h) => CLIENT_HINT_KEYS.has(h.key.toLowerCase()))
+    if (rule.source !== '/:path*' || !hints.some((h) => h.key.toLowerCase() === 'critical-ch')) return [rule]
+    const rest = rule.headers.filter((h) => !CLIENT_HINT_KEYS.has(h.key.toLowerCase()))
+    return [
+      ...(rest.length > 0 ? [{ ...rule, headers: rest }] : []),
+      { ...rule, source: '/admin/:path*', headers: hints },
+    ]
+  })
+}

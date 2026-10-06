@@ -1,12 +1,11 @@
-'use client'
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import { Container } from '@/components/ui/container'
-import { openConsentSettings } from '@/features/tracking/use-consent'
 import { Link } from '@/i18n/navigation'
 import { LanguageSwitcher } from './language-switcher'
+import { ManageCookiesButton } from './manage-cookies-button'
 
-export function SiteFooter({ email, chatUrl }: { email: string; chatUrl?: string | null }) {
-  const t = useTranslations('footer')
+export async function SiteFooter({ email, chatUrl }: { email: string; chatUrl?: string | null }) {
+  const t = await getTranslations('footer')
   const year = new Date().getFullYear()
   return (
     <footer className="border-t border-line py-14 text-sm text-ink-2">
@@ -26,9 +25,7 @@ export function SiteFooter({ email, chatUrl }: { email: string; chatUrl?: string
           <Link href="/legal-notice" className="hover:text-ink-0">{t('legal')}</Link>
           <Link href="/privacy" className="hover:text-ink-0">{t('privacy')}</Link>
           <Link href="/cookies" className="hover:text-ink-0">{t('cookies')}</Link>
-          <button type="button" onClick={openConsentSettings} className="text-left hover:text-ink-0 md:text-right">
-            {t('manageCookies')}
-          </button>
+          <ManageCookiesButton label={t('manageCookies')} />
         </nav>
       </Container>
       <Container className="mt-10 font-mono text-xs text-ink-3">

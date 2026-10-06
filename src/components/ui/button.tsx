@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Link } from '@/i18n/navigation'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 
 type Variant = 'primary' | 'ghost' | 'outline'
 type Size = 'md' | 'lg'
@@ -20,7 +20,9 @@ const sizes: Record<Size, string> = {
 }
 
 export function buttonClasses({ variant = 'primary', size = 'md' }: { variant?: Variant; size?: Size }): string {
-  return cn(base, variants[variant], sizes[size])
+  // Plain clsx (no tailwind-merge): Button ships in client bundles, and base/variant/size classes never conflict.
+  // className overrides must therefore only add classes (spacing, width), never restyle the base.
+  return clsx(base, variants[variant], sizes[size])
 }
 
 type ButtonProps = {
@@ -34,7 +36,7 @@ type ButtonProps = {
 )
 
 export function Button({ variant, size, className, children, ...rest }: ButtonProps) {
-  const classes = cn(buttonClasses({ variant, size }), className)
+  const classes = clsx(buttonClasses({ variant, size }), className)
   if ('href' in rest && rest.href) {
     const { href, ...linkProps } = rest
     return (

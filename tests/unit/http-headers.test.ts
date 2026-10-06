@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { responseHeaders } from '@/lib/http-headers'
+import { responseHeaders, scopeClientHintsToAdmin } from '@/lib/http-headers'
 
 const all = (env: 'staging' | 'production') => responseHeaders(env).flatMap((r) => r.headers)
 
@@ -40,5 +40,30 @@ describe('security headers', () => {
   it('sends HSTS without preload', () => {
     const hsts = responseHeaders('production').flatMap((r) => r.headers).find((h) => h.key === 'Strict-Transport-Security')
     expect(hsts?.value).toBe('max-age=63072000; includeSubDomains')
+  })
+})
+
+describe('scopeClientHintsToAdmin', () => {
+  const payloadRule = {
+    source: '/:path*',
+    headers: [
+      { key: 'Accept-CH', value: 'Sec-CH-Prefers-Color-Scheme' },
+      { key: 'Vary', value: 'Sec-CH-Prefers-Color-Scheme' },
+      { key: 'Critical-CH', value: 'Sec-CH-Prefers-Color-Scheme' },
+      { key: 'X-Powered-By', value: 'Next.js, Payload' },
+    ],
+  }
+  it('moves the Payload client hints to the admin and leaves the other headers on every path', () => {
+    const site = { source: '/((?!admin).*)', headers: [{ key: 'X-Frame-Options', value: 'DENY' }] }
+    expect(scopeClientHintsToAdmin([site, payloadRule])).toEqual([
+      site,
+      { source: '/:path*', headers: [{ key: 'X-Powered-By', value: 'Next.js, Payload' }] },
+      { source: '/admin/:path*', headers: payloadRule.headers.slice(0, 3) },
+    ])
+  })
+  it('never sends Critical-CH outside the admin', () => {
+    const scoped = scopeClientHintsToAdmin([payloadRule])
+    const critical = scoped.filter((r) => r.headers.some((h) => h.key === 'Critical-CH')).map((r) => r.source)
+    expect(critical).toEqual(['/admin/:path*'])
   })
 })

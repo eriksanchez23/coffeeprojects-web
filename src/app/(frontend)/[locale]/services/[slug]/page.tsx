@@ -99,7 +99,8 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
               )}
             </div>
           </div>
-          <GlassCard className="self-start">
+          <GlassCard className="grid gap-6 self-start">
+            {/* Only dt/dd groups may live inside <dl>; tags and the note follow it. */}
             <dl className="grid gap-6">
               <div>
                 <dt className={price.prefix ? 'text-xs uppercase tracking-widest text-ink-3' : 'sr-only'}>{price.prefix ?? t('price')}</dt>
@@ -109,13 +110,15 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
                 <dt className="text-xs uppercase tracking-widest text-ink-3">{t('typicalTime')}</dt>
                 <dd className="text-xl text-ink-0">{s.typicalTime}</dd>
               </div>
+            </dl>
+            {(s.tags ?? []).length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {(s.tags ?? []).map((tag) => (
                   <Badge key={tag}>{tag}</Badge>
                 ))}
               </div>
-              {s.note && <p className="text-sm text-ink-2">{s.note}</p>}
-            </dl>
+            )}
+            {s.note && <p className="text-sm text-ink-2">{s.note}</p>}
           </GlassCard>
         </Container>
       </section>

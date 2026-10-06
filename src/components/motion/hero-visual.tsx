@@ -1,7 +1,7 @@
 'use client'
 import dynamic from 'next/dynamic'
 import { Component, type ReactNode, useEffect, useState } from 'react'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 import { readDevice, shouldRender3D } from './device'
 import { HeroPoster } from './hero-poster'
 
@@ -34,7 +34,7 @@ function supportsWebGL(): boolean {
   }
 }
 
-/** Server-rendered poster first; the 3D scene fades in over it on capable devices once the page is idle. */
+/** Server-rendered poster first; the 3D scene fades in over it on capable devices once the visitor engages. */
 export function HeroVisual() {
   const [enable3D, setEnable3D] = useState(false)
   const [sceneReady, setSceneReady] = useState(false)
@@ -42,13 +42,27 @@ export function HeroVisual() {
 
   useEffect(() => {
     if (!shouldRender3D(readDevice()) || !supportsWebGL()) return
-    // Load 3D only after the page is idle so it never competes with LCP.
-    if (typeof window.requestIdleCallback === 'function') {
-      const id = window.requestIdleCallback(() => setEnable3D(true), { timeout: 3000 })
-      return () => window.cancelIdleCallback(id)
+    // three.js is ~240 KB and >1 s of main-thread work on a mid-range phone, so it loads only once the visitor
+    // engages (moves the pointer, touches, scrolls or types) and the browser is idle. Visitors who just read
+    // keep the static poster and never pay for it; it also never competes with LCP or the first interactions.
+    let idleId: number | undefined
+    const start = () => {
+      removeListeners()
+      const enable = () => setEnable3D(true)
+      idleId =
+        typeof window.requestIdleCallback === 'function'
+          ? window.requestIdleCallback(enable, { timeout: 1500 })
+          : window.setTimeout(enable, 200)
     }
-    const id = window.setTimeout(() => setEnable3D(true), 1200)
-    return () => window.clearTimeout(id)
+    const events = ['pointermove', 'pointerdown', 'touchstart', 'scroll', 'keydown'] as const
+    const removeListeners = () => events.forEach((e) => window.removeEventListener(e, start))
+    events.forEach((e) => window.addEventListener(e, start, { once: true, passive: true }))
+    return () => {
+      removeListeners()
+      if (idleId === undefined) return
+      if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleId)
+      else window.clearTimeout(idleId)
+    }
   }, [])
 
   const fail = () => {
@@ -59,11 +73,11 @@ export function HeroVisual() {
 
   return (
     <div className="relative h-full w-full">
-      <div className={cn('h-full w-full transition-opacity duration-1000', showScene && sceneReady && 'opacity-0')}>
+      <div className={clsx('h-full w-full transition-opacity duration-1000', showScene && sceneReady && 'opacity-0')}>
         <HeroPoster />
       </div>
       {showScene && (
-        <div className={cn('absolute inset-0 opacity-0 transition-opacity duration-1000', sceneReady && 'opacity-100')}>
+        <div className={clsx('absolute inset-0 transition-opacity duration-1000', sceneReady ? 'opacity-100' : 'opacity-0')}>
           <SceneBoundary onError={fail}>
             <HeroScene onReady={() => setSceneReady(true)} onContextLost={fail} />
           </SceneBoundary>
