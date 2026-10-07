@@ -8,7 +8,7 @@ export async function FaqList({ title, items }: { title: string; items: { id: st
       <div className="divide-y divide-line rounded-[var(--radius-lg)] border border-line">
         {items.map((f) => (
           <details key={f.id} className="group p-6 [&_summary::-webkit-details-marker]:hidden">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-lg text-ink-0">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-6 text-lg text-ink-0">
               {f.question}
               <span aria-hidden className="font-mono text-amber transition-transform group-open:rotate-45">+</span>
             </summary>

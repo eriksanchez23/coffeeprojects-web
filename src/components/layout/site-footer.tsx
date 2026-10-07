@@ -14,18 +14,18 @@ export async function SiteFooter({ email, chatUrl }: { email: string; chatUrl?: 
           <p className="font-display text-2xl text-ink-0">{t('tagline')}</p>
           <p className="mt-3">{t('remote')}</p>
         </div>
-        <div className="flex flex-col gap-2">
-          <a href={`mailto:${email}`} className="text-ink-0 hover:text-amber">{email}</a>
-          <Link href="/pricing" className="hover:text-ink-0">{tn('pricing')}</Link>
+        <div className="flex flex-col items-start gap-1">
+          <a href={`mailto:${email}`} className="py-1.5 text-ink-0 hover:text-amber">{email}</a>
+          <Link href="/pricing" className="py-1.5 hover:text-ink-0">{tn('pricing')}</Link>
           {chatUrl && (
-            <a href={chatUrl} target="_blank" rel="noopener noreferrer" className="hover:text-amber">{t('chat')}</a>
+            <a href={chatUrl} target="_blank" rel="noopener noreferrer" className="py-1.5 hover:text-amber">{t('chat')}</a>
           )}
           <LanguageSwitcher className="mt-2" />
         </div>
-        <nav aria-label={t('legalNav')} className="flex flex-col gap-2 md:items-end">
-          <Link href="/legal-notice" className="hover:text-ink-0">{t('legal')}</Link>
-          <Link href="/privacy" className="hover:text-ink-0">{t('privacy')}</Link>
-          <Link href="/cookies" className="hover:text-ink-0">{t('cookies')}</Link>
+        <nav aria-label={t('legalNav')} className="flex flex-col items-start gap-1 md:items-end">
+          <Link href="/legal-notice" className="py-1.5 hover:text-ink-0">{t('legal')}</Link>
+          <Link href="/privacy" className="py-1.5 hover:text-ink-0">{t('privacy')}</Link>
+          <Link href="/cookies" className="py-1.5 hover:text-ink-0">{t('cookies')}</Link>
           <ManageCookiesButton label={t('manageCookies')} />
         </nav>
       </Container>

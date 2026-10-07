@@ -22,7 +22,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
           aria-current={locale === current ? 'true' : undefined}
           title={localeLabels[locale]}
           className={clsx(
-            'rounded-full px-2.5 py-1 uppercase transition-colors',
+            'inline-flex min-h-8 min-w-10 items-center justify-center rounded-full px-2.5 py-1 uppercase transition-colors',
             locale === current ? 'bg-amber text-bg-0' : 'text-ink-2 hover:text-ink-0',
           )}
         >

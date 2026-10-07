@@ -173,6 +173,7 @@
     "projects": "// projects"
   },
   "notFound": {
+    "title": "Page not found · coffeeProjects",
     "command": "$ cd /this-page",
     "error": "error 404: coffee not found",
     "body": "This page ran out of coffee. Let's head back home.",

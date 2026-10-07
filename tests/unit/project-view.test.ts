@@ -18,4 +18,8 @@ describe('coverGradient', () => {
     expect(coverGradient('abc')).toBe(coverGradient('abc'))
     expect(coverGradient('abc')).not.toBe(coverGradient('xyz'))
   })
+  it('always picks a defined hue, even for hashes with the high bit set', () => {
+    const seeds = ['trading-journal', 'coffeeprojects-es', ...Array.from({ length: 200 }, (_, i) => `project-${i}`)]
+    for (const seed of seeds) expect(coverGradient(seed)).not.toContain('undefined')
+  })
 })

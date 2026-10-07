@@ -2,7 +2,7 @@ import { Link } from '@/i18n/navigation'
 
 export function Logo() {
   return (
-    <Link href="/" className="group flex items-center gap-2 font-display text-lg font-semibold text-ink-0" aria-label="coffeeProjects">
+    <Link href="/" className="group flex min-h-11 items-center gap-2 font-display text-lg font-semibold text-ink-0" aria-label="coffeeProjects">
       <svg viewBox="0 0 24 24" className="h-6 w-6 text-amber transition-transform duration-500 group-hover:-rotate-12" aria-hidden>
         <path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9Z" fill="none" stroke="currentColor" strokeWidth="2" />
         <path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16" fill="none" stroke="currentColor" strokeWidth="2" />
