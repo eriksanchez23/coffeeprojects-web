@@ -8,7 +8,7 @@ type Props = {
 
 export const inboxHref = (adminRoute = '/admin') => `${adminRoute}/collections/contacts?where[status][equals]=new`
 
-export function inboxCopy(count: number, language = 'en') {
+export function inboxCopy(count: number, language = 'es') {
   if (language.startsWith('es')) {
     return {
       title: count === 1 ? '1 nueva solicitud de contacto' : `${count} nuevas solicitudes de contacto`,

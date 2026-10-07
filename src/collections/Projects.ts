@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { isTeam, publishedOrTeam } from '@/access'
+import { adminGroups, t } from '@/fields/labels'
 import { seoField } from '@/fields/seo'
 import { slugField } from '@/fields/slug'
 import { revalidateCollection, revalidateCollectionDelete } from '@/hooks/revalidate'
@@ -9,10 +10,11 @@ import { previewUrl } from '@/lib/cms/preview-url'
 
 export const Projects: CollectionConfig = {
   slug: 'projects',
+  labels: { singular: t('Proyecto', 'Project'), plural: t('Proyectos', 'Projects') },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'year', 'status', 'featured', '_status'],
-    group: 'Content',
+    group: adminGroups.content,
     preview: (doc, { locale }) => {
       const slug = typeof doc?.slug === 'string' ? doc.slug : ''
       if (!slug) return null
@@ -27,30 +29,31 @@ export const Projects: CollectionConfig = {
   defaultSort: '-year',
   access: { read: publishedOrTeam, readVersions: isTeam, create: isTeam, update: isTeam, delete: isTeam },
   fields: [
-    { name: 'title', type: 'text', required: true, localized: true },
+    { name: 'title', type: 'text', label: t('Título', 'Title'), required: true, localized: true },
     slugField('title'),
-    { name: 'category', type: 'text', required: true, localized: true },
-    { name: 'summary', type: 'textarea', required: true, localized: true },
-    { name: 'body', type: 'richText', localized: true },
-    { name: 'cover', type: 'upload', relationTo: 'media' },
-    { name: 'gallery', type: 'upload', relationTo: 'media', hasMany: true },
-    { name: 'stack', type: 'text', hasMany: true },
-    { name: 'year', type: 'number', required: true },
+    { name: 'category', type: 'text', label: t('Categoría', 'Category'), required: true, localized: true },
+    { name: 'summary', type: 'textarea', label: t('Resumen', 'Summary'), required: true, localized: true },
+    { name: 'body', type: 'richText', label: t('Contenido', 'Body'), localized: true },
+    { name: 'cover', type: 'upload', label: t('Portada', 'Cover'), relationTo: 'media' },
+    { name: 'gallery', type: 'upload', label: t('Galería', 'Gallery'), relationTo: 'media', hasMany: true },
+    { name: 'stack', type: 'text', label: t('Tecnologías', 'Stack'), hasMany: true },
+    { name: 'year', type: 'number', label: t('Año', 'Year'), required: true },
     {
       name: 'status',
       type: 'select',
+      label: t('Estado', 'Status'),
       enumName: 'enum_projects_project_status',
       required: true,
       defaultValue: 'live',
       options: [
-        { label: 'Live', value: 'live' },
-        { label: 'In progress', value: 'in-progress' },
+        { label: t('En producción', 'Live'), value: 'live' },
+        { label: t('En curso', 'In progress'), value: 'in-progress' },
       ],
     },
-    { name: 'url', type: 'text', admin: { condition: (_, s) => !s?.nda } },
-    { name: 'nda', type: 'checkbox', defaultValue: false },
-    { name: 'featured', type: 'checkbox', defaultValue: true },
-    { name: 'team', type: 'relationship', relationTo: 'team-members', hasMany: true },
+    { name: 'url', type: 'text', label: t('URL', 'URL'), admin: { condition: (_, s) => !s?.nda } },
+    { name: 'nda', type: 'checkbox', label: t('NDA', 'NDA'), defaultValue: false },
+    { name: 'featured', type: 'checkbox', label: t('Destacado', 'Featured'), defaultValue: true },
+    { name: 'team', type: 'relationship', label: t('Equipo', 'Team'), relationTo: 'team-members', hasMany: true },
     seoField(),
   ],
 }

@@ -1,3 +1,5 @@
+import { contactStatusLabels } from '@/fields/labels'
+
 export const statusColors: Record<string, string> = {
   new: '#f5a742',
   'in-progress': '#7cc5ff',
@@ -7,7 +9,14 @@ export const statusColors: Record<string, string> = {
 
 const lightTextOn = new Set(['archived'])
 
-export function StatusCell({ cellData }: { cellData?: string }) {
+export function statusLabel(value: string, language = 'es') {
+  const label = contactStatusLabels[value]
+  if (!label) return value
+  return language.startsWith('en') ? label.en : label.es
+}
+
+// Server cell: Payload passes the admin `i18n`; the badge text follows the panel language (default Spanish).
+export function StatusCell({ cellData, i18n }: { cellData?: string; i18n?: { language?: string } }) {
   const value = cellData || 'new'
   return (
     <span
@@ -22,7 +31,7 @@ export function StatusCell({ cellData }: { cellData?: string }) {
         background: statusColors[value] ?? '#a89584',
       }}
     >
-      {value}
+      {statusLabel(value, i18n?.language)}
     </span>
   )
 }

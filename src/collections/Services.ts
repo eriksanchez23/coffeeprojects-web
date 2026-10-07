@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { isTeam, publishedOrTeam } from '@/access'
-import { projectTypes, toOptions } from '@/features/contact/options'
+import { projectTypes } from '@/features/contact/options'
+import { adminGroups, bilingualOptions, projectTypeLabels, serviceIconLabels, t } from '@/fields/labels'
 import { seoField } from '@/fields/seo'
 import { slugField } from '@/fields/slug'
 import { revalidateCollection, revalidateCollectionDelete } from '@/hooks/revalidate'
@@ -12,10 +13,11 @@ export const serviceIcons = ['globe', 'shopping-cart', 'code', 'server', 'bot', 
 
 export const Services: CollectionConfig = {
   slug: 'services',
+  labels: { singular: t('Servicio', 'Service'), plural: t('Servicios', 'Services') },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'typicalTime', 'order', '_status'],
-    group: 'Content',
+    group: adminGroups.content,
     preview: (doc, { locale }) => {
       const slug = typeof doc?.slug === 'string' ? doc.slug : ''
       if (!slug) return null
@@ -30,58 +32,94 @@ export const Services: CollectionConfig = {
   defaultSort: 'order',
   access: { read: publishedOrTeam, readVersions: isTeam, create: isTeam, update: isTeam, delete: isTeam },
   fields: [
-    { name: 'title', type: 'text', required: true, localized: true },
+    { name: 'title', type: 'text', label: t('Título', 'Title'), required: true, localized: true },
     slugField('title'),
-    { name: 'promise', type: 'text', required: true, localized: true, admin: { description: 'Landing hero headline' } },
-    { name: 'summary', type: 'textarea', required: true, localized: true },
-    { name: 'body', type: 'richText', localized: true },
-    { name: 'icon', type: 'select', required: true, options: toOptions(serviceIcons) },
+    {
+      name: 'promise',
+      type: 'text',
+      label: t('Promesa', 'Promise'),
+      required: true,
+      localized: true,
+      admin: { description: t('Titular principal de la landing', 'Landing hero headline') },
+    },
+    { name: 'summary', type: 'textarea', label: t('Resumen', 'Summary'), required: true, localized: true },
+    { name: 'body', type: 'richText', label: t('Contenido', 'Body'), localized: true },
+    {
+      name: 'icon',
+      type: 'select',
+      label: t('Icono', 'Icon'),
+      required: true,
+      options: bilingualOptions(serviceIcons, serviceIconLabels),
+    },
     {
       name: 'contactType',
       type: 'select',
+      label: t('Tipo de contacto', 'Contact type'),
       required: true,
-      options: toOptions(projectTypes),
-      admin: { description: 'Pre-selects this project type in the contact form' },
+      options: bilingualOptions(projectTypes, projectTypeLabels),
+      admin: {
+        description: t(
+          'Preselecciona este tipo de proyecto en el formulario de contacto',
+          'Pre-selects this project type in the contact form',
+        ),
+      },
     },
     {
       name: 'pricing',
       type: 'group',
+      label: t('Precios', 'Pricing'),
       fields: [
         {
           name: 'mode',
           type: 'select',
+          label: t('Modalidad', 'Mode'),
           required: true,
           defaultValue: 'one-off',
           options: [
-            { label: 'One-off price from', value: 'one-off' },
-            { label: 'Monthly price from', value: 'monthly' },
-            { label: 'Custom quote', value: 'custom' },
-            { label: 'External store', value: 'store' },
+            { label: t('Pago único desde', 'One-off price from'), value: 'one-off' },
+            { label: t('Cuota mensual desde', 'Monthly price from'), value: 'monthly' },
+            { label: t('Presupuesto a medida', 'Custom quote'), value: 'custom' },
+            { label: t('Tienda externa', 'External store'), value: 'store' },
           ],
         },
-        { name: 'amount', type: 'number', min: 0, admin: { condition: (_, s) => s?.mode === 'one-off' || s?.mode === 'monthly' } },
-        { name: 'storeUrl', type: 'text', admin: { condition: (_, s) => s?.mode === 'store' } },
+        {
+          name: 'amount',
+          type: 'number',
+          label: t('Importe', 'Amount'),
+          min: 0,
+          admin: { condition: (_, s) => s?.mode === 'one-off' || s?.mode === 'monthly' },
+        },
+        {
+          name: 'storeUrl',
+          type: 'text',
+          label: t('URL de la tienda', 'Store URL'),
+          admin: { condition: (_, s) => s?.mode === 'store' },
+        },
       ],
     },
-    { name: 'typicalTime', type: 'text', required: true, localized: true },
-    { name: 'tags', type: 'text', hasMany: true },
+    { name: 'typicalTime', type: 'text', label: t('Plazo habitual', 'Typical time'), required: true, localized: true },
+    { name: 'tags', type: 'text', label: t('Etiquetas', 'Tags'), hasMany: true },
     {
       name: 'features',
       type: 'array',
+      label: t('Características', 'Features'),
+      labels: { singular: t('Característica', 'Feature'), plural: t('Características', 'Features') },
       localized: true,
-      fields: [{ name: 'text', type: 'text', required: true }],
+      fields: [{ name: 'text', type: 'text', label: t('Texto', 'Text'), required: true }],
     },
-    { name: 'note', type: 'text', localized: true },
+    { name: 'note', type: 'text', label: t('Nota', 'Note'), localized: true },
     {
       name: 'faq',
       type: 'array',
+      label: t('Preguntas frecuentes', 'FAQ'),
+      labels: { singular: t('Pregunta', 'Question'), plural: t('Preguntas', 'Questions') },
       localized: true,
       fields: [
-        { name: 'question', type: 'text', required: true },
-        { name: 'answer', type: 'textarea', required: true },
+        { name: 'question', type: 'text', label: t('Pregunta', 'Question'), required: true },
+        { name: 'answer', type: 'textarea', label: t('Respuesta', 'Answer'), required: true },
       ],
     },
-    { name: 'order', type: 'number', defaultValue: 0, admin: { position: 'sidebar' } },
+    { name: 'order', type: 'number', label: t('Orden', 'Order'), defaultValue: 0, admin: { position: 'sidebar' } },
     seoField(),
   ],
 }

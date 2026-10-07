@@ -7,8 +7,9 @@ import { contactStatuses } from '@/features/contact/options'
 
 describe('inbox banner', () => {
   it('pluralises the copy and supports Spanish', () => {
-    expect(inboxCopy(1).title).toBe('1 new contact request')
-    expect(inboxCopy(3).title).toBe('3 new contact requests')
+    expect(inboxCopy(1, 'en').title).toBe('1 new contact request')
+    expect(inboxCopy(3, 'en').title).toBe('3 new contact requests')
+    expect(inboxCopy(1).title).toBe('1 nueva solicitud de contacto')
     expect(inboxCopy(1, 'es').title).toBe('1 nueva solicitud de contacto')
     expect(inboxCopy(2, 'es').title).toBe('2 nuevas solicitudes de contacto')
   })
@@ -37,7 +38,8 @@ describe('inbox banner', () => {
 describe('status cell', () => {
   it('falls back to new for empty and to neutral for unknown statuses', () => {
     expect(renderToStaticMarkup(createElement(StatusCell, { cellData: '' }))).toContain('data-status="new"')
-    expect(renderToStaticMarkup(createElement(StatusCell, {}))).toContain('>new<')
+    expect(renderToStaticMarkup(createElement(StatusCell, {}))).toContain('>Nueva<')
+    expect(renderToStaticMarkup(createElement(StatusCell, { i18n: { language: 'en' } }))).toContain('>New<')
     const unknown = renderToStaticMarkup(createElement(StatusCell, { cellData: 'weird' }))
     expect(unknown).toContain('>weird<')
     expect(unknown).toContain('background:#a89584')

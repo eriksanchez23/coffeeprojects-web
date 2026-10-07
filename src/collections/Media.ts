@@ -1,10 +1,12 @@
 import type { CollectionConfig } from 'payload'
 import { isTeam } from '@/access'
+import { adminGroups, t } from '@/fields/labels'
 import { revalidateMedia, revalidateMediaDelete } from '@/hooks/revalidate'
 
 export const Media: CollectionConfig = {
   slug: 'media',
-  admin: { group: 'Content' },
+  labels: { singular: t('Archivo multimedia', 'Media file'), plural: t('Multimedia', 'Media') },
+  admin: { group: adminGroups.content },
   access: { read: () => true, create: isTeam, update: isTeam, delete: isTeam },
   hooks: { afterChange: [revalidateMedia], afterDelete: [revalidateMediaDelete] },
   upload: {
@@ -16,5 +18,5 @@ export const Media: CollectionConfig = {
       { name: 'og', width: 1200, height: 630, position: 'centre' },
     ],
   },
-  fields: [{ name: 'alt', type: 'text', required: true, localized: true }],
+  fields: [{ name: 'alt', type: 'text', label: t('Texto alternativo', 'Alt text'), required: true, localized: true }],
 }

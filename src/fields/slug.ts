@@ -1,4 +1,5 @@
 import type { Field, FieldHook } from 'payload'
+import { t } from '@/fields/labels'
 
 export function slugify(input: string): string {
   return input
@@ -21,10 +22,17 @@ export function slugField(source = 'title'): Field {
   return {
     name: 'slug',
     type: 'text',
+    label: t('Slug', 'Slug'),
     localized: true,
     index: true,
     required: true,
-    admin: { position: 'sidebar', description: 'URL segment. Generated from the title if left empty.' },
+    admin: {
+      position: 'sidebar',
+      description: t(
+        'Segmento de la URL. Se genera a partir del título si se deja vacío.',
+        'URL segment. Generated from the title if left empty.',
+      ),
+    },
     hooks: { beforeValidate: [fillFrom(source)] },
   }
 }

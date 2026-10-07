@@ -35,7 +35,7 @@ export default buildConfig({
       beforeDashboard: ['/components/admin/inbox-banner#InboxBanner'],
     },
   },
-  i18n: { supportedLanguages: { en, es } },
+  i18n: { supportedLanguages: { es, en }, fallbackLanguage: 'es' },
   collections: [Contacts, Services, Projects, TeamMembers, Faqs, Media, Users],
   globals: [Home, Pricing, SiteSettings, Legal],
   localization: {
