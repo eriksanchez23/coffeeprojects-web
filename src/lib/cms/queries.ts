@@ -4,6 +4,7 @@ import { unstable_rethrow } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
 import type { Faq, Home, Legal, Partner, Pricing, Project, Service, SiteSetting, TeamMember } from '@/payload-types'
 import type { Locale } from '@/i18n/locales'
+import { completeWebPlans } from '@/lib/pricing'
 import { payloadClient } from './client'
 import { withHomeDefaults, withLegalDefaults, withPartnersDefaults, withPricingDefaults, withSettingsDefaults } from './global-defaults'
 import { type SlugEntry, toLocaleSlugs, toSlugEntries } from './slugs'
@@ -114,5 +115,6 @@ export const getPartners = async (locale: Locale) => withPartnersDefaults(await 
 /** Web plan slugs of the published pricing global: the only values a contact `plan` may take. */
 export async function getPlanSlugs(): Promise<string[]> {
   const pricing = withPricingDefaults(await getGlobal<Pricing>('pricing', 'es'))
-  return (pricing.packages ?? []).map((p) => p.slug)
+  // Only priced plans: rows left over from an older pricing model are hidden on the page, so they must not validate either.
+  return completeWebPlans(pricing.packages).map((p) => p.slug)
 }

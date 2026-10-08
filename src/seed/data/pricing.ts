@@ -268,6 +268,8 @@ export const pricing: SeedDoc<PricingShared, PricingLocalized> = {
           text: 'Devuelve la parte proporcional del descuento de la web. Ej.: Corporativa (descuento 500 €) con Esencial, baja en el mes 10: 14/24 × 500 € = 292 €.',
         },
         { title: 'Subir de plan', text: 'Siempre. De un plan de 24 meses a Pro, la permanencia pasa a 12 meses desde el cambio.' },
+        { title: 'Bajar de plan', text: 'Al terminar la permanencia, y no por debajo del plan mínimo de su tipo de web.' },
+        { title: 'Impago', text: 'Aviso a los 7 días, suspensión a los 15. Se reactiva al pagar.' },
       ],
       extras: {
         title: 'Tarifa de servicios',
@@ -469,6 +471,8 @@ export const pricing: SeedDoc<PricingShared, PricingLocalized> = {
           text: 'The client returns the proportional part of the website discount. E.g.: Business Website (€500 discount) with Essential, cancelled in month 10: 14/24 × €500 = €292.',
         },
         { title: 'Upgrading', text: 'Always possible. From a 24-month plan to Pro, the minimum term becomes 12 months from the change.' },
+        { title: 'Downgrading', text: 'Once the minimum term ends, and never below the minimum plan for your type of website.' },
+        { title: 'Non-payment', text: 'Reminder after 7 days, suspension after 15. Service resumes once paid.' },
       ],
       extras: {
         title: 'Service rates',
@@ -679,6 +683,11 @@ export const pricing: SeedDoc<PricingShared, PricingLocalized> = {
           title: 'Passer à une formule supérieure',
           text: 'Toujours possible. D’une formule de 24 mois à Pro, l’engagement passe à 12 mois à compter du changement.',
         },
+        {
+          title: 'Passer à une formule inférieure',
+          text: 'À la fin de l’engagement, et jamais en dessous de la formule minimale de votre type de site.',
+        },
+        { title: 'Impayé', text: 'Rappel au bout de 7 jours, suspension au bout de 15. Le service reprend dès le paiement.' },
       ],
       extras: {
         title: 'Tarifs des services',

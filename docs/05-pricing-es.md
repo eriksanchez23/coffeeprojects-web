@@ -58,7 +58,7 @@ Rows 8–10 are misaligned in the text export; this mapping is the ruling.
 
 ## Not published (internal)
 
-p.2 (v3 → v4 changes), p.8 (hosting costs and market position), p.10 (decisions and sources), the legal notice on permanence, and the p.9 rows *Bajar de plan* / *Impago*.
+p.2 (v3 → v4 changes), p.8 (hosting costs and market position), p.10 (decisions and sources) and the legal notice on permanence. All six p.9 permanence rows are published (Bajar de plan / Impago added after review).
 
 ## Services
 

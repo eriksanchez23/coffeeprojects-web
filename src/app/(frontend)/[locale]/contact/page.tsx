@@ -11,6 +11,7 @@ import { localizedPaths } from '@/i18n/paths'
 import { getPricing, getSettings } from '@/lib/cms/queries'
 import { JsonLd } from '@/components/seo/json-ld'
 import { breadcrumbLd } from '@/lib/seo/jsonld'
+import { completeWebPlans } from '@/lib/pricing'
 import { absoluteUrl, buildMetadata } from '@/lib/seo/metadata'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -40,7 +41,7 @@ export default async function ContactPage({
     getPricing(locale),
   ])
   // ?plan= from the pricing CTAs: kept only when it is a package of the published pricing global.
-  const packages = pricing.packages ?? []
+  const packages = completeWebPlans(pricing.packages)
   const plan = resolvePlan(Array.isArray(sp.plan) ? sp.plan[0] : sp.plan, packages.map((p) => p.slug))
   const planName = packages.find((p) => p.slug === plan)?.name
   const alternates = localizedPaths('/contact')
