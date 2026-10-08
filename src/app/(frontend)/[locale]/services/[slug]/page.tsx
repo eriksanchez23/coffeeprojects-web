@@ -124,8 +124,8 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
               </div>
             )}
             {s.note && <p className="text-sm text-ink-2">{s.note}</p>}
-            {/* Web and maintenance are priced as packages on /pricing (S14). */}
-            {(s.contactType === 'web' || s.contactType === 'maintenance') && (
+            {/* Web, online stores and maintenance are priced as plans on /pricing (S15). */}
+            {(s.contactType === 'web' || s.contactType === 'ecommerce' || s.contactType === 'maintenance') && (
               <Link href="/pricing" className="text-sm font-medium text-amber hover:text-amber-hi">
                 {tp('seePackages')} <span aria-hidden>→</span>
               </Link>

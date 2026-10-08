@@ -73,12 +73,12 @@
 
 | Servicio | Promesa (landing hero) | Desde | Plazo típico |
 |----------|------------------------|-------|--------------|
-| Webs & landing pages | Una web rápida, bonita y pensada para traer clientes. | 300 € + IVA (ver paquetes, docs/05-pricing-es.md) | 1-2 semanas |
-| Tiendas online | Vende online con una tienda segura, rápida y fácil de gestionar. | 2.500 € | 4-8 semanas |
+| Webs & landing pages | Una web rápida, bonita y pensada para traer clientes. | 349 € + IVA (Landing Page con mantenimiento; ver planes v4, docs/05-pricing-es.md) | 1-2 semanas |
+| Tiendas online | Vende online con una tienda segura, rápida y fácil de gestionar. | 1.490 € + IVA (Tienda Online con mantenimiento; ver planes v4) | 4-8 semanas |
 | Scripts FiveM | Recursos optimizados para que tu servidor RP destaque. | Ver tienda | Días |
 | Servidores FiveM llave en mano | Tu servidor completo, configurado y listo para tu comunidad. | 800 € | 1 semana |
 | Bots de Discord | Automatiza y protege tu comunidad con un bot a medida. | 120 € | 1-2 semanas |
-| Mantenimiento web mensual | Tu web siempre rápida, segura y actualizada, la hayamos hecho nosotros o no. | 20 €/mes + IVA (ver paquetes, docs/05-pricing-es.md) | Respuesta 24h laborables |
+| Mantenimiento web mensual | Tu web siempre rápida, segura y actualizada, la hayamos hecho nosotros o no. | 25 €/mes + IVA (plan Esencial; ver planes v4, docs/05-pricing-es.md) | Respuesta 24h laborables |
 | Desarrollo a medida | Software hecho a tu medida: automatizaciones, integraciones y dashboards. | A medida | 2-12 semanas |
 
 > Note: the current site says "1-2 sem" for webs but the FAQ says "Una tienda: 3-5 semanas" while the card says "4-8 sem". **Team must confirm the real timeline for online stores** before migrating.
@@ -110,3 +110,12 @@ Migrar las 10 preguntas actuales de coffeeprojects.es (revisadas para 3 miembros
 - "¿Cómo trabajáis si estáis en ciudades diferentes?" → mencionar Murcia, Tarancón y resto de España.
 - Idiomas de atención: español e inglés (añadir francés solo si se confirma Q9).
 - Timeline de tiendas online coherente con la card (ver nota §6).
+
+## 11. Gana dinero con nosotros (S16)
+
+Página `/gana-dinero` (EN `/en/earn-with-us`, FR `/fr/gagnez-avec-nous`), editable en el panel (global «Gana dinero con nosotros»). Fuente: `docs/sources/comisiones-colaboradores.txt`; textos ES/EN/FR en `src/seed/data/partners.ts`.
+
+- Comisión: 10 % del precio de la web sin IVA si el cliente la contrata con cualquier plan de mantenimiento, 5 % si solo la web (porcentajes editables en el panel).
+- Aviso destacado: **sin compra no hay comisión**. Si el colaborador presenta a alguien interesado pero al final no contrata ningún paquete, no se genera ningún pago.
+- La tabla de comisiones se calcula sola con los precios del global Precios (v4): p. ej. Landing Page 349 € con mantenimiento, 34,90 €; 590 € solo la web, 29,50 €.
+- Mantenimiento que se menciona: los planes v4 del global Precios (Esencial, Plus, Pro). «Premium 139 €/mes» y «2 a 25 cambios» del PDF son restos de v3 y no se publican.
