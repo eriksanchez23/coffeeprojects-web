@@ -18,7 +18,7 @@ import type { Contact } from '@/payload-types'
 import { clientEmail, teamEmail, teamRecipients } from './emails'
 import { type ContactResult, handleContact } from './handle-contact'
 import { clientIp, hashIp } from './ip'
-import { buildQuote, type QuoteLabels, quoteSummaryText } from './quote'
+import { buildQuote, quoteLabelsFrom, quoteSummaryText } from './quote'
 import { isRateLimited } from './rate-limit'
 import { toContactRecord } from './record'
 import { formDataToObject } from './schema'
@@ -71,7 +71,7 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
         getTranslations({ locale: input.locale, namespace: 'contact' }),
       ])
       const plan = input.plan ? completeWebPlans(pricing.packages).find((p) => p.slug === input.plan) : undefined
-      return quoteSummaryText(buildQuote({ type: input.projectType, plan, services }), input.locale, t.raw('quote') as QuoteLabels)
+      return quoteSummaryText(buildQuote({ type: input.projectType, plan, services }), input.locale, quoteLabelsFrom(t))
     },
     createContact: async (data) => {
       saved = await payload.create({ collection: 'contacts', overrideAccess: true, data: toContactRecord(data, { marketing, attribution }) })

@@ -41,6 +41,16 @@ export type QuoteLabels = {
 }
 export type QuoteLine = { label: string; value: string }
 
+const LABEL_KEYS = ['plan', 'price', 'withMaintenance', 'webOnly', 'time', 'from', 'perMonth', 'custom', 'vat'] as const
+
+/**
+ * Labels from next-intl's `t` for the `contact` namespace. Messages are precompiled at build time, so `t.raw`
+ * does not return strings: the templates are rebuilt by passing the `{price}` placeholder as the value.
+ */
+export function quoteLabelsFrom(t: (key: `quote.${(typeof LABEL_KEYS)[number]}`, values?: { price: string }) => string): QuoteLabels {
+  return Object.fromEntries(LABEL_KEYS.map((k) => [k, t(`quote.${k}`, { price: '{price}' })])) as QuoteLabels
+}
+
 const isAmount = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v)
 
 /** Amount with VAT, rounded to cents. */

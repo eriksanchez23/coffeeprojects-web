@@ -6,7 +6,7 @@ import { Container } from '@/components/ui/container'
 import { GlassCard } from '@/components/ui/glass-card'
 import { projectTypes } from '@/features/contact/options'
 import { resolvePlan } from '@/features/contact/plan'
-import { buildQuote, type QuoteLabels, quoteLines } from '@/features/contact/quote'
+import { buildQuote, quoteLabelsFrom, quoteLines } from '@/features/contact/quote'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import { getPricing, getServices, getSettings } from '@/lib/cms/queries'
@@ -46,7 +46,7 @@ export default async function ContactPage({
   const plan = resolvePlan(Array.isArray(sp.plan) ? sp.plan[0] : sp.plan, packages.map((p) => p.slug))
   const planDoc = packages.find((p) => p.slug === plan)
   // S17: price with VAT + estimated time for every project type, so the select can switch them client-side.
-  const quoteLabels = t.raw('quote') as QuoteLabels
+  const quoteLabels = quoteLabelsFrom(t)
   const quotes = Object.fromEntries(
     projectTypes.map((type) => [type, quoteLines(buildQuote({ type, plan: planDoc, services }), locale, quoteLabels)]),
   )

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildQuote, quoteLines, quoteSummaryText, serviceForType, withVat } from '@/features/contact/quote'
+import { buildQuote, quoteLabelsFrom, quoteLines, quoteSummaryText, serviceForType, withVat } from '@/features/contact/quote'
 
 const labels = {
   title: 'Precio final y plazo estimado',
@@ -106,5 +106,16 @@ describe('quoteLines / quoteSummaryText', () => {
   it('only uses characters that the WIN1252 dev database can store', () => {
     const text = quoteSummaryText(buildQuote({ type: 'web', plan: pro, services }), 'fr', { ...labels, from: 'à partir de {price}' })
     expect(text).not.toMatch(/[ →]/)
+  })
+})
+
+describe('quoteLabelsFrom', () => {
+  it('rebuilds the {price} templates from a next-intl style translator (messages are precompiled)', () => {
+    const messages: Record<string, string> = { 'quote.from': 'desde {price}', 'quote.perMonth': '{price}/mes' }
+    const t = (key: string, values?: { price: string }) => (messages[key] ?? key).replace('{price}', values?.price ?? '')
+    const l = quoteLabelsFrom(t)
+    expect(l.from).toBe('desde {price}')
+    expect(l.perMonth).toBe('{price}/mes')
+    expect(l.vat).toBe('quote.vat')
   })
 })
