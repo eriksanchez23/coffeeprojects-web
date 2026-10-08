@@ -34,6 +34,8 @@ export default buildConfig({
     components: {
       graphics: { Logo: '/components/admin/logo#Logo', Icon: '/components/admin/icon#Icon' },
       beforeDashboard: ['/components/admin/inbox-banner#InboxBanner'],
+      // S20: the logged-in user's open assigned requests, under the nav links.
+      afterNavLinks: ['/components/admin/assigned-requests#AssignedRequests'],
     },
   },
   i18n: { supportedLanguages: { es, en }, fallbackLanguage: 'es' },

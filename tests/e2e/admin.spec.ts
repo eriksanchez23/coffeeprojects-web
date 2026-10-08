@@ -50,6 +50,25 @@ test.describe('admin panel', () => {
     expect(after.replies ?? []).toHaveLength((contact.replies ?? []).length)
   })
 
+  test('the sidebar lists the open requests assigned to me (S20)', async ({ page }) => {
+    const login = await page.request.post('/api/users/login', { data: { email, password } })
+    expect(login.ok()).toBe(true)
+    const me = ((await (await page.request.get('/api/users/me')).json()) as { user: { id: number } }).user
+    const found = await page.request.get('/api/contacts?where[email][equals]=e2e-inbox-1@example.com&depth=0')
+    const contact = ((await found.json()) as { docs: { id: number; name: string }[] }).docs[0]!
+    const assign = (assignedTo: number | null) => page.request.patch(`/api/contacts/${contact.id}`, { data: { assignedTo, status: 'new' } })
+    expect((await assign(me.id)).ok()).toBe(true)
+    try {
+      await page.goto('/admin')
+      const box = page.getByTestId('assigned-requests')
+      await expect(box).toContainText(/Mis solicitudes abiertas|My open requests/)
+      await expect(box.getByRole('link', { name: new RegExp(contact.name) })).toHaveAttribute('href', `/admin/collections/contacts/${contact.id}`)
+      expect(await box.getByRole('link', { name: /Ver todas|View all/ }).getAttribute('href')).toContain(`[assignedTo][equals]=${me.id}`)
+    } finally {
+      await assign(null)
+    }
+  })
+
   test('the reply endpoint rejects anonymous callers', async ({ playwright, baseURL }) => {
     const anon = await playwright.request.newContext({ baseURL })
     const res = await anon.post('/api/contacts/1/reply', { data: { subject: 'Re: x', message: 'x' } })
