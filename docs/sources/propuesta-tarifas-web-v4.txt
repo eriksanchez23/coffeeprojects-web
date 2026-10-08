@@ -1,0 +1,434 @@
+PROPUESTA INTERNA · V4 · OCTUBRE 2026
+
+Tarifas v4:
+precios ajustados,
+límites claros.
+
+Esta versión aplica la revisión externa de la v3. Subimos Corporativa y Tienda para no regalar
+margen, añadimos una Landing Premium para proyectos tipo Don Panini, ponemos límites
+concretos (idiomas, productos, cambios al mes), simplificamos los descuentos y revisamos
+el coste real del alojamiento.
+
+TIPO DE WEB                         CON MANTENIMIENTO              SOLO LA WEB            PLAN MÍNIMO
+
+Landing Page · producto de entrada                       349 €               590 €               Esencial
+Landing Premium NUEVO                                   590 €                890 €               Esencial
+Custom                                        desde 490 €          desde 790 €
+Web Corporativa                                         890 €               1.390 €                    Plus
+Tienda Online                                          1.490 €              2.190 €              Esencial
+Web Profesional                              desde 1.790 €       desde 2.590 €
+                                                                                                       Plus
+                                                                                                        Pro
+
+  MANTENIMIENTO (OPCIONAL)                                CUOTA  CAMBIOS AL MES           PERMANENCIA
+                                                                                               24 meses
+  Esencial                                     25 €/mes                                2       24 meses
+  Plus                                         45 €/mes                                6       12 meses
+  Pro                                          79 €/mes                               12       12 meses
+  Soporte a medida (antes Premium)  bajo presupuesto                      a medida
+Todos los precios + IVA.
+
+PROPUESTA DE TARIFAS V4                                                                         1 / 10
+00 · QUÉ CAMBIA RESPECTO A LA V3
+
+Cambios y por qué
+
+Resumen de la revisión aplicada. El resto de la propuesta se mantiene igual que en la v3.
+
+TEMA                  V3                    V4                     MOTIVO
+
+Web Corporativa       690 € / 1.090 €       890 € / 1.390 €        La media del mercado es 1.500–2.000 €. Estar
+                                                                   tan por debajo no vende más, solo deja
+Tienda Online         1.190 € / 1.790 €     1.490 € / 2.190 €      menos margen.
+Landing Premium       No existía
+                                            590 € / 890 €          Mismo motivo. Sigue en la parte baja del
+Idiomas               Tienda hasta 3,                              rango de tiendas para pymes.
+                      Profesional hasta 5   1 idioma adicional
+                                            incluido               Proyectos como Don Panini (≈9 secciones,
+Productos de la       Sin límite                                   vídeo, dos locales) no encajaban en ningún
+tienda                                      Catálogo sin límite;   pack.
+                                            cargamos hasta 30
+Cambios del           “Puntuales”,                                 Con la tarifa de extras, 3–5 idiomas valían
+mantenimiento         “frecuentes”…         2 / 6 / 12 al mes      540–1.600 €, más que la propia web. El resto
+                                                                   se cobra aparte.
+Descuentos en extras  Columna “con plan” +  Solo dos columnas
+                      15–40 % según plan                           Si los subís vosotros, “sin límite” es trabajo
+                                            Soporte a medida,      gratis. El resto lo sube el cliente o se cobra por
+Premium               139 €/mes, mejoras    bajo presupuesto       packs.
+                      continuas             Desde Plus
+                                            (confirmado)           Sin números no hay límite real. Se cuentan
+Correo profesional    Desde Plus            “desde” con base       cambios, no horas.
+                                            detallada
+Web Profesional       “desde” sin detallar  Landing solo web: 100  Los descuentos se sumaban: un idioma
+                                            % por adelantado       pasaba de 320 € a 108 €.
+Pago                  50 / 50 en todo       Coste real calculado
+                                            (pág. 8)               Era el plan que más trabajo podía comer. Se
+Alojamiento           No revisado                                  mantiene Plus como escalón intermedio.
+
+                                                                   Da trabajo de soporte y es un buen motivo
+                                                                   para subir de plan.
+
+                                                                   El cliente sabe exactamente qué incluye el
+                                                                   precio base.
+
+                                                                   Con plan, la cuota domiciliada ya asegura el
+                                                                   compromiso.
+
+                                                                   El plan gratuito de Vercel no permite uso
+                                                                   comercial.
+
+PROPUESTA DE TARIFAS V4                                                                    2 / 10
+01 · PLANES DE WEB · PAGO ÚNICO (1/2)
+
+Landings y webs de empresa
+
+Precios + IVA. Todas incluyen diseño responsive, SSL, textos legales, 2 rondas de revisiones y
+30 días de garantía de corrección de fallos.
+
+                                                                                                                                            NUEVO
+
+Landing Page                                          Landing Premium
+
+Producto de entrada: estar en Google y recibir        Para restaurantes, tiendas físicas y negocios con
+contactos.                                            varios locales.
+
+CON MANTENIMIENTO                                     CON MANTENIMIENTO
+
+349 € + IVA                                           590 € + IVA
+
+SOLO LA WEB              590 €                        SOLO LA WEB                                                                                  890 €
+
+✓ Una página con hasta 5 secciones                    ✓ Una página con hasta 10 secciones
+✓ Formulario de contacto + botón de WhatsApp          ✓ Vídeo de cabecera y galería de fotos
+✓ SEO básico on-page                                  ✓ Hasta 2 locales con mapa, horarios y contacto
+✓ Alta de 1 ficha de Google Business Profile          ✓ Diseño a medida con animaciones
+                                                      ✓ SEO básico + hasta 2 fichas de Google Business
+
+PRECIO REDUCIDO DESDE    Esencial
+
+                                                      PRECIO REDUCIDO DESDE                                                                        Esencial
+
+Custom                                                Web Corporativa
+
+Plan personalizado, por ejemplo una landing con       La web de empresa para atraer clientes y transmitir
+panel de control privado.                             confianza.
+
+CON MANTENIMIENTO                                     CON MANTENIMIENTO
+
+desde 490 € + IVA                                     890 € + IVA
+
+SOLO LA WEB              desde 790 €                  SOLO LA WEB            1.390 €
+
+✓ Base de Landing Page (hasta 5 secciones)            ✓ Hasta 6 páginas (inicio, servicios, nosotros…)
+✓ Panel de control privado                            ✓ Blog activado y listo para publicar
+✓ Funciones a medida, presupuestadas aparte           ✓ SEO local on-page + Analytics y Search Console
+✓ SEO básico + 1 ficha de Google Business             ✓ Mapa, reseñas de Google y formularios
+
+PRECIO REDUCIDO DESDE                           Plus  PRECIO REDUCIDO DESDE                                                                        Esencial
+
+PROPUESTA DE TARIFAS V4                                                                                                                            3 / 10
+01 · PLANES DE WEB · PAGO ÚNICO (2/2)
+
+Tiendas y webs a medida
+
+Precios + IVA. Idiomas, productos y funciones por encima de lo incluido se cobran con la
+tarifa de servicios (pág. 7).
+
+            RECOMENDADO
+
+Tienda Online                                          Web Profesional
+
+Para vender por internet, desde pocos productos        A medida con funciones avanzadas. Precio final tras
+hasta catálogos grandes.                               reunión.
+
+CON MANTENIMIENTO                                      CON MANTENIMIENTO
+
+1.490 € + IVA                                          desde 1.790 € + IVA
+
+SOLO LA WEB              2.190 €                       SOLO LA WEB            desde 2.590 €
+
+✓ Todo lo de la Web Corporativa                        EL PRECIO BASE INCLUYE EXACTAMENTE
+✓ Catálogo sin límite de productos
+✓ Carga de hasta 30 productos incluida (con            ✓ Hasta 6 páginas
+                                                       ✓ Panel de control privado con acceso de usuarios
+     variantes)                                        ✓ Sistema de reservas o citas online
+✓ Panel de control privado                             ✓ 1 automatización a WhatsApp (ej. aviso de nueva
+✓ Pagos con tarjeta, Bizum y PayPal · envíos
+✓ 1 idioma adicional incluido                               reserva)
+                                                       ✓ 1 integración (calendario o CRM)
+                                              Plus     ✓ 1 idioma adicional incluido
+
+PRECIO REDUCIDO DESDE
+
+                                                       PRECIO REDUCIDO DESDE              Pro
+
+FORMA DE PAGO                                          “SOLO LA WEB”
+
+Con mantenimiento: 50 % al aceptar y 50 % a la         Incluye la instalación en el hosting que contrate el
+entrega. La cuota domiciliada ya asegura el            cliente y la configuración de su dominio. Después,
+compromiso.                                            cambios y arreglos se cobran con la tarifa “sin plan”.
+Solo la web: 100 % por adelantado en la Landing Page;
+50 / 50 en el resto.
+
+FUNCIONES EXTRA EN LA WEB PROFESIONAL
+
+Cualquier función por encima de la base (más automatizaciones, más integraciones, pasarelas especiales, áreas de
+usuario complejas) se presupuesta por escrito antes de empezar. Así el “desde” nunca se convierte en una sorpresa para
+el cliente ni en trabajo gratis para vosotros.
+
+PROPUESTA DE TARIFAS V4                                                                   4 / 10
+02 · MANTENIMIENTO OPCIONAL · CUOTA MENSUAL
+
+Tres planes con límites claros
+
+Opcional, pero con cualquier plan la web sale más barata. Todos incluyen hosting, dominio,
+SSL, actualizaciones de seguridad y copias de seguridad. Precios + IVA.
+
+                                                                                                 RECOMENDADO
+
+Esencial                      Plus                            Pro
+
+Web siempre online y segura.  Para negocios que actualizan a  Para tiendas y webs de venta.
+                              menudo.
+
+25 €/mes                      45 €/mes                        79 €/mes
+
+PERMANENCIA  24 m             PERMANENCIA              24 m   PERMANENCIA                                     12 m
+
+✓ Hosting, dominio y SSL      ✓ Todo lo de Esencial           ✓ Todo lo de Plus
+✓ Actualizaciones de          ✓ Copia diaria + vigilancia     ✓ 12 cambios al mes,
+
+     seguridad                     24/7                            incluidos pequeños ajustes
+✓ Copia de seguridad          ✓ 6 cambios al mes                   de diseño
+                              ✓ 2 cuentas de correo           ✓ Actualización de tienda con
+     semanal                                                       pruebas
+✓ 2 cambios al mes                 profesional                ✓ SEO mensual: 1 mejora +
+✓ Soporte por email · 72 h    ✓ Respuesta en 48 h                  informe
+                              ✓ Informe trimestral            ✓ 5 cuentas de correo
+     laborables                                               ✓ WhatsApp · respuesta en 24
+                                                                   h
+– Sin correo profesional
+
+SOPORTE A MEDIDA (ANTES PREMIUM)
+
+No se publica como plan. Para clientes que necesitan mejoras continuas, reunión mensual, SEO con contenido o
+mantenimiento de automatizaciones complejas, se hace un presupuesto con lo que incluye exactamente, como
+referencia desde 139 €/mes y 12 meses de permanencia.
+
+¿QUÉ CUENTA COMO UN CAMBIO?                            REGLAS DEL CUPO
+
+Una petición concreta sobre algo que ya existe: un     Los cambios no usados no se acumulan al mes
+texto, una foto, un precio, un horario, un producto o  siguiente. Si el cliente pasa de su cupo, cada cambio
+una noticia. Lo nuevo (páginas, funciones, rediseños)  extra cuesta 20 €, o puede subir de plan.
+es un servicio extra.
+
+PROPUESTA DE TARIFAS V4                                                                                       5 / 10
+03 · POR QUÉ CONTRATAR MANTENIMIENTO
+
+Es opcional, pero sale a cuenta
+
+Argumento de venta para el cliente: lo que cubre el mantenimiento y lo que le costaría
+resolverlo por su cuenta.
+
+−241 € a −800 €                                                                                         Hosting + dominio + SSL
+
+Web más barata desde el primer día                                                                      Incluidos, sin otro proveedor
+
+Con cualquier plan, la web cuesta bastante menos                                                        Por su cuenta pagaría unos 80–130 € al año y tendría
+que “solo la web”.                                                                                      que acordarse de renovar.
+
+Seguridad                                                                                               Copias de seguridad
+
+Actualizaciones y vigilancia                                                                            Si algo se rompe, se recupera
+
+Una web sin actualizar es la principal puerta a                                                         Semanales o diarias según el plan. Sin plan, recuperar
+hackeos. Sin plan, una limpieza cuesta 290 €.                                                           una web caída cuesta 150 €.
+
+2 a 12 cambios/mes                                                                                      Extras a mitad de precio
+
+Incluidos en la cuota                                                                                   Páginas, idiomas, productos…
+
+Textos, fotos, precios, horarios… Sin plan, cada cambio                                                 Todo lo que se añada después cuesta
+cuesta 35 €.                                                                                            aproximadamente la mitad con plan.
+
+Con mantenimiento vs. solo la web                                                                       SOLO LA WEB
+
+                                                                                     CON MANTENIMIENTO  Completo
+                                                                                                        Los contrata y paga el cliente
+Precio de la web               Reducido                                                                 90 € por intervención
+                                                                                                        35 € cada uno
+Hosting y dominio              Incluidos                                                                150–290 € por incidencia
+                                                                                                        30 días
+Actualizaciones y seguridad    Incluidas                                                                Ninguna
+
+Cambios                        2–12 al mes según plan
+
+Si la web se cae o la hackean  Lo resolvemos
+
+Garantía de fallos             Mientras dure el plan
+
+Permanencia                    12 o 24 meses
+
+EJEMPLO: WEB CORPORATIVA A 2 AÑOS
+
+Con Esencial: 890 € + 25 € × 24 = 1.490 €, con hosting, dominio, seguridad y hasta 48 cambios.
+Solo la web: 1.390 € + hosting y dominio propios (~200 €) = ~1.590 €, sin seguridad ni cambios. Con mantenimiento sale
+más barato aunque no pida ningún cambio.
+
+PROPUESTA DE TARIFAS V4                                                                                                                      6 / 10
+04 · SERVICIOS EXTRA Y COMBINACIONES
+
+Tarifa de servicios
+
+Solo dos precios: con cualquier plan o sin plan. Sin descuentos adicionales por nivel de plan.
+Precios + IVA.
+
+SERVICIO                                                                         CON PLAN       SIN PLAN
+
+Cambio (texto, foto, precio, horario)                    En el cupo · 20 € fuera                      35 €
+Sección nueva dentro de una página                                                 45 €               90 €
+Página nueva                                                                       75 €              150 €
+Pack de 25 productos cargados                                                      45 €               90 €
+Idioma adicional                                                                  180 €              320 €
+Redacción de textos (por página)                                                   30 €               50 €
+Logo sencillo                                                                     150 €              220 €
+Actualización de seguridad                                                                            90 €
+Recuperar web caída                                                           Incluida               150 €
+Limpieza tras hackeo                                                          Incluido              290 €
+Rediseño o funciones nuevas                                                                Presupuesto
+                                                                                  120 €
+                                                                       Presupuesto
+
+Combinaciones habituales                     WEB  CUOTA  1.ER AÑO                          TOTAL PERMANENCIA
+
+  COMBINACIÓN                           349 €      25 €       649 €                                            949 €
+                                        590 €      25 €       890 €                                            1.190 €
+  Landing + Esencial (24 m)             490 €      45 €     1.030 €                                           1.570 €
+  Landing Premium + Esencial (24 m)     890 €      25 €      1.190 €                                          1.490 €
+  Custom + Plus (24 m)                  890 €      45 €     1.430 €                                           1.970 €
+  Corporativa + Esencial (24 m)        1.490 €     45 €    2.030 €                                           2.570 €
+  Corporativa + Plus (24 m)            1.490 €     79 €    2.438 €                                           2.438 €
+  Tienda + Plus (24 m)                 1.790 €     79 €     2.738 €                                          2.738 €
+  Tienda + Pro (12 m)
+  Profesional + Pro (12 m)
+
+PROPUESTA DE TARIFAS V4                                                                         7 / 10
+05 · COSTES DE ALOJAMIENTO Y MERCADO
+
+¿Caben los costes en 25 €/mes?
+
+El plan gratuito de Vercel (Hobby) es solo para proyectos personales y no comerciales. Para
+webs de clientes hace falta Vercel Pro u otro proveedor.
+
+CONCEPTO                 COSTE                                          CÓMO SE REPARTE
+
+Vercel Pro               20 $/persona/mes (24 $ con pago mensual),      Fijo por persona del equipo, se
+                         con 1 TB de transferencia incluido             reparte entre todos los clientes
+Alternativa: Cloudflare  Plan gratuito que permite uso comercial
+Pages                                                                   Coste fijo cero mientras se esté
+Tiendas con WordPress /  Hosting compartido 3–9 €/mes por web           dentro de sus límites
+WooCommerce
+Dominio                  10–15 €/año (≈1 €/mes)                         Por cliente (Vercel no aloja
+Correo profesional       Según proveedor y número de buzones            WordPress)
+
+                                                                        Por cliente
+
+                                                                        Solo en Plus y Pro
+
+Margen del plan Esencial (25 €) con Vercel Pro, 2 personas (~37 €/mes)
+
+CLIENTES ALOJADOS        VERCEL POR CLIENTE                       + DOMINIO  COSTE TOTAL     MARGEN
+
+3 clientes                               12,3 €                         1 €  13,3 €                       11,7 €
+
+5 clientes                               7,4 €                          1 €  8,4 €           16,6 €
+
+10 clientes                              3,7 €                          1 €  4,7 €           20,3 €
+
+20 clientes                              1,9 €                          1 €  2,9 €                        22,1 €
+
+Recomendación: solo pagar asiento en Vercel para quien despliega, y configurar un límite de gasto para evitar sustos por picos
+de tráfico. Para las primeras webs, valorad Cloudflare Pages.
+
+Posición frente al mercado español
+
+SERVICIO                 RANGO HABITUAL                                      CON MANT.       SOLO WEB
+
+Landing / una página     200–500 € freelance · 800–1.400 € profesional       349–590 €    590–890 €
+
+Web corporativa          1.500–2.000 € de media                               890 €          1.390 €
+Tienda online            800–2.000 € básica · 1.500–5.000 € pyme             1.490 €         2.190 €
+
+Mantenimiento            50–150 €/mes habitual, desde ~30 €                               25–79 €/mes
+
+PROPUESTA DE TARIFAS V4                                                                      8 / 10
+06 · IMPLEMENTACIÓN Y PERMANENCIA
+
+Puesta en marcha
+
+       1. Web de precios en dos pasos: “1. Elige tu web” con el precio con mantenimiento grande y el de “solo
+          la web” debajo; “2. Elige tu mantenimiento (opcional)” con la tabla de ventajas.
+
+      2. Contrato tipo con alcance cerrado (secciones, idiomas, productos cargados), precio aplicado,
+          permanencia, devolución del descuento por baja anticipada y cupo de cambios.
+
+      3. Dominios a nombre del cliente, con vosotros como gestores.
+      4. Un solo canal de peticiones (email o formulario; WhatsApp solo en Pro) y un registro de cambios
+
+          usados por cliente y mes.
+      5. Cuotas domiciliadas (SEPA o tarjeta con cobro automático). Pago anual adelantado con 10 % de
+
+          descuento.
+      6. Alojamiento comercial contratado (Vercel Pro u otro) antes de publicar la primera web de cliente.
+      7. Revisar precios y cupos a los 6 meses, con datos reales de cuántos cambios pide cada cliente.
+
+Reglas de la permanencia
+
+SITUACIÓN        QUÉ PASA
+
+Inicio           Empieza el día de entrega de la web.
+
+Fin              Renovación mensual, baja con 30 días de preaviso. Si se da de baja, se le entrega la web
+
+                 completa y se instala en su hosting sin coste.
+
+Baja anticipada  Devuelve la parte proporcional del descuento de la web. Ej.: Corporativa (descuento 500 €)
+                 con Esencial, baja en el mes 10 → 14/24 × 500 € = 292 €.
+
+Subir de plan    Siempre. De un plan de 24 meses a Pro, la permanencia pasa a 12 meses desde el cambio.
+
+Bajar de plan    Al terminar la permanencia, y no por debajo del mínimo de su tipo de web.
+
+Impago           Aviso a los 7 días, suspensión a los 15. Se reactiva al pagar.
+
+PROPUESTA DE TARIFAS V4                                                                     9 / 10
+07 · DECISIONES Y FUENTES                                        ABIERTAS
+
+Decisiones                                                         1. Custom (desde 490 €) queda por debajo de
+                                                                       Landing Premium (590 €) aunque lleva panel
+       CERRADAS EN LA V4                                               privado. ¿Subirlo a desde 690 € / 990 €?
+         1. Tres planes públicos: Esencial, Plus y Pro. Premium
+            pasa a soporte a medida.                              2. ¿Vercel Pro o Cloudflare Pages para alojar?
+        2. Correo profesional solo desde Plus.
+        3. Web Profesional con “desde”, detallando lo que         3. ¿Los cupos de 2 / 6 / 12 cambios se ajustan a lo
+            incluye la base.                                           que piden vuestros clientes actuales?
+        4. Landing “solo la web”: 100 % por adelantado. Con
+            plan, 50 / 50.                                        4. El documento de comisiones usa precios de la v3:
+                                                                       hay que actualizarlo.
+
+       AVISO LEGAL SOBRE LA PERMANENCIA
+
+      Con particulares, la Ley de Consumidores (art. 62.5) exige que la penalización sea proporcional al tiempo no cumplido; la
+      devolución proporcional del descuento va en esa línea. Que un abogado o gestor revise el contrato tipo antes de usarlo.
+
+FUENTES CONSULTADAS (OCTUBRE 2026)
+Trustlocal – Precios del diseño web en España · trustlocal.es/coste/diseno-web-coste
+GoDaddy – Cuánto cuesta crear una página web y su mantenimiento · godaddy.com/resources/es/crearweb
+Educación 3.0 – Coste de mantener una web (hosting y dominio) · educaciontrespuntocero.com
+Vendr – Vercel pricing (Hobby no comercial; Pro 20 $/usuario/mes anual, 24 $ mensual) · vendr.com/marketplace/vercel
+The Search Sherpa – Vercel fair use guidelines y alternativas · thesearchsherpa.com
+VPS Ranking – Vercel vs Cloudflare Pages (uso comercial en plan gratuito) · vpsranking.com/serverless/vercel
+Mundobytes – Penalización por permanencia y art. 62.5 LGDCU · mundobytes.com
+
+PROPUESTA DE TARIFAS V4                                          10 / 10
+

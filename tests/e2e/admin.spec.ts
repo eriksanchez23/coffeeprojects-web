@@ -25,7 +25,7 @@ test.describe('admin panel', () => {
       await expect(page).toHaveURL(/collections\/contacts\/\d+/, { timeout: 2_000 })
     }).toPass({ timeout: 15_000 })
     await page.locator('#field-status').click()
-    await page.getByRole('option', { name: 'in-progress' }).click()
+    await page.getByRole('option', { name: /^(En curso|In progress)$/ }).click()
     await page.getByRole('button', { name: /save|guardar/i }).click()
     await expect(page.getByText(/updated successfully|actualizado/i)).toBeVisible()
   })
