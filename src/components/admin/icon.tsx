@@ -1,7 +1,9 @@
+import { CupMark } from './cup-mark'
+
 export function Icon() {
   return (
-    <span role="img" aria-label="coffeeProjects" style={{ color: '#f5a742', fontSize: 20 }}>
-      ☕
+    <span role="img" aria-label="coffeeProjects" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+      <CupMark size={22} />
     </span>
   )
 }

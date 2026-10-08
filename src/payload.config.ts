@@ -70,6 +70,9 @@ export default buildConfig({
   plugins: [
     vercelBlobStorage({
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      // Keep the plugin's fields (e.g. _objectKey) in the schema even when disabled locally, so generated
+      // migrations match production, where the token is set and the plugin queries those columns.
+      alwaysInsertFields: true,
       collections: { media: true },
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
     }),
