@@ -48,7 +48,7 @@ Plan: `docs/03-implementation-plan.md` + `docs/plan/T00..T18` · Spec: `docs/01-
 | T19 pricing section | S14 | delegated (writer, opus) | done | adfbc41..a355d52 (approved; 1 polish round; R29 plan field, R30 badge) |
 | T18 staging deploy | S11 | human + agent | done | L26 |
 | T20 pricing v4 | S15 | delegated (writer, opus) | done (writer; awaiting review) | 2128c21 (migration 20261008_200736_pricing_v4; e2e pricing 10/10 desktop on a prod-like local DB) |
-| T21 partners page | S16 | delegated (writer, opus) | pending | — |
+| T21 partners page | S16 | delegated (writer, opus) | done (writer; awaiting review) | 0415e90..db9ce5f (migration 20261008_203534_partners; global `partners`; e2e partners/a11y/admin 34/34 desktop+mobile on a fresh migrated + seeded local DB) |
 
 Route evidence: large task (resume test fails: multi-session, external accounts, separate deliverables) → Writer trigger: one bounded writer per task.
 
