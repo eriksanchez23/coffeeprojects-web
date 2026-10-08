@@ -3,6 +3,7 @@ import { slugify } from '@/fields/slug'
 import { locales } from '@/i18n/locales'
 import { faqs } from '@/seed/data/faqs'
 import { home } from '@/seed/data/home'
+import { partners } from '@/seed/data/partners'
 import { pricing, pricingData } from '@/seed/data/pricing'
 import { projects } from '@/seed/data/projects'
 import { services } from '@/seed/data/services'
@@ -23,6 +24,7 @@ const localizedSets = {
   projects: projects.map((p) => p.localized),
   faqs: faqs.map((f) => f.localized),
   pricing: [pricing.localized],
+  partners: [partners.localized],
 }
 
 describe('seed data', () => {
@@ -226,6 +228,43 @@ describe('service prices follow the v4 price sheet', () => {
         expect(s.localized[locale].seo.title.length, `${s.localized.es.slug} ${locale}`).toBeLessThanOrEqual(60)
         expect(s.localized[locale].seo.description.length, `${s.localized.es.slug} ${locale}`).toBeLessThanOrEqual(160)
       }
+    }
+  })
+})
+
+describe('partner programme seed (S16)', () => {
+  // Every character of byte 0x80-0xFF in windows-1252, plus ASCII: what the local dev Postgres (WIN1252) can store.
+  const win1252 = new Set([...new TextDecoder('windows-1252').decode(Uint8Array.from({ length: 128 }, (_, i) => 128 + i))])
+  const notWin1252 = (s: string) => [...s].filter((c) => c.charCodeAt(0) > 127 && !win1252.has(c))
+  const strings = (v: unknown): string[] =>
+    typeof v === 'string' ? [v] : Array.isArray(v) ? v.flatMap(strings) : v && typeof v === 'object' ? Object.values(v).flatMap(strings) : []
+
+  it('uses the collaborator sheet rates', () => {
+    expect(partners.shared).toEqual({ rateWithMaintenance: 10, rateWebOnly: 5 })
+  })
+
+  it('every string is WIN1252-encodable', () => {
+    for (const locale of locales) expect(strings(partners.localized[locale]).flatMap(notWin1252), locale).toEqual([])
+  })
+
+  it('has the 4 steps and the same conditions in every locale, the no-purchase rule first', () => {
+    for (const locale of locales) {
+      expect(partners.localized[locale].steps).toHaveLength(4)
+      expect(partners.localized[locale].conditions).toHaveLength(partners.localized.es.conditions.length)
+    }
+    expect(partners.localized.es.conditions[0].topic).toBe('Sin compra no hay comisión')
+    expect(partners.localized.es.notice.text).toContain('no contrata ningún paquete, no se genera ningún pago')
+  })
+
+  it('names no v3 maintenance leftovers (S16 ruling)', () => {
+    const all = strings(partners.localized).join(' ')
+    expect(all).not.toMatch(/Premium 139|139 €|2 a 25 cambios/)
+  })
+
+  it('SEO texts fit the field limits (title 60, description 160) in every locale', () => {
+    for (const locale of locales) {
+      expect(partners.localized[locale].seo.title.length, locale).toBeLessThanOrEqual(60)
+      expect(partners.localized[locale].seo.description.length, locale).toBeLessThanOrEqual(160)
     }
   })
 })

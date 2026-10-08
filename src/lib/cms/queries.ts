@@ -2,10 +2,10 @@ import 'server-only'
 import { draftMode } from 'next/headers'
 import { unstable_rethrow } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
-import type { Faq, Home, Legal, Pricing, Project, Service, SiteSetting, TeamMember } from '@/payload-types'
+import type { Faq, Home, Legal, Partner, Pricing, Project, Service, SiteSetting, TeamMember } from '@/payload-types'
 import type { Locale } from '@/i18n/locales'
 import { payloadClient } from './client'
-import { withHomeDefaults, withLegalDefaults, withPricingDefaults, withSettingsDefaults } from './global-defaults'
+import { withHomeDefaults, withLegalDefaults, withPartnersDefaults, withPricingDefaults, withSettingsDefaults } from './global-defaults'
 import { type SlugEntry, toLocaleSlugs, toSlugEntries } from './slugs'
 
 type Slugged = 'services' | 'projects' | 'team-members'
@@ -97,7 +97,7 @@ export async function getAllSlugs(collection: Slugged): Promise<SlugEntry[]> {
   })
 }
 
-function getGlobal<T>(slug: 'home' | 'pricing' | 'site-settings' | 'legal', locale: Locale): Promise<T> {
+function getGlobal<T>(slug: 'home' | 'pricing' | 'partners' | 'site-settings' | 'legal', locale: Locale): Promise<T> {
   return read([`global:${slug}`, locale], [`global:${slug}`], async (draft) => {
     const payload = await payloadClient()
     return (await payload.findGlobal({ slug, locale, draft, depth: 1, overrideAccess: draft })) as T
@@ -109,6 +109,7 @@ export const getHome = async (locale: Locale) => withHomeDefaults(await getGloba
 export const getSettings = async (locale: Locale) => withSettingsDefaults(await getGlobal<SiteSetting>('site-settings', locale))
 export const getLegal = async (locale: Locale) => withLegalDefaults(await getGlobal<Legal>('legal', locale))
 export const getPricing = async (locale: Locale) => withPricingDefaults(await getGlobal<Pricing>('pricing', locale))
+export const getPartners = async (locale: Locale) => withPartnersDefaults(await getGlobal<Partner>('partners', locale))
 
 /** Web plan slugs of the published pricing global: the only values a contact `plan` may take. */
 export async function getPlanSlugs(): Promise<string[]> {

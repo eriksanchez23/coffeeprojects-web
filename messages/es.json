@@ -18,7 +18,8 @@
     "language": "Idioma",
     "home": "Inicio",
     "mainNav": "Navegación principal",
-    "mobileNav": "Navegación móvil"
+    "mobileNav": "Navegación móvil",
+    "partners": "Gana dinero con nosotros"
   },
   "common": {
     "from": "Desde",
@@ -138,6 +139,15 @@
     "withPlan": "Con plan",
     "withoutPlan": "Sin plan",
     "teaserMaintenance": "Mantenimiento opcional desde {price}: con cualquier plan, la web sale más barata."
+  },
+  "partners": {
+    "rates": "Tu comisión según lo que contrate el cliente",
+    "plan": "Tipo de web",
+    "priceWithMaintenance": "Precio con mantenimiento",
+    "priceWebOnly": "Precio solo la web",
+    "commission": "Tu comisión ({rate})",
+    "amountsNote": "Importes en euros, IVA no incluido.",
+    "perMonth": "{price}/mes"
   },
   "thanks": {
     "title": "¡Recibido! Ya estamos preparando el café.",

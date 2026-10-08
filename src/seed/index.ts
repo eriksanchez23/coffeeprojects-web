@@ -4,6 +4,7 @@ import { locales } from '@/i18n/locales'
 import { faqs } from './data/faqs'
 import { home, homeData } from './data/home'
 import { legal } from './data/legal'
+import { partners } from './data/partners'
 import { pricing, pricingData } from './data/pricing'
 import { projects } from './data/projects'
 import { services } from './data/services'
@@ -118,6 +119,12 @@ async function run() {
       await payload.updateGlobal({ slug: 'pricing', locale, data: { ...pricingData(locale, ids), _status: 'published' } as never })
     }
   } else payload.logger.info('skip seeded global pricing')
+
+  // Partner programme (S16): written once; panel edits are never overwritten (rates shared, texts per locale).
+  await upsertGlobal(payload, 'partners', partners.shared, partners.localized, {
+    drafts: true,
+    isSeeded: (d) => Boolean(d.title),
+  })
 
   // Services seeded before v4 keep their old prices (the seed never overwrites): re-price only those
   // still at a previous price-sheet amount, with the texts that quote the price.

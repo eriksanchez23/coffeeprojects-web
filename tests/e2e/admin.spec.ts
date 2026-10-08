@@ -44,6 +44,20 @@ test.describe('admin panel', () => {
       await expect(page.locator('#field-title')).toBeEditable()
     }
   })
+
+  test('the partner programme global is editable in every locale', async ({ page }) => {
+    const login = await page.request.post('/api/users/login', { data: { email, password } })
+    expect(login.ok()).toBe(true)
+    for (const [locale, title] of [
+      ['es', 'Gana dinero con nosotros'],
+      ['en', 'Earn with us'],
+      ['fr', 'Gagnez avec nous'],
+    ]) {
+      await page.goto(`/admin/globals/partners?locale=${locale}`)
+      await expect(page.locator('#field-title')).toHaveValue(title)
+      await expect(page.locator('#field-title')).toBeEditable()
+    }
+  })
 })
 
 test('the admin is not indexable', async ({ request }) => {

@@ -10,7 +10,8 @@
         "http://localhost:3000/servicios/webs-y-landing-pages",
         "http://localhost:3000/equipo",
         "http://localhost:3000/contacto",
-        "http://localhost:3000/presupuestos"
+        "http://localhost:3000/presupuestos",
+        "http://localhost:3000/gana-dinero"
       ],
       "numberOfRuns": 3,
       "settings": { "formFactor": "mobile", "screenEmulation": { "mobile": true } }
@@ -36,7 +37,7 @@
           }
         },
         {
-          "matchingUrlPattern": "^http://localhost:3000/(servicios|equipo|contacto|presupuestos)",
+          "matchingUrlPattern": "^http://localhost:3000/(servicios|equipo|contacto|presupuestos|gana-dinero)",
           "assertions": {
             "categories:performance": ["error", { "minScore": 0.84, "aggregationMethod": "median-run" }]
           }

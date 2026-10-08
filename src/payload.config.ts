@@ -17,6 +17,7 @@ import { TeamMembers } from './collections/TeamMembers'
 import { Users } from './collections/Users'
 import { Home } from './globals/Home'
 import { Legal } from './globals/Legal'
+import { Partners } from './globals/Partners'
 import { Pricing } from './globals/Pricing'
 import { SiteSettings } from './globals/SiteSettings'
 import { shouldPushSchema } from './lib/db/push'
@@ -37,7 +38,7 @@ export default buildConfig({
   },
   i18n: { supportedLanguages: { es, en }, fallbackLanguage: 'es' },
   collections: [Contacts, Services, Projects, TeamMembers, Faqs, Media, Users],
-  globals: [Home, Pricing, SiteSettings, Legal],
+  globals: [Home, Pricing, Partners, SiteSettings, Legal],
   localization: {
     locales: [
       { code: 'es', label: 'Español' },

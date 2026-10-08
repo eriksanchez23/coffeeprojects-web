@@ -17,6 +17,7 @@ export async function SiteFooter({ email, chatUrl }: { email: string; chatUrl?: 
         <div className="flex flex-col items-start gap-1">
           <a href={`mailto:${email}`} className="py-1.5 text-ink-0 hover:text-amber">{email}</a>
           <Link href="/pricing" className="py-1.5 hover:text-ink-0">{tn('pricing')}</Link>
+          <Link href="/partners" className="py-1.5 hover:text-ink-0">{tn('partners')}</Link>
           {chatUrl && (
             <a href={chatUrl} target="_blank" rel="noopener noreferrer" className="py-1.5 hover:text-amber">{t('chat')}</a>
           )}

@@ -1,4 +1,4 @@
-import type { Home, Legal, Pricing, SiteSetting } from '@/payload-types'
+import type { Home, Legal, Partner, Pricing, SiteSetting } from '@/payload-types'
 
 /**
  * A just-migrated (or not yet seeded/published) database returns globals without their groups and arrays.
@@ -71,4 +71,22 @@ export function withPricingDefaults(raw: Raw<Pricing>): Pricing {
 export function withLegalDefaults(raw: Raw<Legal>): Legal {
   const legal = raw ?? {}
   return { ...legal, id: legal.id ?? 0 }
+}
+
+/** Partner programme (S16): the page renders only once it has a title; lists and groups are never undefined. */
+export function withPartnersDefaults(raw: Raw<Partner>): Partner {
+  const partners = raw ?? {}
+  return {
+    ...partners,
+    id: partners.id ?? 0,
+    eyebrow: partners.eyebrow ?? '',
+    title: partners.title ?? '',
+    rateWithMaintenance: partners.rateWithMaintenance ?? 10,
+    rateWebOnly: partners.rateWebOnly ?? 5,
+    notice: { ...partners.notice },
+    steps: partners.steps ?? [],
+    conditions: partners.conditions ?? [],
+    dontPromise: { ...partners.dontPromise },
+    cta: { ...partners.cta },
+  }
 }

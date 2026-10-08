@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_CONTACT_EMAIL, withHomeDefaults, withLegalDefaults, withPricingDefaults, withSettingsDefaults } from '@/lib/cms/global-defaults'
+import {
+  DEFAULT_CONTACT_EMAIL,
+  withHomeDefaults,
+  withLegalDefaults,
+  withPartnersDefaults,
+  withPricingDefaults,
+  withSettingsDefaults,
+} from '@/lib/cms/global-defaults'
 
 // An empty (just-migrated) database returns a global with no groups/arrays, or nothing at all.
 const empties = [undefined, null, {}, { id: 1, hero: null, sections: null }] as const
@@ -51,5 +58,18 @@ describe('withPricingDefaults / withLegalDefaults', () => {
     expect(legal.legalNotice ?? null).toBeNull()
     expect(legal.privacyPolicy ?? null).toBeNull()
     expect(legal.cookiePolicy ?? null).toBeNull()
+  })
+})
+
+describe('withPartnersDefaults', () => {
+  it.each(empties)('never returns undefined lists or groups for %o', (raw) => {
+    const partners = withPartnersDefaults(raw as never)
+    expect(partners.title).toBe('')
+    expect([partners.steps, partners.conditions]).toEqual([[], []])
+    expect([partners.notice, partners.dontPromise, partners.cta]).toEqual([{}, {}, {}])
+  })
+  it('keeps the rates and texts it is given', () => {
+    const partners = withPartnersDefaults({ title: 'Gana dinero', rateWithMaintenance: 12, rateWebOnly: 6 } as never)
+    expect([partners.title, partners.rateWithMaintenance, partners.rateWebOnly]).toEqual(['Gana dinero', 12, 6])
   })
 })

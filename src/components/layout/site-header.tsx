@@ -31,7 +31,8 @@ export async function SiteHeader() {
           <LanguageSwitcher />
           <Button href="/contact">{t('cta')}</Button>
         </div>
-        <MobileMenu links={links} ctaLabel={t('cta')} navLabel={t('mobileNav')} openLabel={t('openMenu')} closeLabel={t('closeMenu')} />
+        {/* The long "earn with us" label would crowd the desktop bar; the mobile panel has room for it. */}
+        <MobileMenu links={[...links, { href: '/partners' as const, label: t('partners') }]} ctaLabel={t('cta')} navLabel={t('mobileNav')} openLabel={t('openMenu')} closeLabel={t('closeMenu')} />
       </Container>
     </header>
   )

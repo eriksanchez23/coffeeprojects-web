@@ -18,7 +18,8 @@
     "language": "Language",
     "home": "Home",
     "mainNav": "Main navigation",
-    "mobileNav": "Mobile navigation"
+    "mobileNav": "Mobile navigation",
+    "partners": "Earn with us"
   },
   "common": {
     "from": "From",
@@ -138,6 +139,15 @@
     "withPlan": "With a plan",
     "withoutPlan": "Without a plan",
     "teaserMaintenance": "Optional maintenance from {price}: with any plan, the website costs less."
+  },
+  "partners": {
+    "rates": "Your commission depending on what the client hires",
+    "plan": "Website type",
+    "priceWithMaintenance": "Price with maintenance",
+    "priceWebOnly": "Website-only price",
+    "commission": "Your commission ({rate})",
+    "amountsNote": "Amounts in euros, VAT excluded.",
+    "perMonth": "{price}/month"
   },
   "thanks": {
     "title": "Got it! We're already brewing the coffee.",

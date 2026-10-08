@@ -15,10 +15,25 @@ const ALWAYS_GROUP = 'always' as unknown as boolean
  * Whole-euro amount, always grouped ("1.000 €" like the price sheet, where es-ES alone would print "1000 €"),
  * with non-breaking spaces only (narrow NBSP from fr grouping included) so a price never wraps.
  */
-export function formatEuro(amount: number, locale: Locale): string {
-  return new Intl.NumberFormat(intlLocale[locale], { style: 'currency', currency: 'EUR', maximumFractionDigits: 0, useGrouping: ALWAYS_GROUP })
+export function formatEuro(amount: number, locale: Locale, opts: { cents?: boolean } = {}): string {
+  // `cents`: amounts that are not whole euros (partner commissions, "34,90 €") always show two decimals.
+  const digits = opts.cents ? 2 : 0
+  return new Intl.NumberFormat(intlLocale[locale], {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+    useGrouping: ALWAYS_GROUP,
+  })
     .format(amount)
     .replace(/[  ]/g, ' ')
+}
+
+/** Percentage ("10 %" in es/fr, "10%" in en), with the same non-breaking spaces as prices. */
+export function formatPercent(rate: number, locale: Locale): string {
+  return new Intl.NumberFormat(intlLocale[locale], { style: 'percent', maximumFractionDigits: 2 })
+    .format(rate / 100)
+    .replace(/[  ]/g, ' ')
 }
 
 /** Structured price: `prefix` ("From") exists only when there is a numeric amount to qualify. */

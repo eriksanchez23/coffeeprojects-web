@@ -18,7 +18,8 @@
     "language": "Langue",
     "home": "Accueil",
     "mainNav": "Navigation principale",
-    "mobileNav": "Navigation mobile"
+    "mobileNav": "Navigation mobile",
+    "partners": "Gagnez avec nous"
   },
   "common": {
     "from": "À partir de",
@@ -138,6 +139,15 @@
     "withPlan": "Avec formule",
     "withoutPlan": "Sans formule",
     "teaserMaintenance": "Maintenance facultative à partir de {price} : avec n’importe quelle formule, le site coûte moins cher."
+  },
+  "partners": {
+    "rates": "Votre commission selon ce que le client commande",
+    "plan": "Type de site",
+    "priceWithMaintenance": "Prix avec maintenance",
+    "priceWebOnly": "Prix du site seul",
+    "commission": "Votre commission ({rate})",
+    "amountsNote": "Montants en euros, hors TVA.",
+    "perMonth": "{price}/mois"
   },
   "thanks": {
     "title": "Bien reçu ! Le café est déjà en préparation.",

@@ -100,12 +100,14 @@ export interface Config {
   globals: {
     home: Home;
     pricing: Pricing;
+    partners: Partner;
     'site-settings': SiteSetting;
     legal: Legal;
   };
   globalsSelect: {
     home: HomeSelect<false> | HomeSelect<true>;
     pricing: PricingSelect<false> | PricingSelect<true>;
+    partners: PartnersSelect<false> | PartnersSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     legal: LegalSelect<false> | LegalSelect<true>;
   };
@@ -1025,6 +1027,87 @@ export interface Pricing {
   createdAt?: string | null;
 }
 /**
+ * Accepts {high} and {low} (commission rates) and {min} and {max} (how much cheaper the web is with maintenance), filled in automatically.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners".
+ */
+export interface Partner {
+  id: number;
+  eyebrow: string;
+  title: string;
+  intro?: string | null;
+  /**
+   * Shown prominently under the header: no package bought, no commission.
+   */
+  notice?: {
+    title?: string | null;
+    text?: string | null;
+  };
+  /**
+   * Percentage of the VAT-excluded web price
+   */
+  rateWithMaintenance: number;
+  /**
+   * Percentage of the VAT-excluded web price
+   */
+  rateWebOnly: number;
+  withMaintenanceTitle?: string | null;
+  withMaintenanceBadge?: string | null;
+  webOnlyTitle?: string | null;
+  rateNote?: string | null;
+  tableTitle?: string | null;
+  tableNote?: string | null;
+  sellTitle?: string | null;
+  webPlansTitle?: string | null;
+  maintenanceTitle?: string | null;
+  maintenanceText?: string | null;
+  sellArgument?: string | null;
+  stepsTitle?: string | null;
+  steps?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  conditionsTitle?: string | null;
+  conditions?:
+    | {
+        topic: string;
+        condition: string;
+        id?: string | null;
+      }[]
+    | null;
+  dontPromise?: {
+    title?: string | null;
+    text?: string | null;
+  };
+  footnote?: string | null;
+  /**
+   * The button opens an e-mail to the Site settings address with this subject and body. Never put personal data here.
+   */
+  cta?: {
+    title?: string | null;
+    text?: string | null;
+    registerLabel?: string | null;
+    contactLabel?: string | null;
+    emailSubject?: string | null;
+    emailBody?: string | null;
+  };
+  /**
+   * Search engine and social preview. Leave empty to use defaults.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".
  */
@@ -1280,6 +1363,78 @@ export interface PricingSelect<T extends boolean = true> {
               withoutPlanText?: T;
               id?: T;
             };
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners_select".
+ */
+export interface PartnersSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  intro?: T;
+  notice?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+      };
+  rateWithMaintenance?: T;
+  rateWebOnly?: T;
+  withMaintenanceTitle?: T;
+  withMaintenanceBadge?: T;
+  webOnlyTitle?: T;
+  rateNote?: T;
+  tableTitle?: T;
+  tableNote?: T;
+  sellTitle?: T;
+  webPlansTitle?: T;
+  maintenanceTitle?: T;
+  maintenanceText?: T;
+  sellArgument?: T;
+  stepsTitle?: T;
+  steps?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  conditionsTitle?: T;
+  conditions?:
+    | T
+    | {
+        topic?: T;
+        condition?: T;
+        id?: T;
+      };
+  dontPromise?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+      };
+  footnote?: T;
+  cta?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        registerLabel?: T;
+        contactLabel?: T;
+        emailSubject?: T;
+        emailBody?: T;
       };
   seo?:
     | T
