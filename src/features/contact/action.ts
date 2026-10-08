@@ -14,7 +14,8 @@ import { ATTR_COOKIE, parseAttributionCookie } from '@/features/tracking/attribu
 import { capiConfigFromEnv, sendCapiEvent } from '@/features/tracking/capi'
 import { CONSENT_COOKIE, parseConsent } from '@/features/tracking/consent'
 import { afterSaveLead } from '@/features/tracking/lead'
-import { clientEmail, teamEmail } from './emails'
+import type { Contact } from '@/payload-types'
+import { clientEmail, teamEmail, teamRecipients } from './emails'
 import { type ContactResult, handleContact } from './handle-contact'
 import { clientIp, hashIp } from './ip'
 import { buildQuote, type QuoteLabels, quoteSummaryText } from './quote'
@@ -46,15 +47,8 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
     )
   }
 
-  // Without a Resend adapter Payload has no real transport: skip sending and log instead.
-  const send = async (message: Parameters<typeof payload.sendEmail>[0]) => {
-    if (!process.env.RESEND_API_KEY) {
-      if (env.isProduction) payload.logger.error('Contact email not sent: RESEND_API_KEY is not set in production')
-      else payload.logger.info('Contact email not sent: RESEND_API_KEY is not set')
-      return
-    }
-    await payload.sendEmail(message)
-  }
+  // The stored row: the team email lists every column of it (S18).
+  let saved: Contact | undefined
 
   const result = await handleContact(raw, {
     ipHash,
@@ -80,15 +74,26 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
       return quoteSummaryText(buildQuote({ type: input.projectType, plan, services }), input.locale, t.raw('quote') as QuoteLabels)
     },
     createContact: async (data) => {
-      await payload.create({ collection: 'contacts', overrideAccess: true, data: toContactRecord(data, { marketing, attribution }) })
+      saved = await payload.create({ collection: 'contacts', overrideAccess: true, data: toContactRecord(data, { marketing, attribution }) })
     },
     notify: async (input) => {
-      const team = teamEmail(input)
-      const client = clientEmail(input)
-      await Promise.all([
-        send({ to: process.env.CONTACT_NOTIFY_EMAIL ?? 'contact@coffeeprojects.es', replyTo: input.email, ...team }),
-        send({ to: input.email, ...client }),
+      // Without a Resend adapter Payload has no real transport: skip sending and log instead (the lead is stored).
+      if (!process.env.RESEND_API_KEY) {
+        if (env.isProduction) payload.logger.error('Contact email not sent: RESEND_API_KEY is not set in production')
+        else payload.logger.info('Contact email not sent: RESEND_API_KEY is not set')
+        return
+      }
+      if (!saved) return
+      // S18: one email per team user (their own panel email) plus CONTACT_NOTIFY_EMAIL, so one bad address
+      // never blocks the others.
+      const users = await payload.find({ collection: 'users', depth: 0, limit: 100, pagination: false, overrideAccess: true, select: { email: true } })
+      const adminUrl = `${env.SITE_URL}${payload.config.routes.admin}/collections/contacts/${saved.id}`
+      const team = teamEmail(saved, { adminUrl })
+      const results = await Promise.allSettled([
+        ...teamRecipients(users.docs, process.env.CONTACT_NOTIFY_EMAIL).map((to) => payload.sendEmail({ to, replyTo: input.email, ...team })),
+        payload.sendEmail({ to: input.email, ...clientEmail(input) }),
       ])
+      results.forEach((r) => r.status === 'rejected' && log(r.reason))
     },
     afterSave: async (input, eventId) => {
       await afterSaveLead(

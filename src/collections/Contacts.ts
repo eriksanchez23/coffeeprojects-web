@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin, isAdminField, isTeam, nobody } from '@/access'
+import { contactReplyEndpoint } from '@/endpoints/contact-reply'
 import { budgets, contactStatuses, projectTypes, timelines } from '@/features/contact/options'
 import {
   adminGroups,
@@ -26,6 +27,8 @@ export const Contacts: CollectionConfig = {
     components: { beforeListTable: ['/components/admin/default-new-filter#DefaultNewFilter'] },
   },
   defaultSort: '-createdAt',
+  // S19: POST /api/contacts/:id/reply (team only) — used by the "Responder" panel in the edit view.
+  endpoints: [contactReplyEndpoint],
   access: {
     // Public submissions go through the Server Action with the Local API (T11), never through REST.
     create: nobody,
@@ -50,6 +53,12 @@ export const Contacts: CollectionConfig = {
       ],
     },
     { name: 'internalNotes', type: 'textarea', label: t('Notas internas', 'Internal notes') },
+    {
+      name: 'replyAction',
+      type: 'ui',
+      label: t('Responder', 'Reply'),
+      admin: { position: 'sidebar', components: { Field: '/components/admin/contact-reply#ContactReply' } },
+    },
     { name: 'name', type: 'text', label: t('Nombre', 'Name'), required: true, admin: readOnly, access: locked },
     { name: 'email', type: 'email', label: t('Correo electrónico', 'Email'), required: true, admin: readOnly, access: locked },
     { name: 'phone', type: 'text', label: t('Teléfono', 'Phone'), admin: readOnly, access: locked },
@@ -142,6 +151,24 @@ export const Contacts: CollectionConfig = {
         { name: 'utmContent', type: 'text', label: t('Contenido UTM', 'UTM content'), admin: readOnly, access: locked },
         { name: 'utmTerm', type: 'text', label: t('Término UTM', 'UTM term'), admin: readOnly, access: locked },
         { name: 'fbclid', type: 'text', label: t('fbclid', 'fbclid'), admin: readOnly, access: locked },
+      ],
+    },
+    {
+      name: 'replies',
+      type: 'array',
+      label: t('Respuestas enviadas', 'Sent replies'),
+      labels: { singular: t('Respuesta', 'Reply'), plural: t('Respuestas', 'Replies') },
+      admin: {
+        readOnly: true,
+        description: t('Historial de respuestas enviadas desde el panel con «Responder»', 'Replies sent from the panel with "Reply"'),
+      },
+      // Written only by the reply endpoint (overrideAccess) after the email was sent.
+      access: { create: () => false, update: () => false },
+      fields: [
+        { name: 'sentAt', type: 'date', label: t('Enviada', 'Sent'), required: true, access: locked, admin: { date: { pickerAppearance: 'dayAndTime' } } },
+        { name: 'author', type: 'relationship', relationTo: 'users', label: t('Autor', 'Author'), access: locked },
+        { name: 'subject', type: 'text', label: t('Asunto', 'Subject'), required: true, access: locked },
+        { name: 'body', type: 'textarea', label: t('Mensaje', 'Message'), required: true, access: locked },
       ],
     },
     {

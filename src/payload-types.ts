@@ -175,6 +175,18 @@ export interface Contact {
   utmContent?: string | null;
   utmTerm?: string | null;
   fbclid?: string | null;
+  /**
+   * Replies sent from the panel with "Reply"
+   */
+  replies?:
+    | {
+        sentAt: string;
+        author?: (number | null) | User;
+        subject: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
   ipHash?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -548,6 +560,15 @@ export interface ContactsSelect<T extends boolean = true> {
   utmContent?: T;
   utmTerm?: T;
   fbclid?: T;
+  replies?:
+    | T
+    | {
+        sentAt?: T;
+        author?: T;
+        subject?: T;
+        body?: T;
+        id?: T;
+      };
   ipHash?: T;
   updatedAt?: T;
   createdAt?: T;

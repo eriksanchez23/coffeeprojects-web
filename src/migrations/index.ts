@@ -4,6 +4,7 @@ import * as migration_20261008_200736_pricing_v4 from './20261008_200736_pricing
 import * as migration_20261008_203534_partners from './20261008_203534_partners';
 import * as migration_20261008_233103_media_object_key from './20261008_233103_media_object_key';
 import * as migration_20261008_234103_contact_quoted_summary from './20261008_234103_contact_quoted_summary';
+import * as migration_20261008_234606_contact_replies from './20261008_234606_contact_replies';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20261008_234103_contact_quoted_summary.up,
     down: migration_20261008_234103_contact_quoted_summary.down,
-    name: '20261008_234103_contact_quoted_summary'
+    name: '20261008_234103_contact_quoted_summary',
+  },
+  {
+    up: migration_20261008_234606_contact_replies.up,
+    down: migration_20261008_234606_contact_replies.down,
+    name: '20261008_234606_contact_replies'
   },
 ];

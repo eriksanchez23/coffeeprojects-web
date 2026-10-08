@@ -30,6 +30,33 @@ test.describe('admin panel', () => {
     await expect(page.getByText(/updated successfully|actualizado/i)).toBeVisible()
   })
 
+  test('the reply box reports a missing email setup and leaves the status unchanged (S19)', async ({ page }) => {
+    test.skip(Boolean(process.env.RESEND_API_KEY), 'Only meaningful while email sending is not configured')
+    const login = await page.request.post('/api/users/login', { data: { email, password } })
+    expect(login.ok()).toBe(true)
+    const found = await page.request.get('/api/contacts?where[email][equals]=e2e-inbox-2@example.com&depth=0')
+    const contact = ((await found.json()) as { docs: { id: number; status: string; replies?: unknown[] }[] }).docs[0]!
+    expect(contact).toBeTruthy()
+
+    await page.goto(`/admin/collections/contacts/${contact.id}`)
+    const box = page.getByTestId('contact-reply')
+    await expect(box.getByLabel(/^(Asunto|Subject)$/)).toHaveValue(/^Re: /)
+    await box.getByLabel(/^(Mensaje|Message)$/).fill('Hola, esto es una prueba automática del panel.')
+    await box.getByRole('button', { name: /Enviar respuesta|Send reply/ }).click()
+    await expect(box.getByTestId('contact-reply-error')).toContainText('RESEND_API_KEY')
+
+    const after = (await (await page.request.get(`/api/contacts/${contact.id}?depth=0`)).json()) as { status: string; replies?: unknown[] }
+    expect(after.status).toBe(contact.status)
+    expect(after.replies ?? []).toHaveLength((contact.replies ?? []).length)
+  })
+
+  test('the reply endpoint rejects anonymous callers', async ({ playwright, baseURL }) => {
+    const anon = await playwright.request.newContext({ baseURL })
+    const res = await anon.post('/api/contacts/1/reply', { data: { subject: 'Re: x', message: 'x' } })
+    expect(res.status()).toBe(401)
+    await anon.dispose()
+  })
+
   test('the pricing global is editable in every locale', async ({ page }) => {
     // API login sets the auth cookie on this context (the UI login flow is covered by the test above).
     const login = await page.request.post('/api/users/login', { data: { email, password } })

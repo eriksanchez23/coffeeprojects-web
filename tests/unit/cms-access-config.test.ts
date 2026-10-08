@@ -29,6 +29,8 @@ describe('Contacts access config', () => {
   it('only status, assignedTo and internalNotes are updatable', async () => {
     const editable = ['status', 'assignedTo', 'internalNotes']
     for (const [name, field] of Object.entries(named(Contacts.fields))) {
+      // `ui` fields (the "Responder" box) store no data.
+      if ((field as { type?: string }).type === 'ui') continue
       const update = (field as { access?: { update?: (a: never) => unknown } }).access?.update
       if (editable.includes(name)) expect(update, name).toBeUndefined()
       else expect(await update?.(args(admin)), name).toBe(false)
