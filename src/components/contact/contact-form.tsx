@@ -1,10 +1,11 @@
 'use client'
 import { useTranslations } from 'next-intl'
-import { type FormEvent, type ReactNode, useActionState, useEffect, useRef, useState } from 'react'
+import { type FormEvent, useActionState, useEffect, useRef, useState } from 'react'
 import { buttonClasses } from '@/components/ui/button'
 import { submitContact } from '@/features/contact/action'
 import type { ContactResult } from '@/features/contact/handle-contact'
-import { budgets, projectTypes, timelines } from '@/features/contact/options'
+import { type ProjectType, projectTypes } from '@/features/contact/options'
+import type { QuoteLine } from '@/features/contact/quote'
 import { readConsentFromDocument } from '@/features/tracking/consent'
 import { Link } from '@/i18n/navigation'
 import { clsx } from 'clsx'
@@ -26,14 +27,17 @@ export function ContactForm({
   locale,
   sourcePath,
   prefill,
-  planNotice,
+  quotes,
   siteKey,
 }: {
   locale: string
   sourcePath: string
   prefill: Prefill
-  /** Server-rendered summary of the chosen package, shown inside the form. */
-  planNotice?: ReactNode
+  /**
+   * Final price (VAT included) and estimated time per project type, formatted on the server (S17).
+   * Display only: the Server Action rebuilds the summary it stores from the CMS.
+   */
+  quotes: Partial<Record<ProjectType, QuoteLine[]>>
   siteKey: string
 }) {
   const t = useTranslations('contact')
@@ -101,6 +105,8 @@ export function ContactForm({
   })
   const initialType = values.projectType ?? prefill.type
   const defaultType = projectTypes.find((p) => p === initialType) ?? 'web'
+  const [selectedType, setSelectedType] = useState<ProjectType>(defaultType)
+  const quote = quotes[selectedType] ?? []
 
   return (
     <form
@@ -122,8 +128,6 @@ export function ContactForm({
         <input id="cp_hp" name="cp_hp" tabIndex={-1} autoComplete="off" />
       </div>
 
-      {prefill.plan && planNotice}
-
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className={label}>{t('name')} *</label>
@@ -137,34 +141,45 @@ export function ContactForm({
         </div>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="projectType" className={label}>{t('projectType')} *</label>
-          <select id="projectType" name="projectType" defaultValue={defaultType} className={field} {...aria('projectType')}>
+          <select
+            id="projectType"
+            name="projectType"
+            defaultValue={defaultType}
+            onChange={(e) => setSelectedType(projectTypes.find((p) => p === e.target.value) ?? 'web')}
+            className={field}
+            aria-invalid={Boolean(errors.projectType)}
+            aria-describedby={errors.projectType ? 'projectType-error quote-summary' : 'quote-summary'}
+          >
             {projectTypes.map((p) => (
               <option key={p} value={p}>{t(`projectTypes.${p}`)}</option>
             ))}
           </select>
           {err('projectType')}
         </div>
-        <div>
-          <label htmlFor="budget" className={label}>{t('budget')}</label>
-          <select id="budget" name="budget" defaultValue={values.budget ?? ''} className={field}>
-            <option value="">—</option>
-            {budgets.map((b) => (
-              <option key={b} value={b}>{t(`budgets.${b}`)}</option>
+        {/* Read-only: what this project type costs (VAT included) and how long it usually takes. */}
+        <section
+          aria-labelledby="quote-title"
+          className="rounded-[var(--radius-md)] border border-line-amber bg-bg-2 p-4"
+          data-testid="quote-summary"
+        >
+          <h2 id="quote-title" className="font-mono text-xs uppercase tracking-widest text-amber">{t('quote.title')}</h2>
+          <dl id="quote-summary" aria-live="polite" aria-atomic="true" className="mt-3 grid gap-1.5 text-sm">
+            {quote.map((line, i) => (
+              <div
+                key={line.label}
+                className="flex flex-wrap items-baseline justify-between gap-x-3"
+                data-testid={prefill.plan && i === 0 ? 'selected-plan' : undefined}
+              >
+                <dt className="text-ink-2">{line.label}</dt>
+                <dd className="font-display text-base text-ink-0">{line.value}</dd>
+              </div>
             ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="timeline" className={label}>{t('timeline')}</label>
-          <select id="timeline" name="timeline" defaultValue={values.timeline ?? ''} className={field}>
-            <option value="">—</option>
-            {timelines.map((x) => (
-              <option key={x} value={x}>{t(`timelines.${x}`)}</option>
-            ))}
-          </select>
-        </div>
+          </dl>
+          <p className="mt-3 text-xs text-ink-3">{t('quote.vat')}. {t('quote.hint')}</p>
+        </section>
       </div>
 
       <div>

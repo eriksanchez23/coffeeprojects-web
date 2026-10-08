@@ -60,8 +60,6 @@
     "email": "Email",
     "phone": "Teléfono (opcional)",
     "projectType": "Tipo de proyecto",
-    "budget": "Presupuesto estimado",
-    "timeline": "Plazo deseado",
     "message": "Cuéntanos tu proyecto",
     "messageHint": "Cuanto más concreto seas, más ajustado será el presupuesto.",
     "howFound": "¿Cómo nos has conocido? (opcional)",
@@ -87,20 +85,18 @@
       "maintenance": "Mantenimiento web",
       "custom": "Desarrollo a medida"
     },
-    "budgets": {
-      "lt500": "Menos de 500 €",
-      "500-1500": "500 € – 1.500 €",
-      "1500-3000": "1.500 € – 3.000 €",
-      "3000-6000": "3.000 € – 6.000 €",
-      "gt6000": "Más de 6.000 €",
-      "tbd": "Por definir"
-    },
-    "timelines": {
-      "flexible": "Flexible",
-      "lt1m": "Menos de 1 mes",
-      "1-2m": "1 – 2 meses",
-      "2-4m": "2 – 4 meses",
-      "gt4m": "Más de 4 meses"
+    "quote": {
+      "title": "Precio final y plazo estimado",
+      "plan": "Plan elegido",
+      "price": "Precio final",
+      "withMaintenance": "Con mantenimiento",
+      "webOnly": "Solo la web",
+      "time": "Plazo estimado",
+      "from": "desde {price}",
+      "perMonth": "{price}/mes",
+      "custom": "A medida (bajo presupuesto)",
+      "vat": "IVA (21 %) incluido",
+      "hint": "Precio orientativo según el tipo de proyecto; te confirmaremos el importe exacto en la propuesta."
     },
     "errors": {
       "required": "Este campo es obligatorio.",
@@ -119,8 +115,6 @@
     "includes": "Qué incluye {name}",
     "notIncluded": "No incluido:",
     "viewAll": "Ver presupuestos",
-    "selectedPlan": "Plan elegido",
-    "selectedPlanHint": "Lo tendremos en cuenta al preparar tu propuesta.",
     "seePackages": "Ver planes y precios",
     "withMaintenance": "Con mantenimiento",
     "webOnly": "Solo la web",

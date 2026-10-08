@@ -156,6 +156,10 @@ export interface Contact {
    * Web plan chosen on the pricing page (validated against the Pricing global)
    */
   plan?: string | null;
+  /**
+   * Final price (VAT included) and estimated time the client saw on the form
+   */
+  quotedSummary?: string | null;
   budget?: ('lt500' | '500-1500' | '1500-3000' | '3000-6000' | 'gt6000' | 'tbd') | null;
   timeline?: ('flexible' | 'lt1m' | '1-2m' | '2-4m' | 'gt4m') | null;
   message: string;
@@ -528,6 +532,7 @@ export interface ContactsSelect<T extends boolean = true> {
   phone?: T;
   projectType?: T;
   plan?: T;
+  quotedSummary?: T;
   budget?: T;
   timeline?: T;
   message?: T;

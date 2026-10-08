@@ -60,8 +60,6 @@
     "email": "Email",
     "phone": "Phone (optional)",
     "projectType": "Project type",
-    "budget": "Estimated budget",
-    "timeline": "Desired timeline",
     "message": "Tell us about your project",
     "messageHint": "The more specific you are, the more accurate our quote will be.",
     "howFound": "How did you hear about us? (optional)",
@@ -87,20 +85,18 @@
       "maintenance": "Website maintenance",
       "custom": "Custom development"
     },
-    "budgets": {
-      "lt500": "Under €500",
-      "500-1500": "€500 – €1,500",
-      "1500-3000": "€1,500 – €3,000",
-      "3000-6000": "€3,000 – €6,000",
-      "gt6000": "Over €6,000",
-      "tbd": "To be defined"
-    },
-    "timelines": {
-      "flexible": "Flexible",
-      "lt1m": "Under 1 month",
-      "1-2m": "1 – 2 months",
-      "2-4m": "2 – 4 months",
-      "gt4m": "Over 4 months"
+    "quote": {
+      "title": "Final price and estimated time",
+      "plan": "Selected plan",
+      "price": "Final price",
+      "withMaintenance": "With maintenance",
+      "webOnly": "Website only",
+      "time": "Estimated time",
+      "from": "from {price}",
+      "perMonth": "{price}/month",
+      "custom": "Tailored (on quote)",
+      "vat": "VAT (21%) included",
+      "hint": "Indicative price for this type of project; we will confirm the exact amount in our proposal."
     },
     "errors": {
       "required": "This field is required.",
@@ -119,8 +115,6 @@
     "includes": "What {name} includes",
     "notIncluded": "Not included:",
     "viewAll": "See pricing",
-    "selectedPlan": "Selected plan",
-    "selectedPlanHint": "We will take it into account when preparing your proposal.",
     "seePackages": "See plans and pricing",
     "withMaintenance": "With maintenance",
     "webOnly": "Website only",

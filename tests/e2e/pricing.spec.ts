@@ -148,8 +148,10 @@ test('submitting with a plan stores it and keeps personal data out of the URL', 
   const res = await request.get(`/api/contacts?where[email][equals]=${encodeURIComponent(email)}&depth=0`, {
     headers: { Authorization: `JWT ${token}` },
   })
-  const { docs } = (await res.json()) as { docs: { plan?: string; projectType: string }[] }
+  const { docs } = (await res.json()) as { docs: { plan?: string; projectType: string; quotedSummary?: string }[] }
   expect(docs[0]).toMatchObject({ plan: 'landing-page', projectType: 'web' })
+  // S17: the lead keeps the price/time summary the visitor saw, rebuilt on the server.
+  expect(docs[0]!.quotedSummary).toMatch(/Landing Page.*422,29.*713,90.*Plazo estimado: 1-2 semanas.*IVA (21 %) incluido/)
 })
 
 test('home teaser and navigation link to the pricing page', async ({ page, isMobile }) => {

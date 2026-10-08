@@ -5,14 +5,19 @@ export type ContactResult =
   | { status: 'ok'; saved: boolean; eventId: string }
   | { status: 'error'; fieldErrors?: Partial<Record<keyof ContactInput, string>>; formError?: 'captcha' | 'rateLimited' | 'generic' }
 
+/** A validated submission plus the quote summary rebuilt server-side (S17). */
+export type ContactLead = ContactInput & { quotedSummary?: string }
+
 export type ContactDeps = {
   verifyCaptcha(token: string): Promise<boolean>
   isRateLimited(): Promise<boolean>
-  createContact(data: ContactInput & { ipHash: string }): Promise<void>
-  notify(input: ContactInput): Promise<void>
+  createContact(data: ContactLead & { ipHash: string }): Promise<void>
+  notify(input: ContactLead): Promise<void>
   afterSave?(input: ContactInput, eventId: string): Promise<void>
   /** Package slugs currently published in the pricing global; a submitted plan outside this list is dropped. */
   knownPlans?(): Promise<string[]>
+  /** The price/time summary the form showed for this project type and plan, built from the CMS (never from the client). */
+  quoteSummary?(input: ContactInput): Promise<string | undefined>
   newEventId(): string
   ipHash: string
   log(e: unknown): void
@@ -46,7 +51,8 @@ export async function handleContact(raw: Record<string, unknown>, deps: ContactD
   if (await deps.isRateLimited()) return { status: 'error', formError: 'rateLimited' }
 
   // Looked up only for verified, non-limited submissions, so bots never cost a CMS read.
-  const input = { ...parsed.data, plan: await knownPlan(parsed.data.plan, deps) }
+  const validated = { ...parsed.data, plan: await knownPlan(parsed.data.plan, deps) }
+  const input: ContactLead = { ...validated, quotedSummary: await quoteSummary(validated, deps) }
 
   try {
     await deps.createContact({ ...input, ipHash: deps.ipHash })
@@ -69,6 +75,17 @@ async function knownPlan(plan: string | undefined, deps: ContactDeps): Promise<s
     return resolvePlan(plan, await deps.knownPlans())
   } catch (e) {
     // The plan is a nice-to-have: an unreadable pricing global drops it, never the lead.
+    deps.log(e)
+    return undefined
+  }
+}
+
+async function quoteSummary(input: ContactInput, deps: ContactDeps): Promise<string | undefined> {
+  if (!deps.quoteSummary) return undefined
+  try {
+    return (await deps.quoteSummary(input))?.slice(0, 500) || undefined
+  } catch (e) {
+    // Informational only: a CMS hiccup drops the summary, never the lead.
     deps.log(e)
     return undefined
   }

@@ -76,11 +76,25 @@ export const Contacts: CollectionConfig = {
       access: locked,
     },
     {
+      name: 'quotedSummary',
+      type: 'textarea',
+      label: t('Precio y plazo mostrados', 'Quoted price and time'),
+      admin: {
+        ...readOnly,
+        description: t(
+          'Precio final (IVA incluido) y plazo estimado que vio el cliente en el formulario',
+          'Final price (VAT included) and estimated time the client saw on the form',
+        ),
+      },
+      access: locked,
+    },
+    // Retired from the form (S17): kept for requests sent before, shown only when they hold a value.
+    {
       name: 'budget',
       type: 'select',
       label: t('Presupuesto', 'Budget'),
       options: bilingualOptions(budgets, budgetLabels),
-      admin: readOnly,
+      admin: { ...readOnly, condition: (data) => Boolean(data?.budget) },
       access: locked,
     },
     {
@@ -88,7 +102,7 @@ export const Contacts: CollectionConfig = {
       type: 'select',
       label: t('Plazo', 'Timeline'),
       options: bilingualOptions(timelines, timelineLabels),
-      admin: readOnly,
+      admin: { ...readOnly, condition: (data) => Boolean(data?.timeline) },
       access: locked,
     },
     { name: 'message', type: 'textarea', label: t('Mensaje', 'Message'), required: true, admin: readOnly, access: locked },

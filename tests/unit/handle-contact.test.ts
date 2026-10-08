@@ -100,12 +100,12 @@ describe('handleContact', () => {
   })
 
   it('shows a form-level error when only non-rendered fields fail validation', async () => {
-    const r = await handleContact({ ...base, budget: 'bogus' }, deps())
+    const r = await handleContact({ ...base, locale: 'de' }, deps())
     expect(r).toEqual({ status: 'error', formError: 'generic' })
   })
 
   it('adds the form-level error next to field errors when a hidden field also fails', async () => {
-    const r = await handleContact({ ...base, email: 'bad', timeline: 'bogus' }, deps())
+    const r = await handleContact({ ...base, email: 'bad', locale: 'de' }, deps())
     expect(r).toEqual({ status: 'error', fieldErrors: { email: 'invalidEmail' }, formError: 'generic' })
   })
 
@@ -173,5 +173,33 @@ describe('handleContact plan', () => {
     await handleContact(base, d)
     expect(d.knownPlans).not.toHaveBeenCalled()
     expect(vi.mocked(d.createContact).mock.calls[0][0].plan).toBeUndefined()
+  })
+})
+
+describe('handleContact quoted summary (S17)', () => {
+  it('ignores the retired budget/timeline fields instead of storing them', async () => {
+    const d = deps()
+    const r = await handleContact({ ...base, budget: 'lt500', timeline: 'bogus' }, d)
+    expect(r).toMatchObject({ status: 'ok', saved: true })
+    const saved = vi.mocked(d.createContact).mock.calls[0]![0] as Record<string, unknown>
+    expect(saved).not.toHaveProperty('budget')
+    expect(saved).not.toHaveProperty('timeline')
+  })
+
+  it('stores and notifies the summary rebuilt server-side for the validated plan', async () => {
+    const quoteSummary = vi.fn().mockResolvedValue('Plan: Estandar (IVA incluido)')
+    const d = deps({ knownPlans: vi.fn().mockResolvedValue(['estandar']), quoteSummary })
+    await handleContact({ ...base, projectType: 'web', plan: 'estandar', quotedSummary: 'forged' }, d)
+    expect(quoteSummary).toHaveBeenCalledWith(expect.objectContaining({ projectType: 'web', plan: 'estandar', locale: 'es' }))
+    expect(vi.mocked(d.createContact).mock.calls[0]![0].quotedSummary).toBe('Plan: Estandar (IVA incluido)')
+    expect(vi.mocked(d.notify).mock.calls[0]![0].quotedSummary).toBe('Plan: Estandar (IVA incluido)')
+  })
+
+  it('never stores a client-sent summary and keeps the lead when the quote fails', async () => {
+    const d = deps({ quoteSummary: vi.fn().mockRejectedValue(new Error('cms down')) })
+    const r = await handleContact({ ...base, quotedSummary: 'forged' }, d)
+    expect(r).toMatchObject({ status: 'ok', saved: true })
+    expect(vi.mocked(d.createContact).mock.calls[0]![0].quotedSummary).toBeUndefined()
+    expect(d.log).toHaveBeenCalled()
   })
 })

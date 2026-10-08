@@ -60,8 +60,6 @@
     "email": "E-mail",
     "phone": "Téléphone (facultatif)",
     "projectType": "Type de projet",
-    "budget": "Budget estimé",
-    "timeline": "Délai souhaité",
     "message": "Parlez-nous de votre projet",
     "messageHint": "Plus vous êtes précis, plus notre devis sera juste.",
     "howFound": "Comment nous avez-vous connus ? (facultatif)",
@@ -87,20 +85,18 @@
       "maintenance": "Maintenance de site",
       "custom": "Développement sur mesure"
     },
-    "budgets": {
-      "lt500": "Moins de 500 €",
-      "500-1500": "500 € – 1 500 €",
-      "1500-3000": "1 500 € – 3 000 €",
-      "3000-6000": "3 000 € – 6 000 €",
-      "gt6000": "Plus de 6 000 €",
-      "tbd": "À définir"
-    },
-    "timelines": {
-      "flexible": "Flexible",
-      "lt1m": "Moins d'un mois",
-      "1-2m": "1 à 2 mois",
-      "2-4m": "2 à 4 mois",
-      "gt4m": "Plus de 4 mois"
+    "quote": {
+      "title": "Prix final et délai estimé",
+      "plan": "Formule choisie",
+      "price": "Prix final",
+      "withMaintenance": "Avec maintenance",
+      "webOnly": "Site seul",
+      "time": "Délai estimé",
+      "from": "à partir de {price}",
+      "perMonth": "{price}/mois",
+      "custom": "Sur mesure (sur devis)",
+      "vat": "TVA (21 %) incluse",
+      "hint": "Prix indicatif selon le type de projet ; nous vous confirmerons le montant exact dans notre proposition."
     },
     "errors": {
       "required": "Ce champ est obligatoire.",
@@ -119,8 +115,6 @@
     "includes": "Ce que comprend {name}",
     "notIncluded": "Non inclus :",
     "viewAll": "Voir les tarifs",
-    "selectedPlan": "Formule choisie",
-    "selectedPlanHint": "Nous en tiendrons compte pour préparer votre proposition.",
     "seePackages": "Voir les formules et tarifs",
     "withMaintenance": "Avec maintenance",
     "webOnly": "Site seul",

@@ -29,3 +29,34 @@ test('submits a valid request and lands on the thank-you page', async ({ page })
   // Personal data never travels in the URL.
   expect(page.url()).not.toContain('@')
 })
+
+test('shows the final price with VAT and the estimated time instead of budget/timeline inputs (S17)', async ({ page }) => {
+  await page.goto('/contacto?type=web&plan=landing-page')
+  const summary = page.getByTestId('quote-summary')
+  await expect(summary).toContainText('Landing Page')
+  // Landing Page: 349 € / 590 € + 21 % VAT.
+  await expect(summary).toContainText(/Con mantenimientos*422,29s€/)
+  await expect(summary).toContainText(/Solo la webs*713,90s€/)
+  await expect(summary).toContainText(/Plazo estimados*1-2 semanas/)
+  await expect(summary).toContainText('IVA (21 %) incluido')
+  await expect(page.getByLabel(/Presupuesto estimado/)).toHaveCount(0)
+  await expect(page.getByLabel(/Plazo deseado/)).toHaveCount(0)
+  await expect(page.locator('select[name="budget"], select[name="timeline"]')).toHaveCount(0)
+
+  // Without a plan the summary follows the project type select.
+  await page.goto('/contacto')
+  await expect(summary).toContainText(/Precio finals*desde 422,29s€/)
+  await page.getByLabel('Tipo de proyecto *').selectOption('ecommerce')
+  await expect(summary).toContainText(/desde 1.802,90s€/)
+  await expect(summary).toContainText(/4-8 semanas/)
+  await page.getByLabel('Tipo de proyecto *').selectOption('custom')
+  await expect(summary).toContainText('A medida (bajo presupuesto)')
+  // Screen readers hear the update.
+  await expect(page.locator('#quote-summary')).toHaveAttribute('aria-live', 'polite')
+})
+
+test('the quote summary is localized', async ({ page }) => {
+  await page.goto('/en/contact?type=ecommerce')
+  await expect(page.getByTestId('quote-summary')).toContainText(/from €1,802.90/)
+  await expect(page.getByTestId('quote-summary')).toContainText('VAT (21%) included')
+})

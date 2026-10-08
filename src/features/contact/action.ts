@@ -2,11 +2,13 @@
 import { randomUUID } from 'node:crypto'
 import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import { LEAD_COOKIE, LEAD_COOKIE_MAX_AGE_S } from '@/components/tracking/lead-proof'
 import { buildPath } from '@/i18n/build-path'
 import { type Locale, locales } from '@/i18n/locales'
 import { payloadClient } from '@/lib/cms/client'
-import { getPlanSlugs } from '@/lib/cms/queries'
+import { getPlanSlugs, getPricing, getServices } from '@/lib/cms/queries'
+import { completeWebPlans } from '@/lib/pricing'
 import { env } from '@/lib/env'
 import { ATTR_COOKIE, parseAttributionCookie } from '@/features/tracking/attribution'
 import { capiConfigFromEnv, sendCapiEvent } from '@/features/tracking/capi'
@@ -15,6 +17,7 @@ import { afterSaveLead } from '@/features/tracking/lead'
 import { clientEmail, teamEmail } from './emails'
 import { type ContactResult, handleContact } from './handle-contact'
 import { clientIp, hashIp } from './ip'
+import { buildQuote, type QuoteLabels, quoteSummaryText } from './quote'
 import { isRateLimited } from './rate-limit'
 import { toContactRecord } from './record'
 import { formDataToObject } from './schema'
@@ -66,6 +69,16 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
     },
     isRateLimited: () => isRateLimited(payload, ipHash),
     knownPlans: getPlanSlugs,
+    // Same data and labels as the contact page, so the stored summary is what the visitor saw (S17).
+    quoteSummary: async (input) => {
+      const [services, pricing, t] = await Promise.all([
+        getServices(input.locale),
+        getPricing(input.locale),
+        getTranslations({ locale: input.locale, namespace: 'contact' }),
+      ])
+      const plan = input.plan ? completeWebPlans(pricing.packages).find((p) => p.slug === input.plan) : undefined
+      return quoteSummaryText(buildQuote({ type: input.projectType, plan, services }), input.locale, t.raw('quote') as QuoteLabels)
+    },
     createContact: async (data) => {
       await payload.create({ collection: 'contacts', overrideAccess: true, data: toContactRecord(data, { marketing, attribution }) })
     },

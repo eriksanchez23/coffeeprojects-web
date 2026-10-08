@@ -1,16 +1,16 @@
+import type { ContactLead } from './handle-contact'
 import type { ContactInput } from './schema'
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
 
-export function teamEmail(i: ContactInput) {
+export function teamEmail(i: ContactLead) {
   const rows: [string, string | undefined][] = [
     ['Nombre', i.name],
     ['Email', i.email],
     ['Teléfono', i.phone],
     ['Tipo', i.projectType],
     ['Plan', i.plan],
-    ['Presupuesto', i.budget],
-    ['Plazo', i.timeline],
+    ['Precio y plazo mostrados', i.quotedSummary],
     ['Cómo nos conoció', i.howFound],
     ['NDA', i.nda ? 'Sí, quiere firmar NDA' : 'No'],
     ['Idioma', i.locale],

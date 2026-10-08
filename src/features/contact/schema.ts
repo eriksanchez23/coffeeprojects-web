@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { budgets, projectTypes, timelines } from './options'
+import { projectTypes } from './options'
 import { parsePlan } from './plan'
 
 // Single-line fields never legitimately hold control characters (header/log injection, invisible junk).
@@ -13,8 +13,8 @@ export const contactSchema = z.object({
   email: z.preprocess(stripControl, z.string({ message: 'required' }).trim().email('invalidEmail').max(200, 'tooLong')),
   phone: optionalText(30),
   projectType: z.enum(projectTypes, { message: 'required' }),
-  budget: z.preprocess((v) => (v === '' ? undefined : v), z.enum(budgets).optional()),
-  timeline: z.preprocess((v) => (v === '' ? undefined : v), z.enum(timelines).optional()),
+  // S17: the form no longer asks for a budget or a timeline; any such field sent is stripped (budget/timeline
+  // columns stay in the collection only for older requests).
   message: z.string({ message: 'required' }).trim().min(20, 'tooShort').max(2000, 'tooLong'),
   howFound: optionalText(200),
   // Pricing package from /pricing CTAs; checked against the pricing global in handleContact.
