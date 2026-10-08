@@ -35,9 +35,9 @@ test.describe('admin panel', () => {
     const login = await page.request.post('/api/users/login', { data: { email, password } })
     expect(login.ok()).toBe(true)
     for (const [locale, title] of [
-      ['es', 'Propuesta de tarifas — Landing Pages y Mantenimiento'],
-      ['en', 'Pricing — Landing Pages & Maintenance'],
-      ['fr', 'Nos tarifs — Landing pages et maintenance'],
+      ['es', 'Tarifas web'],
+      ['en', 'Website pricing'],
+      ['fr', 'Nos tarifs web'],
     ]) {
       await page.goto(`/admin/globals/pricing?locale=${locale}`)
       await expect(page.locator('#field-title')).toHaveValue(title)

@@ -1,5 +1,6 @@
 import type { Locale } from '@/i18n/locales'
 import { env } from '@/lib/env'
+import { completeMaintenancePlans, completeWebPlans } from '@/lib/pricing'
 import type { Project, Service, TeamMember } from '@/payload-types'
 
 const ORG_ID = () => `${env.SITE_URL}/#organization`
@@ -101,50 +102,57 @@ export function projectLd(p: Pick<Project, 'title' | 'summary' | 'year' | 'stack
 
 type PricingInput = {
   title: string
-  packages?: { name: string; initialPrice: number; monthlyPrice?: number | null; items?: { text: string }[] | null }[] | null
-  custom?: { title: string; description?: string | null; fromPrice?: number | null; monthlyPrice?: number | null } | null
+  packages?:
+    | { name: string; pitch?: string | null; priceWithMaintenance?: number | null; priceWebOnly?: number | null; fromPrice?: boolean | null }[]
+    | null
+  maintenancePlans?: { name: string; pitch?: string | null; monthlyPrice?: number | null; permanenceMonths?: number | null }[] | null
+  customSupport?: { title?: string | null; text?: string | null; fromPrice?: number | null } | null
 }
+type PricingLabels = { withMaintenance: string; webOnly: string }
 
 const exVat = { priceCurrency: 'EUR', valueAddedTaxIncluded: false } as const
-const monthlySpec = (price: number) => ({
-  '@type': 'UnitPriceSpecification',
-  price,
-  ...exVat,
-  unitCode: 'MON',
-  referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' },
-})
+const monthly = { unitCode: 'MON', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' } } as const
+/** A fixed price, or a minimum one for "from" prices. */
+const amount = (value: number, from: boolean) => (from ? { minPrice: value } : { price: value })
 
-/** Pricing page: one Offer per package (initial payment + monthly fee, VAT excluded) plus the custom service ("from" price). */
-export function pricingLd(p: PricingInput, url: string) {
+/**
+ * Pricing page (v4): one Offer per web plan (price with maintenance and web only, VAT excluded; "from" plans as
+ * minimum prices), one per maintenance plan (monthly fee) and tailored support (monthly minimum).
+ * Plans without prices (rows left by an older schema) are skipped, like on the page.
+ */
+export function pricingLd(p: PricingInput, url: string, labels: PricingLabels) {
   const seller = { '@id': ORG_ID() }
-  const packages = (p.packages ?? []).map((pkg) => ({
+  const offer = (name: string, description: string | null | undefined) => ({
     '@type': 'Offer',
-    name: pkg.name,
-    description: (pkg.items ?? []).map((i) => i.text).join(' · '),
+    name,
+    ...(description ? { description } : {}),
     url,
-    price: pkg.initialPrice,
     priceCurrency: 'EUR',
     seller,
-    priceSpecification: [
-      { '@type': 'UnitPriceSpecification', price: pkg.initialPrice, ...exVat },
-      ...(pkg.monthlyPrice != null ? [monthlySpec(pkg.monthlyPrice)] : []),
-    ] as Record<string, unknown>[],
+  })
+  const web = completeWebPlans(p.packages).map((plan) => {
+    const from = Boolean(plan.fromPrice)
+    return {
+      ...offer(plan.name, plan.pitch),
+      ...(from ? {} : { price: plan.priceWithMaintenance }),
+      priceSpecification: [
+        { '@type': 'UnitPriceSpecification', name: labels.withMaintenance, ...amount(plan.priceWithMaintenance as number, from), ...exVat },
+        { '@type': 'UnitPriceSpecification', name: labels.webOnly, ...amount(plan.priceWebOnly as number, from), ...exVat },
+      ] as Record<string, unknown>[],
+    }
+  })
+  const maintenance = completeMaintenancePlans(p.maintenancePlans).map((plan) => ({
+    ...offer(plan.name, plan.pitch),
+    price: plan.monthlyPrice,
+    priceSpecification: [{ '@type': 'UnitPriceSpecification', price: plan.monthlyPrice, ...exVat, ...monthly }] as Record<string, unknown>[],
   }))
-  const c = p.custom
-  const custom =
-    c?.fromPrice != null
+  const c = p.customSupport
+  const support =
+    c?.title && c.fromPrice != null
       ? [
           {
-            '@type': 'Offer',
-            name: c.title,
-            description: c.description ?? undefined,
-            url,
-            priceCurrency: 'EUR',
-            seller,
-            priceSpecification: [
-              { '@type': 'UnitPriceSpecification', minPrice: c.fromPrice, ...exVat },
-              ...(c.monthlyPrice != null ? [monthlySpec(c.monthlyPrice)] : []),
-            ] as Record<string, unknown>[],
+            ...offer(c.title, c.text),
+            priceSpecification: [{ '@type': 'UnitPriceSpecification', minPrice: c.fromPrice, ...exVat, ...monthly }] as Record<string, unknown>[],
           },
         ]
       : []
@@ -153,6 +161,6 @@ export function pricingLd(p: PricingInput, url: string) {
     '@type': 'OfferCatalog',
     name: p.title,
     url,
-    itemListElement: [...packages, ...custom],
+    itemListElement: [...web, ...maintenance, ...support] as (Record<string, unknown> & { name: string; priceSpecification: Record<string, unknown>[] })[],
   }
 }

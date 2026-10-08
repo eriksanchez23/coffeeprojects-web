@@ -9,6 +9,7 @@ import { projects } from './data/projects'
 import { services } from './data/services'
 import { settings } from './data/settings'
 import { team } from './data/team'
+import { needsReprice } from './reprice'
 import { seedOverwrite, shouldWrite, upsertGlobal, upsertLocalized } from './upsert'
 
 async function run() {
@@ -97,16 +98,51 @@ async function run() {
   } else payload.logger.info('skip seeded global home')
 
   const currentPricing = await payload.findGlobal({ slug: 'pricing', locale: 'es', depth: 0 })
-  if (shouldWrite(Boolean(currentPricing.title), seedOverwrite())) {
-    // Same pattern as Home: ES first, then EN/FR onto the saved package rows so prices stay shared.
+  // v4 (S15) is seeded once it has maintenance plans: a DB holding only the S14 packages gets the new sheet.
+  if (shouldWrite((currentPricing.maintenancePlans ?? []).length > 0, seedOverwrite())) {
+    // Same pattern as Home: ES first, then EN/FR onto the saved rows so prices stay shared across locales.
     await payload.updateGlobal({ slug: 'pricing', locale: 'es', data: { ...pricingData('es'), _status: 'published' } as never })
     const saved = await payload.findGlobal({ slug: 'pricing', locale: 'es', draft: true })
-    const rowIds = (saved.packages ?? []).map((r) => r.id)
-    if (rowIds.length !== pricing.shared.packages.length) throw new Error('pricing seed: package rows were not saved')
+    const ids = {
+      packages: (saved.packages ?? []).map((r) => r.id),
+      maintenancePlans: (saved.maintenancePlans ?? []).map((r) => r.id),
+      extras: (saved.extras?.rows ?? []).map((r) => r.id),
+    }
+    if (
+      ids.packages.length !== pricing.shared.packages.length ||
+      ids.maintenancePlans.length !== pricing.shared.maintenancePlans.length ||
+      ids.extras.length !== pricing.shared.extras.length
+    )
+      throw new Error('pricing seed: plan rows were not saved')
     for (const locale of locales.filter((l) => l !== 'es')) {
-      await payload.updateGlobal({ slug: 'pricing', locale, data: { ...pricingData(locale, rowIds), _status: 'published' } as never })
+      await payload.updateGlobal({ slug: 'pricing', locale, data: { ...pricingData(locale, ids), _status: 'published' } as never })
     }
   } else payload.logger.info('skip seeded global pricing')
+
+  // Services seeded before v4 keep their old prices (the seed never overwrites): re-price only those
+  // still at a previous price-sheet amount, with the texts that quote the price.
+  for (const s of services) {
+    const found = await payload.find({
+      collection: 'services',
+      where: { slug: { equals: s.localized.es.slug } },
+      locale: 'es',
+      limit: 1,
+      depth: 0,
+      draft: true,
+    })
+    const doc = found.docs[0]
+    if (!doc || !needsReprice(s.shared.contactType, doc.pricing, s.shared.pricing)) continue
+    for (const locale of locales) {
+      const { note, typicalTime, seo } = s.localized[locale]
+      await payload.update({
+        collection: 'services',
+        id: doc.id,
+        locale,
+        data: { ...(locale === 'es' ? { pricing: s.shared.pricing } : {}), note, typicalTime, seo, _status: 'published' } as never,
+      })
+    }
+    payload.logger.info(`re-priced service ${s.localized.es.slug}`)
+  }
 
   payload.logger.info('Seed complete')
 }

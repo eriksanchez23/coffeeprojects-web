@@ -22,7 +22,7 @@ type ServiceLocalized = {
 
 export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
   {
-    shared: { icon: 'globe', contactType: 'web', pricing: { mode: 'one-off', amount: 300 }, tags: ['Astro', 'Next.js', 'Tailwind', 'GSAP', 'Vercel'], order: 1 },
+    shared: { icon: 'globe', contactType: 'web', pricing: { mode: 'one-off', amount: 349 }, tags: ['Astro', 'Next.js', 'Tailwind', 'GSAP', 'Vercel'], order: 1 },
     localized: {
       es: {
         title: 'Webs & landing pages',
@@ -30,7 +30,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
         promise: 'Una web rápida, bonita y pensada para traer clientes.',
         summary: 'Sitios rápidos, orientados a conversión y optimizados para SEO, con stack moderno y despliegue incluido.',
         typicalTime: '1-2 semanas',
-        note: 'Mantenimiento mensual desde 20 €/mes + IVA, según el paquete.',
+        note: 'Mantenimiento opcional desde 25 €/mes + IVA: con cualquier plan, la web sale más barata.',
         features: [
           { text: 'Landing de producto o campaña' },
           { text: 'Web corporativa' },
@@ -42,7 +42,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: '¿Cuánto tarda una web?', answer: 'Una landing sencilla suele estar lista en 1-2 semanas. Tras la primera llamada te damos un plazo concreto según el alcance real.' },
           { question: '¿Podré editar los textos yo mismo?', answer: 'Sí. Si lo necesitas, incluimos un panel de gestión para que cambies textos e imágenes sin tocar código.' },
         ],
-        seo: { title: 'Diseño de páginas web y landing pages', description: 'Webs y landing pages rápidas, optimizadas para SEO y orientadas a conseguir clientes. Desde 300 € + IVA, listas en 1-2 semanas.' },
+        seo: { title: 'Diseño de páginas web y landing pages', description: 'Webs y landing pages rápidas, optimizadas para SEO y orientadas a conseguir clientes. Desde 349 € + IVA, listas en 1-2 semanas.' },
       },
       en: {
         title: 'Websites & landing pages',
@@ -50,7 +50,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
         promise: 'A fast, beautiful website built to bring you clients.',
         summary: 'Fast, conversion-focused, SEO-optimized websites with a modern stack and deployment included.',
         typicalTime: '1-2 weeks',
-        note: 'Monthly maintenance from €20/month + VAT, depending on the package.',
+        note: 'Optional maintenance from €25/month + VAT: with any plan, the website costs less.',
         features: [
           { text: 'Product or campaign landing page' },
           { text: 'Corporate website' },
@@ -62,7 +62,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: 'How long does a website take?', answer: 'A simple landing page is usually ready in 1-2 weeks. After the first call we give you a concrete timeline based on the real scope.' },
           { question: 'Will I be able to edit the content myself?', answer: 'Yes. If you need it, we include an admin panel so you can change text and images without touching code.' },
         ],
-        seo: { title: 'Website and landing page design', description: 'Fast, SEO-optimized websites and landing pages built to win clients. From €300 + VAT, ready in 1-2 weeks.' },
+        seo: { title: 'Website and landing page design', description: 'Fast, SEO-optimized websites and landing pages built to win clients. From €349 + VAT, ready in 1-2 weeks.' },
       },
       fr: {
         title: 'Sites web & landing pages',
@@ -70,7 +70,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
         promise: 'Un site rapide, élégant et pensé pour vous apporter des clients.',
         summary: 'Des sites rapides, orientés conversion et optimisés pour le SEO, avec une stack moderne et la mise en ligne incluse.',
         typicalTime: '1 à 2 semaines',
-        note: 'Maintenance mensuelle à partir de 20 €/mois + TVA, selon la formule.',
+        note: 'Maintenance facultative à partir de 25 €/mois + TVA : avec n’importe quelle formule, le site coûte moins cher.',
         features: [
           { text: 'Landing page produit ou campagne' },
           { text: "Site vitrine d'entreprise" },
@@ -82,12 +82,12 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: 'Combien de temps faut-il pour un site ?', answer: 'Une landing page simple est généralement prête en 1 à 2 semaines. Après le premier appel, nous vous donnons un délai précis selon le périmètre réel.' },
           { question: 'Pourrai-je modifier les contenus moi-même ?', answer: "Oui. Si besoin, nous incluons un panneau d'administration pour modifier textes et images sans toucher au code." },
         ],
-        seo: { title: 'Création de sites web et landing pages', description: 'Sites web et landing pages rapides, optimisés pour le SEO et pensés pour gagner des clients. À partir de 300 € + TVA, prêts en 1 à 2 semaines.' },
+        seo: { title: 'Création de sites web et landing pages', description: 'Sites web et landing pages rapides, optimisés pour le SEO et pensés pour gagner des clients. À partir de 349 € + TVA, prêts en 1 à 2 semaines.' },
       },
     },
   },
   {
-    shared: { icon: 'shopping-cart', contactType: 'ecommerce', pricing: { mode: 'one-off', amount: 2500 }, tags: ['Shopify', 'WooCommerce', 'Stripe', 'Next.js'], order: 2 },
+    shared: { icon: 'shopping-cart', contactType: 'ecommerce', pricing: { mode: 'one-off', amount: 1490 }, tags: ['Shopify', 'WooCommerce', 'Stripe', 'Next.js'], order: 2 },
     localized: {
       es: {
         title: 'Tiendas online',
@@ -106,7 +106,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: '¿Qué plataforma usaréis?', answer: 'Depende de tu catálogo y presupuesto: Shopify, WooCommerce o una tienda a medida. Te recomendamos la opción más rentable en la propuesta.' },
           { question: '¿Puedo cobrar con tarjeta y PayPal?', answer: 'Sí. Integramos Stripe y PayPal, con pagos seguros y facturación.' },
         ],
-        seo: { title: 'Desarrollo de tiendas online a medida', description: 'Tiendas online seguras y rápidas con pagos Stripe y PayPal, gestión de stock y panel propio. Desde 2.500 €.' },
+        seo: { title: 'Desarrollo de tiendas online a medida', description: 'Tiendas online seguras y rápidas con pagos Stripe y PayPal, gestión de stock y panel propio. Desde 1.490 € + IVA.' },
       },
       en: {
         title: 'Online stores',
@@ -125,7 +125,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: 'Which platform will you use?', answer: 'It depends on your catalog and budget: Shopify, WooCommerce or a custom store. We recommend the most cost-effective option in the proposal.' },
           { question: 'Can I accept cards and PayPal?', answer: 'Yes. We integrate Stripe and PayPal, with secure payments and invoicing.' },
         ],
-        seo: { title: 'Custom online store development', description: 'Secure, fast online stores with Stripe and PayPal payments, stock management and their own admin panel. From €2,500.' },
+        seo: { title: 'Custom online store development', description: 'Secure, fast online stores with Stripe and PayPal payments, stock management and their own admin panel. From €1,490 + VAT.' },
       },
       fr: {
         title: 'Boutiques en ligne',
@@ -144,7 +144,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: 'Quelle plateforme utiliserez-vous ?', answer: 'Cela dépend de votre catalogue et de votre budget : Shopify, WooCommerce ou une boutique sur mesure. Nous recommandons l’option la plus rentable dans la proposition.' },
           { question: 'Puis-je accepter la carte et PayPal ?', answer: 'Oui. Nous intégrons Stripe et PayPal, avec paiements sécurisés et facturation.' },
         ],
-        seo: { title: 'Création de boutiques en ligne sur mesure', description: "Boutiques en ligne sûres et rapides avec paiements Stripe et PayPal, gestion des stocks et panneau d'administration. À partir de 2 500 €." },
+        seo: { title: 'Création de boutiques en ligne sur mesure', description: "Boutiques en ligne sûres et rapides avec paiements Stripe et PayPal, gestion des stocks et panneau d'administration. À partir de 1 490 € + TVA." },
       },
     },
   },
@@ -308,14 +308,14 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
     },
   },
   {
-    shared: { icon: 'wrench', contactType: 'maintenance', pricing: { mode: 'monthly', amount: 20 }, tags: ['Backups', 'Updates', 'Monitoring'], order: 6 },
+    shared: { icon: 'wrench', contactType: 'maintenance', pricing: { mode: 'monthly', amount: 25 }, tags: ['Backups', 'Updates', 'Monitoring'], order: 6 },
     localized: {
       es: {
         title: 'Mantenimiento web mensual',
         slug: 'mantenimiento-web',
         promise: 'Tu web siempre rápida, segura y actualizada, la hayamos hecho nosotros o no.',
         summary: '¿Ya tienes web y quieres que la cuidemos? Nos encargamos aunque no la hayamos hecho nosotros: actualizaciones, copias de seguridad, soporte y cambios menores por una cuota fija.',
-        typicalTime: 'Respuesta en 24h laborables',
+        typicalTime: 'Respuesta en 24–72 h según el plan',
         note: 'Para webs hechas por nosotros o por terceros. Auditoría inicial incluida.',
         features: [
           { text: 'Actualizaciones y parches' },
@@ -324,14 +324,14 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { text: 'Cambios menores y soporte' },
         ],
         faq: [],
-        seo: { title: 'Mantenimiento web mensual', description: 'Mantenimiento web con actualizaciones, copias de seguridad, monitorización y soporte. Para cualquier web. Desde 20 €/mes + IVA.' },
+        seo: { title: 'Mantenimiento web mensual', description: 'Mantenimiento web con actualizaciones, copias de seguridad, monitorización y soporte. Para cualquier web. Desde 25 €/mes + IVA.' },
       },
       en: {
         title: 'Monthly website maintenance',
         slug: 'website-maintenance',
         promise: "Your website always fast, secure and up to date, whether we built it or not.",
         summary: "Already have a website and want us to look after it? We take care of it even if we didn't build it: updates, backups, support and minor changes for a fixed monthly fee.",
-        typicalTime: 'Reply within 24 business hours',
+        typicalTime: 'Reply within 24–72 h depending on the plan',
         note: 'For websites built by us or by others. Initial audit included.',
         features: [
           { text: 'Updates and patches' },
@@ -340,14 +340,14 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { text: 'Minor changes and support' },
         ],
         faq: [],
-        seo: { title: 'Monthly website maintenance', description: 'Website maintenance with updates, backups, monitoring and support. For any website. From €20/month + VAT.' },
+        seo: { title: 'Monthly website maintenance', description: 'Website maintenance with updates, backups, monitoring and support. For any website. From €25/month + VAT.' },
       },
       fr: {
         title: 'Maintenance web mensuelle',
         slug: 'maintenance-site-web',
         promise: "Votre site toujours rapide, sûr et à jour, que nous l'ayons créé ou non.",
         summary: "Vous avez déjà un site et souhaitez qu'on s'en occupe ? Nous le prenons en charge même si nous ne l'avons pas créé : mises à jour, sauvegardes, support et petites modifications pour un forfait mensuel fixe.",
-        typicalTime: 'Réponse sous 24 h ouvrées',
+        typicalTime: 'Réponse sous 24 à 72 h selon la formule',
         note: 'Pour les sites créés par nous ou par d’autres. Audit initial inclus.',
         features: [
           { text: 'Mises à jour et correctifs' },
@@ -356,7 +356,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { text: 'Petites modifications et support' },
         ],
         faq: [],
-        seo: { title: 'Maintenance web mensuelle', description: 'Maintenance de site avec mises à jour, sauvegardes, surveillance et support. Pour tout site. À partir de 20 €/mois + TVA.' },
+        seo: { title: 'Maintenance web mensuelle', description: 'Maintenance de site avec mises à jour, sauvegardes, surveillance et support. Pour tout site. À partir de 25 €/mois + TVA.' },
       },
     },
   },

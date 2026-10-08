@@ -34,40 +34,55 @@ describe('json-ld', () => {
 
 describe('pricingLd', () => {
   const pricing = {
-    title: 'Presupuestos',
+    title: 'Tarifas web',
     packages: [
-      { slug: 'basico', name: 'Básico', initialPrice: 300, monthlyPrice: 20, items: [{ text: 'Landing Page' }, { text: 'Dominio incluido' }] },
-      { slug: 'sin-cuota', name: 'Sin cuota', initialPrice: 100, monthlyPrice: null, items: [] },
+      { slug: 'landing-page', name: 'Landing Page', pitch: 'Estar en Google.', priceWithMaintenance: 349, priceWebOnly: 590, fromPrice: false },
+      { slug: 'custom', name: 'Custom', pitch: 'A medida.', priceWithMaintenance: 490, priceWebOnly: 790, fromPrice: true },
+      { slug: 'basico', name: 'Básico', priceWithMaintenance: null, priceWebOnly: null },
     ],
-    custom: { title: 'Servicio personalizado', description: 'Para cualquier servicio.', fromPrice: 500, monthlyPrice: 20 },
+    maintenancePlans: [{ slug: 'esencial', name: 'Esencial', pitch: 'Web segura.', monthlyPrice: 25, permanenceMonths: 24 }],
+    customSupport: { title: 'Soporte a medida', text: 'Bajo presupuesto.', fromPrice: 139 },
   }
-  const ld = pricingLd(pricing as never, 'https://x/presupuestos')
+  const labels = { withMaintenance: 'Con mantenimiento', webOnly: 'Solo la web' }
+  const ld = pricingLd(pricing as never, 'https://x/presupuestos', labels)
   const offers = ld.itemListElement
+  const exVat = { priceCurrency: 'EUR', valueAddedTaxIncluded: false }
+  const monthly = { unitCode: 'MON', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' } }
 
-  it('is an OfferCatalog with one Offer per package plus the custom service', () => {
+  it('is an OfferCatalog with one Offer per complete web plan, maintenance plan and tailored support', () => {
     expect(ld['@type']).toBe('OfferCatalog')
     expect(ld.url).toBe('https://x/presupuestos')
     // inLanguage is not an OfferCatalog property.
     expect(ld).not.toHaveProperty('inLanguage')
-    expect(offers).toHaveLength(3)
+    expect(offers.map((o) => o.name)).toEqual(['Landing Page', 'Custom', 'Esencial', 'Soporte a medida'])
     expect(offers.every((o) => o['@type'] === 'Offer')).toBe(true)
   })
 
-  it('splits the initial payment and the monthly fee, both excluding VAT', () => {
-    expect(offers[0]).toMatchObject({ name: 'Básico', price: 300, priceCurrency: 'EUR', description: 'Landing Page · Dominio incluido' })
+  it('prices a web plan with maintenance and as web only, both excluding VAT', () => {
+    expect(offers[0]).toMatchObject({ name: 'Landing Page', description: 'Estar en Google.', price: 349, priceCurrency: 'EUR' })
     expect(offers[0].priceSpecification).toEqual([
-      { '@type': 'UnitPriceSpecification', price: 300, priceCurrency: 'EUR', valueAddedTaxIncluded: false },
-      { '@type': 'UnitPriceSpecification', price: 20, priceCurrency: 'EUR', valueAddedTaxIncluded: false, unitCode: 'MON', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' } },
+      { '@type': 'UnitPriceSpecification', name: 'Con mantenimiento', price: 349, ...exVat },
+      { '@type': 'UnitPriceSpecification', name: 'Solo la web', price: 590, ...exVat },
     ])
   })
 
-  it('omits a monthly fee that does not exist', () => {
-    expect(offers[1].priceSpecification).toHaveLength(1)
+  it('states "from" plans as minimum prices, never fixed ones', () => {
+    expect(offers[1]).not.toHaveProperty('price')
+    expect(offers[1].priceSpecification).toEqual([
+      { '@type': 'UnitPriceSpecification', name: 'Con mantenimiento', minPrice: 490, ...exVat },
+      { '@type': 'UnitPriceSpecification', name: 'Solo la web', minPrice: 790, ...exVat },
+    ])
   })
 
-  it('states the custom service as a minimum price, never a fixed one', () => {
-    expect(offers[2]).toMatchObject({ name: 'Servicio personalizado', description: 'Para cualquier servicio.' })
-    expect(offers[2]).not.toHaveProperty('price')
-    expect(offers[2].priceSpecification[0]).toEqual({ '@type': 'UnitPriceSpecification', minPrice: 500, priceCurrency: 'EUR', valueAddedTaxIncluded: false })
+  it('prices maintenance monthly and tailored support as a monthly minimum', () => {
+    expect(offers[2]).toMatchObject({ description: 'Web segura.', price: 25 })
+    expect(offers[2].priceSpecification).toEqual([{ '@type': 'UnitPriceSpecification', price: 25, ...exVat, ...monthly }])
+    expect(offers[3]).not.toHaveProperty('price')
+    expect(offers[3].priceSpecification).toEqual([{ '@type': 'UnitPriceSpecification', minPrice: 139, ...exVat, ...monthly }])
+  })
+
+  it('omits tailored support without a price', () => {
+    const ld2 = pricingLd({ ...pricing, customSupport: { title: 'Soporte' } } as never, 'https://x', labels)
+    expect(ld2.itemListElement).toHaveLength(3)
   })
 })

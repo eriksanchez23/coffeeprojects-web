@@ -151,7 +151,7 @@ export interface Contact {
   phone?: string | null;
   projectType: 'web' | 'ecommerce' | 'fivem-script' | 'fivem-server' | 'discord-bot' | 'maintenance' | 'custom';
   /**
-   * Pricing package chosen on the pricing page (validated against the Pricing global)
+   * Web plan chosen on the pricing page (validated against the Pricing global)
    */
   plan?: string | null;
   budget?: ('lt500' | '500-1500' | '1500-3000' | '3000-6000' | 'gt6000' | 'tbd') | null;
@@ -844,6 +844,16 @@ export interface Pricing {
   title: string;
   subtitle?: string | null;
   intro?: string | null;
+  /**
+   * Shown after every price, e.g. "+ IVA"
+   */
+  vatNote?: string | null;
+  footnote?: string | null;
+  webTitle: string;
+  webIntro?: string | null;
+  /**
+   * One-off payment. The big price is the "with maintenance" one.
+   */
   packages?:
     | {
         /**
@@ -851,23 +861,41 @@ export interface Pricing {
          */
         slug: string;
         name: string;
+        pitch?: string | null;
         /**
          * EUR, VAT excluded
          */
-        initialPrice: number;
+        priceWithMaintenance: number;
         /**
          * EUR, VAT excluded
          */
-        monthlyPrice?: number | null;
+        priceWebOnly: number;
         /**
-         * Highlighted as recommended
+         * Both prices are shown as "from"
+         */
+        fromPrice?: boolean | null;
+        /**
+         * Slug of the maintenance plan that unlocks the reduced price (e.g. "esencial")
+         */
+        minPlan?: string | null;
+        contactType?: ('web' | 'ecommerce' | 'custom') | null;
+        /**
+         * Highlighted with the "Recommended" badge
          */
         featured?: boolean | null;
+        /**
+         * Shows the "New" badge
+         */
+        isNew?: boolean | null;
+        /**
+         * Optional, e.g. "The base price includes exactly:"
+         */
+        itemsLead?: string | null;
         items?:
           | {
               text: string;
               /**
-               * Shown as not included (e.g. "Sin SEO")
+               * Shown as not included (e.g. "No professional email")
                */
               excluded?: boolean | null;
               id?: string | null;
@@ -878,27 +906,112 @@ export interface Pricing {
       }[]
     | null;
   /**
-   * Custom service card ("from" price)
+   * Payment terms, "web only", extra features…
    */
-  custom: {
-    title: string;
-    subtitle?: string | null;
-    description?: string | null;
+  webNotes?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  maintenanceTitle: string;
+  maintenanceIntro?: string | null;
+  maintenancePlans?:
+    | {
+        /**
+         * Stable id referenced by each web plan's "minimum plan". Lowercase, digits and dashes. Do not translate.
+         */
+        slug: string;
+        name: string;
+        pitch?: string | null;
+        /**
+         * EUR, VAT excluded
+         */
+        monthlyPrice: number;
+        permanenceMonths: number;
+        /**
+         * Highlighted with the "Recommended" badge
+         */
+        featured?: boolean | null;
+        items?:
+          | {
+              text: string;
+              /**
+               * Shown as not included (e.g. "No professional email")
+               */
+              excluded?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        ctaLabel?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Note under the plans: not a published plan, quoted on request
+   */
+  customSupport?: {
+    title?: string | null;
+    text?: string | null;
     /**
      * EUR, VAT excluded
      */
     fromPrice?: number | null;
-    /**
-     * EUR, VAT excluded
-     */
-    monthlyPrice?: number | null;
-    ctaLabel?: string | null;
+    permanenceMonths?: number | null;
   };
   /**
-   * Shown after every price, e.g. "+ IVA"
+   * "What counts as a change?" and allowance rules
    */
-  vatNote?: string | null;
-  footnote?: string | null;
+  changeNotes?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  comparison?: {
+    title?: string | null;
+    intro?: string | null;
+    rows?:
+      | {
+          label: string;
+          withPlan: string;
+          webOnly: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  permanenceRules?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  extras?: {
+    title?: string | null;
+    intro?: string | null;
+    /**
+     * Each column shows the amount when set; otherwise its text (e.g. "Included", "Quote").
+     */
+    rows?:
+      | {
+          service: string;
+          /**
+           * EUR, VAT excluded
+           */
+          withPlan?: number | null;
+          withPlanText?: string | null;
+          /**
+           * EUR, VAT excluded
+           */
+          withoutPlan?: number | null;
+          withoutPlanText?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   /**
    * Search engine and social preview. Leave empty to use defaults.
    */
@@ -1060,13 +1173,51 @@ export interface PricingSelect<T extends boolean = true> {
   title?: T;
   subtitle?: T;
   intro?: T;
+  vatNote?: T;
+  footnote?: T;
+  webTitle?: T;
+  webIntro?: T;
   packages?:
     | T
     | {
         slug?: T;
         name?: T;
-        initialPrice?: T;
+        pitch?: T;
+        priceWithMaintenance?: T;
+        priceWebOnly?: T;
+        fromPrice?: T;
+        minPlan?: T;
+        contactType?: T;
+        featured?: T;
+        isNew?: T;
+        itemsLead?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              excluded?: T;
+              id?: T;
+            };
+        ctaLabel?: T;
+        id?: T;
+      };
+  webNotes?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  maintenanceTitle?: T;
+  maintenanceIntro?: T;
+  maintenancePlans?:
+    | T
+    | {
+        slug?: T;
+        name?: T;
+        pitch?: T;
         monthlyPrice?: T;
+        permanenceMonths?: T;
         featured?: T;
         items?:
           | T
@@ -1078,18 +1229,58 @@ export interface PricingSelect<T extends boolean = true> {
         ctaLabel?: T;
         id?: T;
       };
-  custom?:
+  customSupport?:
     | T
     | {
         title?: T;
-        subtitle?: T;
-        description?: T;
+        text?: T;
         fromPrice?: T;
-        monthlyPrice?: T;
-        ctaLabel?: T;
+        permanenceMonths?: T;
       };
-  vatNote?: T;
-  footnote?: T;
+  changeNotes?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  comparison?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        rows?:
+          | T
+          | {
+              label?: T;
+              withPlan?: T;
+              webOnly?: T;
+              id?: T;
+            };
+      };
+  permanenceRules?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  extras?:
+    | T
+    | {
+        title?: T;
+        intro?: T;
+        rows?:
+          | T
+          | {
+              service?: T;
+              withPlan?: T;
+              withPlanText?: T;
+              withoutPlan?: T;
+              withoutPlanText?: T;
+              id?: T;
+            };
+      };
   seo?:
     | T
     | {

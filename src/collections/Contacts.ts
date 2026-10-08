@@ -69,8 +69,8 @@ export const Contacts: CollectionConfig = {
       admin: {
         ...readOnly,
         description: t(
-          'Paquete elegido en la página de precios (validado con el global de Precios)',
-          'Pricing package chosen on the pricing page (validated against the Pricing global)',
+          'Plan de web elegido en la página de precios (validado con el global de Precios)',
+          'Web plan chosen on the pricing page (validated against the Pricing global)',
         ),
       },
       access: locked,

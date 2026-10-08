@@ -55,8 +55,16 @@ export function withPricingDefaults(raw: Raw<Pricing>): Pricing {
     id: pricing.id ?? 0,
     eyebrow: pricing.eyebrow ?? '',
     title: pricing.title ?? '',
+    webTitle: pricing.webTitle ?? '',
+    maintenanceTitle: pricing.maintenanceTitle ?? '',
     packages: pricing.packages ?? [],
-    custom: { title: '', ...pricing.custom },
+    webNotes: pricing.webNotes ?? [],
+    maintenancePlans: pricing.maintenancePlans ?? [],
+    customSupport: { ...pricing.customSupport },
+    changeNotes: pricing.changeNotes ?? [],
+    comparison: { ...pricing.comparison, rows: pricing.comparison?.rows ?? [] },
+    permanenceRules: pricing.permanenceRules ?? [],
+    extras: { ...pricing.extras, rows: pricing.extras?.rows ?? [] },
   }
 }
 

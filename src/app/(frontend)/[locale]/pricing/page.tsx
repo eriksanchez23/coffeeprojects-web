@@ -8,6 +8,7 @@ import { Container } from '@/components/ui/container'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import { getPricing } from '@/lib/cms/queries'
+import { completeWebPlans } from '@/lib/pricing'
 import { breadcrumbLd, pricingLd } from '@/lib/seo/jsonld'
 import { absoluteUrl, buildMetadata } from '@/lib/seo/metadata'
 
@@ -28,9 +29,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function PricingPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = (await params).locale as Locale
   setRequestLocale(locale)
-  const [pricing, tn] = await Promise.all([getPricing(locale), getTranslations('nav')])
-  // Not seeded / not published yet: no half-empty pricing page.
-  if (!pricing.title || (pricing.packages ?? []).length === 0) notFound()
+  const [pricing, tn, tp] = await Promise.all([getPricing(locale), getTranslations('nav'), getTranslations('pricing')])
+  // Not seeded / not published yet (or only pre-v4 rows without prices): no half-empty pricing page.
+  if (!pricing.title || completeWebPlans(pricing.packages).length === 0) notFound()
   const paths = localizedPaths('/pricing')
   const pageUrl = absoluteUrl(paths[locale])
 
@@ -38,7 +39,7 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
     <PageShell locale={locale} alternates={paths}>
       <JsonLd
         data={[
-          pricingLd(pricing, pageUrl),
+          pricingLd(pricing, pageUrl, { withMaintenance: tp('withMaintenance'), webOnly: tp('webOnly') }),
           breadcrumbLd([
             { name: tn('home'), url: absoluteUrl(localizedPaths('/')[locale]) },
             { name: tn('pricing'), url: pageUrl },

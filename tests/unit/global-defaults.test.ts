@@ -39,7 +39,14 @@ describe('withSettingsDefaults', () => {
 
 describe('withPricingDefaults / withLegalDefaults', () => {
   it.each(empties)('never returns undefined lists or documents for %o', (raw) => {
-    expect(withPricingDefaults(raw as never).packages).toEqual([])
+    const pricing = withPricingDefaults(raw as never)
+    expect(pricing.packages).toEqual([])
+    expect(pricing.maintenancePlans).toEqual([])
+    expect([pricing.webNotes, pricing.changeNotes, pricing.permanenceRules]).toEqual([[], [], []])
+    expect(pricing.comparison?.rows).toEqual([])
+    expect(pricing.extras?.rows).toEqual([])
+    expect(pricing.customSupport).toEqual({})
+    expect([pricing.webTitle, pricing.maintenanceTitle]).toEqual(['', ''])
     const legal = withLegalDefaults(raw as never)
     expect(legal.legalNotice ?? null).toBeNull()
     expect(legal.privacyPolicy ?? null).toBeNull()

@@ -110,7 +110,7 @@ export const getSettings = async (locale: Locale) => withSettingsDefaults(await 
 export const getLegal = async (locale: Locale) => withLegalDefaults(await getGlobal<Legal>('legal', locale))
 export const getPricing = async (locale: Locale) => withPricingDefaults(await getGlobal<Pricing>('pricing', locale))
 
-/** Package slugs of the published pricing global: the only values a contact `plan` may take. */
+/** Web plan slugs of the published pricing global: the only values a contact `plan` may take. */
 export async function getPlanSlugs(): Promise<string[]> {
   const pricing = withPricingDefaults(await getGlobal<Pricing>('pricing', 'es'))
   return (pricing.packages ?? []).map((p) => p.slug)
