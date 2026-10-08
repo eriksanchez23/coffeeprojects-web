@@ -52,9 +52,9 @@ Plan: `docs/03-implementation-plan.md` + `docs/plan/T00..T18` · Spec: `docs/01-
 | T19 pricing section | S14 | delegated (writer, opus) | done | adfbc41..a355d52 (approved; 1 polish round; R29 plan field, R30 badge) |
 | T18 staging deploy | S11 | human + agent | done | L26 |
 | T20 pricing v4 | S15 | delegated (writer, opus) | done (writer; awaiting review) | 2128c21 (migration 20261008_200736_pricing_v4; e2e pricing 10/10 desktop on a prod-like local DB) |
-| T22 contact form price/time | S17 | delegated (writer, opus) | in progress | — |
-| T23 team emails + panel reply | S18, S19 | delegated (writer, opus) | pending | — |
-| T24 assigned requests in sidebar | S20 | delegated (writer, opus) | pending | — |
+| T22 contact form price/time | S17 | delegated (writer, opus) | done (writer; awaiting review) | 41eec9d + 3135558 (migration 20261008_234103_contact_quoted_summary; quote pure fns RED→GREEN; summary rebuilt server-side, client value ignored) |
+| T23 team emails + panel reply | S18, S19 | delegated (writer, opus) | done (writer; awaiting review) | bb91126 (migration 20261008_234606_contact_replies; POST /api/contacts/:id/reply team-only; endpoint tests with mocked transport) |
+| T24 assigned requests in sidebar | S20 | delegated (writer, opus) | done (writer; awaiting review) | f099d84 (afterNavLinks server component; e2e 102 passed / 9 pre-existing skips desktop+mobile on a fresh migrated + seeded local DB, RESEND_API_KEY unset) |
 | T25 admin media upload + icon | user report 2026-10-09 | inline | done | 453295d |
 | T21 partners page | S16 | delegated (writer, opus) | done (writer; awaiting review) | 0415e90..db9ce5f (migration 20261008_203534_partners; global `partners`; e2e partners/a11y/admin 34/34 desktop+mobile on a fresh migrated + seeded local DB) |
 
