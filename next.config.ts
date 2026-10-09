@@ -3,7 +3,7 @@ import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { legacyRedirects, responseHeaders, scopeClientHintsToAdmin } from './src/lib/http-headers'
+import { legacyRedirects, nextSecurityConfig, responseHeaders, scopeClientHintsToAdmin } from './src/lib/http-headers'
 
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
@@ -15,6 +15,7 @@ const withNextIntl = createNextIntlPlugin({
 })
 
 const nextConfig: NextConfig = {
+  ...nextSecurityConfig,
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
