@@ -1,0 +1,39 @@
+# selfhost-proxmox — feature document
+
+Objective: move coffeeprojects.es off Vercel to a Proxmox LXC (local Postgres + local media) behind Nginx Proxy Manager and Cloudflare, after an exhaustive security audit, with twice-daily backups.
+Branch: `feat/selfhost-proxmox` · Delivery strategy: `ask-on-risk` (forecast < 400 authored lines of code; most work is infrastructure) · Test runner: Vitest (unit) + Playwright (E2E); infra checks are command evidence.
+Constraint: the fork must stay schema-compatible with the production DB (no new migrations before T6; keep the Blob plugin registered so its columns stay).
+
+## Specs
+
+- **S1** — "tengo un servidor en casa y queremos deployearla correctamente en el mismo" / "colocar la web con su dominio y todo funcionando en el container requerido". Acceptance: the site runs in its own Proxmox LXC under systemd and serves `https://coffeeprojects.es` (and `www`) through NPM + Cloudflare.
+- **S2** — "Revisala bien porque veras que tiene terminos de base de datos, y multiples funcionalidades necesarias." Acceptance: every feature works after the move: public site es/en/fr, `/admin`, contact form + Turnstile + rate limit, emails, panel reply, inbound email sync, drafts preview, sitemap/robots/OG images.
+- **S3** — "cualquier clave, api key, lo que sea, mandamos los cambios a github sin eso y luego todo eso va con la web." Acceptance: no secret in Git; secrets live only in `/etc/coffeeprojects/app.env` (root, 600) on the container; Claude never prints secret values.
+- **S4** — "Creo que seria mas seguro con un Postgres local, habria que migrar toda la base de datos sin reestriccion para no fallar ahi". Acceptance: local Postgres (same major as Neon or newer) restored from a full `pg_dump` of Neon (`--no-owner --no-acl`), per-table row counts equal to the source, `payload_migrations` included; Neon kept untouched as fallback.
+- **S5** — "Dios local creo qeu sera mejor, porque asi tendremos todo en local, sin necesidad de nada externo". Acceptance: media stored on a persistent directory outside the code checkout; every existing Vercel Blob object (originals + image sizes) downloaded and served locally.
+- **S6** — "Si, tengo acceso al dominio y ese sera el dominio final." Acceptance: `coffeeprojects.es` (DNS in the user's Cloudflare); Vercel kept as rollback until the new host is stable; IONOS mail (MX/SPF) untouched.
+- **S7** — "tras el deploy tambien hay que configurar Resend". Acceptance: Resend DNS records in Cloudflare, domains verified, webhook URL = `https://coffeeprojects.es/api/inbound/resend`, end-to-end test (form → notification, panel reply, email reply sync).
+- **S8** — "hay que hacer una revision exhausta de seguridad a la pagina web, no podemos dejar pasar nada, habra informacion confidencial en esa web, no se puede dejar pasar, sobre todo en temas de API, todo eso hay que verificarlo." Acceptance: audit with skills `security-review`, `security-and-hardening`, `payload`, plus `judgment-day`/`review-risk`; covers Payload REST/GraphQL access per collection, custom endpoints, secrets exposure, headers/CSP, uploads, injections, dependencies (`pnpm audit`), and live probes against the deployed container; every finding fixed or explicitly accepted by the user before exposure.
+- **S9** — "en la fase 7, quiero que se hagan 2 backups al dia, 00:00 y 12:00.  BBDD y todo lo requerido por si hay que hacer una copia de seguridad." Acceptance: at 00:00 and 12:00 a backup of Postgres + media + encrypted `app.env` lands on `disco-nas`; a restore has been tested; plus a `vzdump` of the container.
+- **S10** — "Los meta ads aun no estan hechos, asi que dejalos al final". Acceptance: Meta Pixel/CAPI configured last, out of the cutover path.
+
+## Tasks
+
+| ID | Specs | Route | Status | Evidence / commit |
+|----|-------|-------|--------|-------------------|
+| T0 code prep (env-driven media dir, drop Vercel hosts from CSP/images, gitignore) | S3, S5 | delegated (writer) | pending | — |
+| T0.5 security audit + fixes | S8 | delegated (auditors + writer) | pending | — |
+| T1 container (Debian 12, Node 22, pnpm, Postgres, NTP, systemd, firewall) | S1 | inline over SSH | pending | — |
+| T2 data migration (Neon dump/restore, Blob → disk) | S4, S5 | inline over SSH + user scp | pending | — |
+| T3 build + LAN test + live security probes | S1, S2, S8 | inline over SSH | pending | — |
+| T4 NPM + Cloudflare (proxy host, real IP, SSL Full strict, www, Turnstile hostname) | S1, S6 | human with exact steps | pending | — |
+| T5 Resend DNS + webhook + e2e | S7 | human with exact steps | pending | — |
+| T6 cutover (final dump, DNS switch, smoke tests, Vercel rollback kept) | S1, S2, S6 | both | pending | — |
+| T7 post: backups 00:00/12:00 + restore test, drop temp vars, privacy text, deploy runbook, Meta | S9, S10 | inline + writer | pending | — |
+
+## Log
+
+- **L1** (2026-10-09, user, verbatim) — "Buenas, tenemos esta web, actualmente deployeada en vercel en https://coffeeprojects-web.vercel.app/ La idea es que yo tengo un servidor en casa y queremos deployearla correctamente en el mismo. Yo te voy a dar acceso a mi promox en el propio nodo mediante ssh, este solo estara disponible en mi red, no estara abierto al publico asi que no te preocupes por terminos de contraseñas ni nada en terminos del ssh. Quiero que se haga una revision a la web, no tiene que ser tampoco para reventar el contexto pero si para saber que es totalmente necesario para poder colocar la web con su dominio y todo funcionando en el container requerido. Revisala bien porque veras que tiene terminos de base de datos, y multiples funcionalidades necesarias. Entonces vamos a planear eso, como podemos subirla a mi proxmox, que quede ahi hosteada y todo lo necesario. Tengo NGINX Proxy Reverse y Cloudflare para ello con mi dominio ahi, esas cosas las vemos luego lo que puedes hacer tu y lo que puedo hacer yo. [...] tras el deploy tambien hay que configurar Resend, eso sumaselo a todo lo necesario."
+- **L2** (2026-10-09) — Environment evidence: Proxmox VE 9.1.1 node `nekix` (SSH alias `proxmox`, key `~/.ssh/proxmox_claude`), 62 GB RAM / 32 cores, storages `local-lvm` and `disco-nas`, no backup jobs configured. NPM in CT 104 (`192.168.1.50`, Docker `jc21/nginx-proxy-manager`), router forwards 80/443 to it; NPM trusts Cloudflare ranges but uses `real_ip_header X-Real-IP`, so this host needs `real_ip_header CF-Connecting-IP;`. Used LAN IPs: .10 .11 .50 .60 .61 .70 .80 .100; proposed CT IP `192.168.1.90` (to verify free). DNS: NS Cloudflare, A → Vercel (216.198.79.65, 64.29.17.65), MX/SPF IONOS, no `www` record.
+- **L3** (2026-10-09) — Production env pulled by the user from the Vercel project (owned by eriksanchez23) into `.env.vercel.production` (gitignored). Keep: `PAYLOAD_SECRET`, `IP_HASH_SALT` (must stay identical), `RESEND_*`, `EMAIL_FROM_ADDRESS`, `CONTACT_NOTIFY_EMAIL`, `TURNSTILE_SECRET_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `PREVIEW_SECRET`, `NEXT_PUBLIC_SITE_ENV`. Change: `DATABASE_URL`, `NEXT_PUBLIC_SITE_URL`. Temporary: `DATABASE_URL_UNPOOLED`, `BLOB_READ_WRITE_TOKEN`. Drop: `PG*`, `POSTGRES_*`, `NEON_*`, `TURBO_*`, `NX_DAEMON`, `VITE_NEON_AUTH_URL`, all `VERCEL*` (`VERCEL=1` would render Vercel Analytics). User settings deny Read/Edit of `.env.*`: Claude never reads values, `.env.example` edits are a user step.
+- **L4** (2026-10-09) — User: "Pero el repo que te pase, es mi fork, no deberias tener problemas, ten en cuenta eso." Verified: `TtvNekix/coffeeprojects-web` is a fork of `eriksanchez23/coffeeprojects-web`, compare = identical (ahead 0, behind 0), same migrations up to `20261009_000317_contact_reply_channel`. The fork never deploys to Vercel, so Vercel-only config can be removed now; the Blob plugin stays registered (disabled without token) so the schema keeps matching the Neon DB. Before T6, re-check the fork is not behind upstream migrations.
