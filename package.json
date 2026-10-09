@@ -17,6 +17,8 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts",
+    "contacts:anonymize": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/anonymize-contacts.ts",
+    "contacts:anonymize:dry-run": "cross-env NODE_OPTIONS=--no-deprecation ANONYMIZE_DRY_RUN=1 payload run scripts/anonymize-contacts.ts",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "format": "prettier --write ."
   },
