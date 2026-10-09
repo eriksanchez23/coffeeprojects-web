@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 // In-memory stand-ins for Next's data cache, draft mode and the Payload Local API.
 const state = vi.hoisted(() => ({
   draft: false,
-  user: null as null | { id: number },
+  user: null as null | { id: number; role?: string },
   store: new Map<string, unknown>(),
   docs: [] as Record<string, unknown>[],
   finds: [] as Record<string, unknown>[],
@@ -72,10 +72,18 @@ describe('draft mode requires a Payload session', () => {
 
   it('serves drafts to a logged-in team member in draft mode', async () => {
     state.draft = true
-    state.user = { id: 7 }
+    state.user = { id: 7, role: 'editor' }
     state.docs = [{ id: 1, slug: 'hola' }]
     await getProject('es', 'hola')
     expect(state.finds[0]).toMatchObject({ draft: true, overrideAccess: true })
     expect(state.store.size).toBe(0) // draft reads are never cached
+  })
+
+  it.each([['integration'], [undefined], ['unknown']])('serves published content to a non-team session (role: %s)', async (role) => {
+    state.draft = true
+    state.user = { id: 8, role }
+    state.docs = [{ id: 1, slug: 'hola' }]
+    await getProject('es', 'hola')
+    expect(state.finds[0]).toMatchObject({ draft: false, overrideAccess: false })
   })
 })

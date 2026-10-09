@@ -6,6 +6,7 @@ import { cache } from 'react'
 import type { Faq, Home, Legal, Partner, Pricing, Project, Service, SiteSetting, TeamMember } from '@/payload-types'
 import type { Locale } from '@/i18n/locales'
 import { completeWebPlans } from '@/lib/pricing'
+import { hasTeamRole } from '@/access'
 import { payloadClient } from './client'
 import { withHomeDefaults, withLegalDefaults, withPartnersDefaults, withPricingDefaults, withSettingsDefaults } from './global-defaults'
 import { type SlugEntry, toLocaleSlugs, toSlugEntries } from './slugs'
@@ -14,7 +15,7 @@ type Slugged = 'services' | 'projects' | 'team-members'
 const REVALIDATE = 3600
 
 /**
- * Draft content needs both the draft-mode cookie and a live Payload session: the draft cookie outlives an
+ * Draft content needs both the draft-mode cookie and a live Payload session of a team member (admin|editor): the draft cookie outlives an
  * admin logout (or an expired token), and draft reads bypass access control. Once per request.
  */
 const isDraft = cache(async (): Promise<boolean> => {
@@ -22,7 +23,7 @@ const isDraft = cache(async (): Promise<boolean> => {
     if (!(await draftMode()).isEnabled) return false
     const payload = await payloadClient()
     const { user } = await payload.auth({ headers: await headers() })
-    return Boolean(user)
+    return hasTeamRole(user)
   } catch (err) {
     unstable_rethrow(err) // keep Next.js control-flow errors intact
     return false // called outside a request (build-time generateStaticParams)
