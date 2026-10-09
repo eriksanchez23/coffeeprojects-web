@@ -16,7 +16,7 @@ export const config = {
   // OG images are skipped too: their generated URLs use internal paths (/es/..., /fr/pricing/...) that
   // next-intl would otherwise 307 to the public path, which some link-preview scrapers do not follow.
   matcher: [
-    '/((?!api|admin|next|_next|_vercel|.*\..*|.*opengraph-image).*)',
+    '/((?!api|admin|next|_next|_vercel|.*\\..*|.*opengraph-image).*)',
     // S11: API-key requests to Payload's locked-documents collection are refused (src/lib/security/locked-documents.ts).
     '/api/:path*',
   ],
