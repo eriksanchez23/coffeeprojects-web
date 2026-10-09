@@ -60,3 +60,22 @@ describe('findBySlug cache', () => {
     expect(state.store.size).toBe(1)
   })
 })
+
+describe('draft mode requires a Payload session', () => {
+  it('serves published content when the draft cookie outlived the admin session', async () => {
+    state.draft = true
+    state.user = null
+    state.docs = [{ id: 1, slug: 'hola' }]
+    await getProject('es', 'hola')
+    expect(state.finds[0]).toMatchObject({ draft: false, overrideAccess: false })
+  })
+
+  it('serves drafts to a logged-in team member in draft mode', async () => {
+    state.draft = true
+    state.user = { id: 7 }
+    state.docs = [{ id: 1, slug: 'hola' }]
+    await getProject('es', 'hola')
+    expect(state.finds[0]).toMatchObject({ draft: true, overrideAccess: true })
+    expect(state.store.size).toBe(0) // draft reads are never cached
+  })
+})

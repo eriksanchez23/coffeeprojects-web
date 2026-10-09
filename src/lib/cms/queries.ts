@@ -1,7 +1,8 @@
 import 'server-only'
-import { draftMode } from 'next/headers'
+import { draftMode, headers } from 'next/headers'
 import { unstable_rethrow } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
+import { cache } from 'react'
 import type { Faq, Home, Legal, Partner, Pricing, Project, Service, SiteSetting, TeamMember } from '@/payload-types'
 import type { Locale } from '@/i18n/locales'
 import { completeWebPlans } from '@/lib/pricing'
@@ -12,14 +13,21 @@ import { type SlugEntry, toLocaleSlugs, toSlugEntries } from './slugs'
 type Slugged = 'services' | 'projects' | 'team-members'
 const REVALIDATE = 3600
 
-async function isDraft(): Promise<boolean> {
+/**
+ * Draft content needs both the draft-mode cookie and a live Payload session: the draft cookie outlives an
+ * admin logout (or an expired token), and draft reads bypass access control. Once per request.
+ */
+const isDraft = cache(async (): Promise<boolean> => {
   try {
-    return (await draftMode()).isEnabled
+    if (!(await draftMode()).isEnabled) return false
+    const payload = await payloadClient()
+    const { user } = await payload.auth({ headers: await headers() })
+    return Boolean(user)
   } catch (err) {
     unstable_rethrow(err) // keep Next.js control-flow errors intact
     return false // called outside a request (build-time generateStaticParams)
   }
-}
+})
 
 /** Cached in production reads; bypassed entirely in draft mode so editors see unpublished changes. */
 async function read<T>(key: string[], tags: string[], fn: (draft: boolean) => Promise<T>): Promise<T> {
