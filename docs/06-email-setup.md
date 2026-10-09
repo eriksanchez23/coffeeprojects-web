@@ -76,3 +76,27 @@ fields removed in S17; it now mentions the price and estimated time summary show
 not overwrite a legal page that already exists, so on a live database the team updates it in the panel:
 **Ajustes, Legal, Política de privacidad**, edit the "quote requests" paragraph in each language (ES, EN, FR) with
 the same text as the seed, and save.
+
+## Current state (2026-10-09)
+
+Configured through the Resend API (region eu-west-1):
+
+- Domain `coffeeprojects.es`: sending only (open/click tracking off).
+- Domain `inbound.coffeeprojects.es`: receiving only.
+- API key "coffeeprojects-web (Vercel)" (full access: the webhook reads received emails).
+- Webhook `email.received` -> `https://coffeeprojects-web.vercel.app/api/inbound/resend`.
+- Vercel env (production + preview): `RESEND_API_KEY`, `RESEND_WEBHOOK_SECRET`, `RESEND_INBOUND_DOMAIN=inbound.coffeeprojects.es` (sensitive values are only stored in Vercel/Resend).
+
+DNS for `coffeeprojects.es` is on Cloudflare (mailboxes stay on IONOS: its MX/SPF records are not touched). Records to add there, all "DNS only" (grey cloud):
+
+| Type | Name | Value | Priority |
+|------|------|-------|----------|
+| TXT | `resend._domainkey` | DKIM value shown in Resend > Domains > coffeeprojects.es | |
+| MX | `send` | `feedback-smtp.eu-west-1.amazonses.com` | 10 |
+| TXT | `send` | `v=spf1 include:amazonses.com ~all` | |
+| CNAME | `rsend` | `send.forge.rmta.net` | |
+| TXT | `resend._domainkey.inbound` | DKIM value shown in Resend > Domains > inbound.coffeeprojects.es | |
+| MX | `inbound` | `inbound-smtp.eu-west-1.amazonaws.com` | 10 |
+| TXT | `_dmarc` (recommended) | `v=DMARC1; p=none;` | |
+
+Until both domains show "Verified" in Resend, sending from `web@coffeeprojects.es` fails: contact requests are still stored, the team notification is skipped with a log line and the panel's "Responder" shows an error.
