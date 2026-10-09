@@ -9,7 +9,7 @@ Already done: Resend domains, API key, `email.received` webhook and Vercel env v
 1. In Cloudflare (DNS of `coffeeprojects.es`), add the records listed in `docs/06-email-setup.md` (DNS only / grey cloud). Do not touch the IONOS MX/SPF records.
 2. In Resend > Domains, click "Verify" on `coffeeprojects.es` and `inbound.coffeeprojects.es` (or ask Claude to run `verify-domain`), wait until both show "Verified".
 3. End-to-end test on the live site:
-   - Send a contact request from `/contacto` -> every panel user receives the notification, the client receives the auto-reply.
+   - Send a contact request from `/contacto` (try /en too) -> every panel user receives the notification; the client receives the confirmation from `contact@coffeeprojects.es` with the thank-you PDF attached, in the language used on the site, and the request lists it under "Agradecimientos enviados" with no author.
    - Answer it from the panel ("Responder") -> client receives it, request shows "Respondida" with channel `panel`.
    - Answer another notification by email (Gmail/Outlook "Reply") -> client receives it from `web@coffeeprojects.es`, request shows the reply with channel `email`.
    - In a request, "Agradecimiento (PDF)" -> "Enviar al cliente" -> client receives the PDF from `contact@coffeeprojects.es` (a reply lands in IONOS), the request shows it under "Agradecimientos enviados".

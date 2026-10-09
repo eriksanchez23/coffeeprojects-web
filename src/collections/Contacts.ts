@@ -203,11 +203,11 @@ export const Contacts: CollectionConfig = {
       admin: {
         readOnly: true,
         description: t(
-          'Cada envío del PDF de agradecimiento al cliente desde «Agradecimiento (PDF)»',
-          'Each time the thank-you PDF was emailed to the client from "Thank-you note (PDF)"',
+          'Cada envío del PDF de agradecimiento al cliente: el automático al recibir la solicitud (sin autor) y los hechos desde «Agradecimiento (PDF)»',
+          'Each time the thank-you PDF was emailed to the client: the automatic one when the request arrives (no author) and those sent from "Thank-you note (PDF)"',
         ),
       },
-      // Written only by POST /api/contacts/:id/thank-you (overrideAccess) after the email was sent (S22).
+      // Written only by sendThankYouPdf (automatic confirmation + POST /api/contacts/:id/thank-you) after the email was sent (S22).
       access: { create: () => false, update: () => false },
       fields: [
         { name: 'sentAt', type: 'date', label: t('Enviado', 'Sent'), required: true, access: locked, admin: { date: { pickerAppearance: 'dayAndTime' } } },

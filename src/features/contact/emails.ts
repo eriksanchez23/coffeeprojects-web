@@ -92,6 +92,23 @@ const copy = {
 type ClientLocale = keyof typeof copy
 const clientLocale = (l: string | null | undefined): ClientLocale => (l === 'en' || l === 'fr' ? l : 'es')
 
+const attachedNote = {
+  es: 'Te adjuntamos un resumen de tu solicitud en PDF.',
+  en: "We've attached a summary of your request as a PDF.",
+  fr: 'Vous trouverez en pièce jointe un résumé de votre demande au format PDF.',
+} as const
+
+/** S22: the automatic confirmation, in the client's language, sent with the thank-you PDF attached. */
+export function confirmationEmail(locale: string | null | undefined) {
+  const l = clientLocale(locale)
+  const c = copy[l]
+  return {
+    subject: c.subject,
+    text: [`${c.hi},`, '', c.body, attachedNote[l], '', `— ${c.sign}`, 'https://coffeeprojects.es'].join('\n'),
+    html: `<p>${c.hi},</p><p>${c.body}</p><p>${attachedNote[l]}</p><p>— ${c.sign}<br/><a href="https://coffeeprojects.es">coffeeprojects.es</a></p>`,
+  }
+}
+
 export function clientEmail(i: ContactInput) {
   const c = copy[i.locale]
   return {
