@@ -178,7 +178,16 @@ describe('sender checks', () => {
     expect(senderAuthenticated(undefined)).toBe(true)
     expect(senderAuthenticated({ spf: 'fail', dkim: 'fail', dmarc: 'pass' })).toBe(true)
     expect(senderAuthenticated({ spf: 'pass', dkim: 'pass', dmarc: 'fail' })).toBe(false)
-    expect(senderAuthenticated({ spf: 'pass', dkim: 'unknown', dmarc: 'unknown' })).toBe(true)
+    // Without a DMARC pass, an SPF/DKIM pass may belong to the attacker's own domain: reject.
+    expect(senderAuthenticated({ spf: 'pass', dkim: 'unknown', dmarc: 'unknown' })).toBe(false)
+    expect(senderAuthenticated({ spf: 'pass', dkim: 'pass' })).toBe(false)
     expect(senderAuthenticated({ spf: 'fail', dkim: 'fail', dmarc: 'unknown' })).toBe(false)
+  })
+})
+
+describe('stripQuotedReply never forwards the team notification', () => {
+  it('cuts at the notification heading even when the quote header is not recognised', () => {
+    const text = 'Hola, te paso presupuesto.\n\nRandom client header line\nNueva solicitud desde coffeeprojects.es\nEmail: client@example.com\nUTM: x'
+    expect(stripQuotedReply(text)).toBe('Hola, te paso presupuesto.\n\nRandom client header line')
   })
 })

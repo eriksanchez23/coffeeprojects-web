@@ -56,10 +56,11 @@ function fakeReq(opts: { body?: string; headers?: Record<string, string>; payloa
 }
 
 type FetchCall = [string, RequestInit]
-function mockFetch({ get = { ok: true, body: received as unknown }, send = { ok: true, body: { id: 'sent_1' } as unknown } } = {}) {
+type Reply = { ok: boolean; body: unknown; status?: number }
+function mockFetch({ get = { ok: true, body: received as unknown } as Reply, send = { ok: true, body: { id: 'sent_1' } as unknown } as Reply } = {}) {
   const fn = vi.fn(async (url: string, init?: RequestInit) => {
     const r = init?.method === 'POST' ? send : get
-    return new Response(JSON.stringify(r.body), { status: r.ok ? 200 : 500 })
+    return new Response(JSON.stringify(r.body), { status: r.status ?? (r.ok ? 200 : 500) })
   })
   vi.stubGlobal('fetch', fn)
   return fn as unknown as { mock: { calls: FetchCall[] } } & typeof fn
@@ -246,6 +247,36 @@ describe('POST /api/inbound/resend (S21)', () => {
     expect(await call(req)).toEqual({ status: 500, body: { error: 'sendFailed' } })
     expect(payload.update).not.toHaveBeenCalled()
     expect(allLogs(payload)).not.toContain('client@example.com')
+  })
+
+  it('ignores (200, no retry) a permanent Resend 4xx when fetching the email', async () => {
+    mockFetch({ get: { ok: false, status: 404, body: { message: 'not found' } } })
+    const { req, payload } = fakeReq()
+    expect(await call(req)).toEqual({ status: 200, body: { ok: true, ignored: 'permanent' } })
+    expect(payload.update).not.toHaveBeenCalled()
+  })
+
+  it('ignores (200, no retry) a permanent Resend 4xx when forwarding', async () => {
+    mockFetch({ send: { ok: false, status: 422, body: { message: 'invalid' } } })
+    const { req, payload } = fakeReq()
+    expect(await call(req)).toEqual({ status: 200, body: { ok: true, ignored: 'permanent' } })
+    expect(payload.update).not.toHaveBeenCalled()
+  })
+
+  it('still asks for a retry (500) when Resend rate-limits (429)', async () => {
+    mockFetch({ send: { ok: false, status: 429, body: {} } })
+    const { req } = fakeReq()
+    expect(await call(req)).toEqual({ status: 500, body: { error: 'sendFailed' } })
+  })
+
+  it('ignores an event without an email_id instead of retrying', async () => {
+    const fetch = mockFetch()
+    const ev = event() as { data: Record<string, unknown> }
+    const body = JSON.stringify({ ...ev, data: { ...ev.data, email_id: '' } })
+    const { req, payload } = fakeReq({ body })
+    expect(await call(req)).toEqual({ status: 200, body: { ok: true, ignored: 'permanent' } })
+    expect(fetch).not.toHaveBeenCalled()
+    expect(payload.update).not.toHaveBeenCalled()
   })
 
   it('returns 500 when saving fails after forwarding (the retry reuses the idempotency key)', async () => {

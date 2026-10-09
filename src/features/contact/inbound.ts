@@ -101,15 +101,13 @@ type AuthResult = 'pass' | 'fail' | 'gray' | 'processing_failed' | 'unknown' | (
 export type InboundAuthentication = { spf?: AuthResult | null; dkim?: AuthResult | null; dmarc?: AuthResult | null }
 
 /**
- * Resend's SPF/DKIM/DMARC results for the received email. A DMARC failure means the From address is
- * spoofed; without a DMARC verdict, SPF or DKIM must pass. Missing results (older emails) are accepted:
- * the signed relay address is still required.
+ * Resend's SPF/DKIM/DMARC results for the received email. Only DMARC proves the From domain is aligned:
+ * an SPF/DKIM pass alone may belong to the sender's own (attacker) domain, so it is not enough. Missing
+ * results are accepted because the secret, per-request signed relay address is still required.
  */
 export function senderAuthenticated(auth: InboundAuthentication | null | undefined): boolean {
   if (!auth) return true
-  if (auth.dmarc === 'pass') return true
-  if (auth.dmarc === 'fail') return false
-  return auth.spf === 'pass' || auth.dkim === 'pass'
+  return auth.dmarc === 'pass'
 }
 
 const REPLY_HEADERS = [
@@ -121,6 +119,8 @@ const REPLY_HEADERS = [
 const OUTLOOK_FROM = /^(from|de)\s*:/i
 const OUTLOOK_FIELD = /^(sent|date|to|subject|enviado|fecha|para|asunto|envoy[ée]|à|objet)\s*:/i
 const OUTLOOK_RULE = /^_{10,}$/
+// Heading of our own team notification: anything from here on is quoted internal data (admin link, UTM, consents).
+const NOTIFICATION_HEADING = /nueva solicitud desde coffeeprojects.es/i
 
 /**
  * The new text of an email reply: everything above the quoted history (Gmail "On … wrote:" in en/es/fr,
@@ -135,7 +135,7 @@ export function stripQuotedReply(text: string): string {
     const header = REPLY_HEADERS.some((re) => re.test(line) || (next && re.test(`${line} ${next}`)))
     const outlookBlock = OUTLOOK_FROM.test(line) && OUTLOOK_FIELD.test(next)
     const outlookRule = OUTLOOK_RULE.test(line) && OUTLOOK_FROM.test(next)
-    if (header || outlookBlock || outlookRule) {
+    if (header || outlookBlock || outlookRule || NOTIFICATION_HEADING.test(line)) {
       end = i
       break
     }

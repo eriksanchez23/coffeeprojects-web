@@ -27,7 +27,7 @@ import { emailFrom } from '@/lib/email'
 const RESEND_API = 'https://api.resend.com'
 const TIMEOUT_MS = 10_000
 
-type Ignored = 'eventType' | 'token' | 'sender' | 'contact' | 'duplicate' | 'unauthenticated' | 'empty'
+type Ignored = 'eventType' | 'token' | 'sender' | 'contact' | 'duplicate' | 'unauthenticated' | 'empty' | 'permanent'
 type InboundError = 'notConfigured' | 'invalidSignature' | 'invalid' | 'fetchFailed' | 'sendFailed' | 'saveFailed'
 
 type ReceivedEvent = {
@@ -60,6 +60,9 @@ class HttpError extends Error {
     this.name = 'HttpError'
   }
 }
+
+/** A 4xx other than 429 will fail the same way on every retry: acknowledge it instead of making Resend retry. */
+const isPermanent = (e: unknown) => e instanceof HttpError && e.status >= 400 && e.status < 500 && e.status !== 429
 
 async function resend(apiKey: string, path: string, init: RequestInit = {}): Promise<unknown> {
   const headers = new Headers(init.headers)
@@ -117,11 +120,13 @@ export async function inboundResendHandler(req: PayloadRequest): Promise<Respons
   if (hasInboundReply(contact, svixId)) return ignore(req, 'duplicate')
 
   // The webhook carries metadata only: the body comes from the Received emails API.
+  if (typeof data.email_id !== 'string' || !data.email_id) return ignore(req, 'permanent')
   let email: ReceivedEmail
   try {
-    email = (await resend(config.apiKey, `/emails/receiving/${encodeURIComponent(String(data.email_id ?? ''))}`)) as ReceivedEmail
+    email = (await resend(config.apiKey, `/emails/receiving/${encodeURIComponent(data.email_id)}`)) as ReceivedEmail
   } catch (e) {
     logFailure(req, 'fetch', e)
+    if (isPermanent(e)) return ignore(req, 'permanent')
     return fail(500, 'fetchFailed')
   }
   if (!senderAuthenticated(email.authentication)) return ignore(req, 'unauthenticated')
@@ -139,6 +144,7 @@ export async function inboundResendHandler(req: PayloadRequest): Promise<Respons
     })
   } catch (e) {
     logFailure(req, 'send', e)
+    if (isPermanent(e)) return ignore(req, 'permanent')
     return fail(500, 'sendFailed')
   }
 
