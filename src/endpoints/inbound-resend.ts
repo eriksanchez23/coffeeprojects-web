@@ -106,8 +106,8 @@ export async function inboundResendHandler(req: PayloadRequest): Promise<Respons
   const contactId = addresses.map((a) => parseRelayAddress(a, config.domain, config.key)).find((id) => id !== null)
   if (!contactId) return ignore(req, 'token')
 
-  const users = await req.payload.find({ collection: 'users', depth: 0, limit: 100, pagination: false, overrideAccess: true, select: { email: true } })
-  const sender = findTeamSender(typeof data.from === 'string' ? data.from : null, users.docs as { id: number | string; email?: string | null }[])
+  const users = await req.payload.find({ collection: 'users', depth: 0, limit: 100, pagination: false, overrideAccess: true, select: { email: true, role: true } })
+  const sender = findTeamSender(typeof data.from === 'string' ? data.from : null, users.docs as { id: number | string; email?: string | null; role?: string | null }[])
   if (!sender?.email) return ignore(req, 'sender')
 
   let contact: ContactWithReplies & { email: string; locale?: string | null }
