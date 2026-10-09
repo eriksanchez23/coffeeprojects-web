@@ -86,7 +86,7 @@ describe('POST /api/contacts/:id/reply (S19)', () => {
     expect(update).toMatchObject({ collection: 'contacts', id: 7, data: { status: 'answered' } })
     expect(update.data.replies).toHaveLength(2)
     expect(update.data.replies[0]).toEqual(previous)
-    expect(update.data.replies[1]).toMatchObject({ author: 3, subject: 'Re: tu solicitud', body: 'Hola, gracias por escribirnos.' })
+    expect(update.data.replies[1]).toMatchObject({ author: 3, subject: 'Re: tu solicitud', body: 'Hola, gracias por escribirnos.', channel: 'panel' })
     expect(new Date(update.data.replies[1].sentAt).getTime()).not.toBeNaN()
   })
 

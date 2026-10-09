@@ -176,7 +176,7 @@ export interface Contact {
   utmTerm?: string | null;
   fbclid?: string | null;
   /**
-   * Replies sent from the panel with "Reply"
+   * Replies sent from the panel with "Reply" or by answering the request notification email
    */
   replies?:
     | {
@@ -184,6 +184,8 @@ export interface Contact {
         author?: (number | null) | User;
         subject: string;
         body: string;
+        channel?: ('panel' | 'email') | null;
+        inboundId?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -567,6 +569,8 @@ export interface ContactsSelect<T extends boolean = true> {
         author?: T;
         subject?: T;
         body?: T;
+        channel?: T;
+        inboundId?: T;
         id?: T;
       };
   ipHash?: T;

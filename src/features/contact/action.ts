@@ -17,6 +17,7 @@ import { afterSaveLead } from '@/features/tracking/lead'
 import type { Contact } from '@/payload-types'
 import { clientEmail, teamEmail, teamRecipients } from './emails'
 import { type ContactResult, handleContact } from './handle-contact'
+import { inboundConfig, teamReplyTo } from './inbound'
 import { clientIp, hashIp } from './ip'
 import { buildQuote, quoteLabelsFrom, quoteSummaryText } from './quote'
 import { isRateLimited } from './rate-limit'
@@ -89,8 +90,11 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
       const users = await payload.find({ collection: 'users', depth: 0, limit: 100, pagination: false, overrideAccess: true, select: { email: true } })
       const adminUrl = `${env.SITE_URL}${payload.config.routes.admin}/collections/contacts/${saved.id}`
       const team = teamEmail(saved, { adminUrl })
+      // S21: with Resend inbound configured, replying to this email reaches the client through the relay and is
+      // synced into the panel; otherwise Reply goes straight to the client (S18).
+      const replyTo = teamReplyTo(saved.id, input.email, inboundConfig(process.env))
       const results = await Promise.allSettled([
-        ...teamRecipients(users.docs, process.env.CONTACT_NOTIFY_EMAIL).map((to) => payload.sendEmail({ to, replyTo: input.email, ...team })),
+        ...teamRecipients(users.docs, process.env.CONTACT_NOTIFY_EMAIL).map((to) => payload.sendEmail({ to, replyTo, ...team })),
         payload.sendEmail({ to: input.email, ...clientEmail(input) }),
       ])
       results.forEach((r) => r.status === 'rejected' && log(r.reason))

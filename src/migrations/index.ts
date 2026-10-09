@@ -5,6 +5,7 @@ import * as migration_20261008_203534_partners from './20261008_203534_partners'
 import * as migration_20261008_233103_media_object_key from './20261008_233103_media_object_key';
 import * as migration_20261008_234103_contact_quoted_summary from './20261008_234103_contact_quoted_summary';
 import * as migration_20261008_234606_contact_replies from './20261008_234606_contact_replies';
+import * as migration_20261009_000317_contact_reply_channel from './20261009_000317_contact_reply_channel';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20261008_234606_contact_replies.up,
     down: migration_20261008_234606_contact_replies.down,
-    name: '20261008_234606_contact_replies'
+    name: '20261008_234606_contact_replies',
+  },
+  {
+    up: migration_20261009_000317_contact_reply_channel.up,
+    down: migration_20261009_000317_contact_reply_channel.down,
+    name: '20261009_000317_contact_reply_channel'
   },
 ];

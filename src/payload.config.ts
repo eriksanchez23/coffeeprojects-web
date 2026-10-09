@@ -20,7 +20,9 @@ import { Legal } from './globals/Legal'
 import { Partners } from './globals/Partners'
 import { Pricing } from './globals/Pricing'
 import { SiteSettings } from './globals/SiteSettings'
+import { inboundResendEndpoint } from './endpoints/inbound-resend'
 import { shouldPushSchema } from './lib/db/push'
+import { emailFrom } from './lib/email'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -53,6 +55,8 @@ export default buildConfig({
   editor: lexicalEditor(),
   // Nothing uses GraphQL (site and admin read via the Local/REST API): one less public endpoint.
   graphQL: { disable: true },
+  // S21: POST /api/inbound/resend — Resend `email.received` webhook (Svix-signed) that syncs email replies.
+  endpoints: [inboundResendEndpoint],
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
@@ -64,8 +68,8 @@ export default buildConfig({
   email: process.env.RESEND_API_KEY
     ? resendAdapter({
         apiKey: process.env.RESEND_API_KEY,
-        defaultFromAddress: process.env.EMAIL_FROM_ADDRESS || 'hola@coffeeprojects.es',
-        defaultFromName: 'coffeeProjects',
+        defaultFromAddress: emailFrom().address,
+        defaultFromName: emailFrom().name,
       })
     : undefined,
   sharp,

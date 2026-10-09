@@ -2,6 +2,7 @@ import type { Endpoint, PayloadRequest } from 'payload'
 import { z } from 'zod'
 import { isTeam } from '@/access'
 import { replyEmail } from '@/features/contact/emails'
+import { appendReply, type ContactWithReplies } from '@/features/contact/replies'
 
 /**
  * S19: POST /api/contacts/:id/reply — a team user answers a contact request from the panel.
@@ -18,8 +19,6 @@ const replySchema = z.object({
   subject: z.preprocess(noControl, z.string().trim().min(1).max(200)),
   message: z.string().trim().min(1).max(10_000),
 })
-
-type StoredReply = { id?: string | null; sentAt: string; author: number | string | { id: number | string } | null; subject: string; body: string }
 
 const json = (status: number, body: Record<string, unknown>) => Response.json(body, { status })
 const fail = (status: number, error: ReplyError) => json(status, { error })
@@ -42,8 +41,6 @@ async function readBody(req: PayloadRequest): Promise<unknown> {
   }
 }
 
-const authorId = (a: StoredReply['author']) => (a && typeof a === 'object' ? a.id : a)
-
 export async function replyHandler(req: PayloadRequest): Promise<Response> {
   if (!req.user || !(await isTeam({ req }))) return fail(401, 'unauthorized')
 
@@ -52,7 +49,7 @@ export async function replyHandler(req: PayloadRequest): Promise<Response> {
   if (!process.env.RESEND_API_KEY) return fail(503, 'emailNotConfigured')
 
   const id = String(req.routeParams?.id ?? '')
-  let contact: { id: number | string; email: string; replies?: StoredReply[] | null }
+  let contact: ContactWithReplies & { email: string }
   try {
     // The user's own access decides whether the request exists for them.
     contact = (await req.payload.findByID({ collection: 'contacts', id, depth: 0, overrideAccess: false, user: req.user })) as typeof contact
@@ -69,20 +66,8 @@ export async function replyHandler(req: PayloadRequest): Promise<Response> {
   }
 
   try {
-    // `replies` is read-only for everyone (field access), so the history is written here only.
-    await req.payload.update({
-      collection: 'contacts',
-      id: contact.id,
-      overrideAccess: true,
-      user: req.user,
-      data: {
-        status: 'answered',
-        replies: [
-          ...(contact.replies ?? []).map((r) => ({ ...r, author: authorId(r.author) })),
-          { sentAt: new Date().toISOString(), author: req.user.id, subject, body: message },
-        ],
-      } as never,
-    })
+    // `replies` is read-only for everyone (field access), so the history is written here only (S19/S21 shared).
+    await appendReply(req.payload, contact, { author: req.user.id, subject, body: message, channel: 'panel' }, req.user)
   } catch (e) {
     logFailure(req, 'save', e)
     return fail(500, 'saveFailed')

@@ -160,15 +160,31 @@ export const Contacts: CollectionConfig = {
       labels: { singular: t('Respuesta', 'Reply'), plural: t('Respuestas', 'Replies') },
       admin: {
         readOnly: true,
-        description: t('Historial de respuestas enviadas desde el panel con «Responder»', 'Replies sent from the panel with "Reply"'),
+        description: t(
+          'Historial de respuestas enviadas desde el panel con «Responder» o respondiendo por email al aviso de la solicitud',
+          'Replies sent from the panel with "Reply" or by answering the request notification email',
+        ),
       },
-      // Written only by the reply endpoint (overrideAccess) after the email was sent.
+      // Written only by the reply endpoints (overrideAccess) after the email was sent (S19 panel, S21 email).
       access: { create: () => false, update: () => false },
       fields: [
         { name: 'sentAt', type: 'date', label: t('Enviada', 'Sent'), required: true, access: locked, admin: { date: { pickerAppearance: 'dayAndTime' } } },
         { name: 'author', type: 'relationship', relationTo: 'users', label: t('Autor', 'Author'), access: locked },
         { name: 'subject', type: 'text', label: t('Asunto', 'Subject'), required: true, access: locked },
         { name: 'body', type: 'textarea', label: t('Mensaje', 'Message'), required: true, access: locked },
+        {
+          name: 'channel',
+          type: 'select',
+          label: t('Canal', 'Channel'),
+          defaultValue: 'panel',
+          options: [
+            { label: t('Panel', 'Panel'), value: 'panel' },
+            { label: t('Email', 'Email'), value: 'email' },
+          ],
+          access: locked,
+        },
+        // S21: Svix message id of the webhook delivery that stored this reply (dedupes Resend retries).
+        { name: 'inboundId', type: 'text', access: locked, admin: { hidden: true } },
       ],
     },
     {
