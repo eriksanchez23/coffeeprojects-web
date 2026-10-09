@@ -5,18 +5,12 @@ const P = (text: string) => ({ p: text })
 const H = (text: string) => ({ h2: text })
 
 // Factual description of what the site does (data, processors, cookies). The provider is identified as
-// CoffeeProjects (being incorporated), represented by Juan Pérez Ros; the only marker left is the review
-// notice below, so while it remains the legal pages are noindex and left out of the sitemap
-// (src/lib/legal.ts). Not legal advice: the company must review these texts before production.
-
-const REVIEW_ES = P('[PENDIENTE: revisión] Borrador: la empresa debe revisar este texto antes de publicar la web en producción.')
-const REVIEW_EN = P('[PENDING: review] Draft: the company must review this text before the website goes live in production.')
-const REVIEW_FR = P('[EN ATTENTE : relecture] Brouillon : la société doit relire ce texte avant la mise en production du site.')
+// CoffeeProjects (being incorporated), represented by Juan Pérez Ros. The texts were approved by the owner
+// and carry no pending markers, so the legal pages are indexable (src/lib/legal.ts). Not legal advice.
 
 export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; cookiePolicy: unknown }> = {
   es: {
     legalNotice: lexical([
-      REVIEW_ES,
       H('Datos identificativos'),
       P('Titular: CoffeeProjects (en constitución). Responsable: Juan Pérez Ros. NIF: en trámite (sociedad en constitución). Ubicación: Murcia, España. Email: contact@coffeeprojects.es.'),
       H('Objeto'),
@@ -27,7 +21,6 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
       P('Este aviso legal se rige por la legislación española (LSSI-CE).'),
     ]),
     privacyPolicy: lexical([
-      REVIEW_ES,
       H('Responsable del tratamiento'),
       P('CoffeeProjects (en constitución), responsable: Juan Pérez Ros. NIF: en trámite (sociedad en constitución). Ubicación: Murcia, España. Email: contact@coffeeprojects.es.'),
       H('Qué datos tratamos y para qué'),
@@ -44,7 +37,6 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
       P('Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a contact@coffeeprojects.es, y reclamar ante la Agencia Española de Protección de Datos (aepd.es).'),
     ]),
     cookiePolicy: lexical([
-      REVIEW_ES,
       H('Qué son las cookies'),
       P('Pequeños archivos que el navegador guarda para que la web funcione o para medir su uso.'),
       H('Cookies necesarias'),
@@ -57,7 +49,6 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
   },
   en: {
     legalNotice: lexical([
-      REVIEW_EN,
       H('Company details'),
       P('Owner: CoffeeProjects (being incorporated). Responsible person: Juan Pérez Ros. NIF (Spanish tax ID): in progress (company being incorporated). Location: Murcia, Spain. Email: contact@coffeeprojects.es.'),
       H('Purpose'),
@@ -68,7 +59,6 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
       P('This legal notice is governed by Spanish law (LSSI-CE).'),
     ]),
     privacyPolicy: lexical([
-      REVIEW_EN,
       H('Data controller'),
       P('CoffeeProjects (being incorporated), responsible person: Juan Pérez Ros. NIF (Spanish tax ID): in progress (company being incorporated). Location: Murcia, Spain. Email: contact@coffeeprojects.es.'),
       H('What data we process and why'),
@@ -85,7 +75,6 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
       P('You can exercise your rights of access, rectification, erasure, objection, restriction and portability by writing to contact@coffeeprojects.es, and lodge a complaint with the Spanish Data Protection Agency (aepd.es).'),
     ]),
     cookiePolicy: lexical([
-      REVIEW_EN,
       H('What cookies are'),
       P('Small files your browser stores so the website works or so its use can be measured.'),
       H('Necessary cookies'),
@@ -98,7 +87,6 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
   },
   fr: {
     legalNotice: lexical([
-      REVIEW_FR,
       H("Informations sur l'éditeur"),
       P('Éditeur : CoffeeProjects (en cours de constitution). Responsable : Juan Pérez Ros. NIF (numéro fiscal espagnol) : en cours (société en cours de constitution). Localisation : Murcia, Espagne. E-mail : contact@coffeeprojects.es.'),
       H('Objet'),
@@ -109,7 +97,6 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
       P('Les présentes mentions légales sont régies par le droit espagnol (LSSI-CE).'),
     ]),
     privacyPolicy: lexical([
-      REVIEW_FR,
       H('Responsable du traitement'),
       P('CoffeeProjects (en cours de constitution), responsable : Juan Pérez Ros. NIF (numéro fiscal espagnol) : en cours (société en cours de constitution). Localisation : Murcia, Espagne. E-mail : contact@coffeeprojects.es.'),
       H('Données traitées et finalités'),
@@ -126,7 +113,6 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
       P('Vous pouvez exercer vos droits d’accès, de rectification, d’effacement, d’opposition, de limitation et de portabilité en écrivant à contact@coffeeprojects.es, et introduire une réclamation auprès de l’autorité espagnole de protection des données (aepd.es).'),
     ]),
     cookiePolicy: lexical([
-      REVIEW_FR,
       H('Que sont les cookies ?'),
       P('De petits fichiers enregistrés par votre navigateur pour faire fonctionner le site ou mesurer son utilisation.'),
       H('Cookies nécessaires'),

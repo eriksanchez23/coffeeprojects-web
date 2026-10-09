@@ -8,7 +8,6 @@ const text = (doc: unknown) =>
     .flatMap((n) => n.children.map((c) => c.text))
     .join('\n')
 
-const reviewMarker = { es: '[PENDIENTE: revisión]', en: '[PENDING: review]', fr: '[EN ATTENTE : relecture]' } as const
 const incorporating = { es: 'CoffeeProjects (en constitución)', en: 'CoffeeProjects (being incorporated)', fr: 'CoffeeProjects (en cours de constitution)' } as const
 const taxId = {
   es: 'NIF: en trámite (sociedad en constitución)',
@@ -22,14 +21,11 @@ describe.each(locales)('seeded legal texts (%s)', (locale) => {
   const { legalNotice, privacyPolicy, cookiePolicy } = legal[locale]
   const docs = { legalNotice, privacyPolicy, cookiePolicy }
 
-  it('open every document with the "review before production" note', () => {
-    for (const doc of Object.values(docs)) expect(text(doc).startsWith(reviewMarker[locale])).toBe(true)
-  })
-
-  it('keep the review notice as the only pending marker', () => {
+  it('carry no pending marker and no draft notice (texts approved)', () => {
     for (const doc of Object.values(docs)) {
-      const withoutNotice = text(doc).replace(reviewMarker[locale], '')
-      expect(withoutNotice.match(anyMarker)).toBeNull()
+      const t = text(doc)
+      expect(t.match(anyMarker)).toBeNull()
+      expect(t).not.toMatch(/Borrador|Draft:|Brouillon/)
     }
   })
 
