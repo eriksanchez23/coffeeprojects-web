@@ -23,11 +23,19 @@ import { SiteSettings } from './globals/SiteSettings'
 import { inboundResendEndpoint } from './endpoints/inbound-resend'
 import { shouldPushSchema } from './lib/db/push'
 import { emailFrom } from './lib/email'
+import { siteOrigins } from './lib/security/origins'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+// Absolute links (reset emails, admin) and the CSRF/CORS allow-list come from NEXT_PUBLIC_SITE_URL.
+// Payload only accepts the auth cookie when Origin (or Sec-Fetch-Site) proves a trusted origin.
+const { serverURL, origins } = siteOrigins(process.env)
+
 export default buildConfig({
+  ...(serverURL ? { serverURL } : {}),
+  csrf: origins,
+  cors: origins,
   admin: {
     user: Users.slug,
     theme: 'dark',
