@@ -19,6 +19,8 @@
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts",
     "contacts:anonymize": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/anonymize-contacts.ts",
     "contacts:anonymize:dry-run": "cross-env NODE_OPTIONS=--no-deprecation ANONYMIZE_DRY_RUN=1 payload run scripts/anonymize-contacts.ts",
+    "legal:update": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/update-legal.ts",
+    "legal:update:dry-run": "cross-env NODE_OPTIONS=--no-deprecation LEGAL_UPDATE_DRY_RUN=1 payload run scripts/update-legal.ts",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "format": "prettier --write ."
   },
