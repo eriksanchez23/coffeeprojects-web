@@ -228,6 +228,27 @@ function clampLines(lines: string[], max: number, font: PDFFont, size: number, m
 const truncate = (s: string, max: number) => (s.length > max ? `${s.slice(0, max).trimEnd()}${ELLIPSIS}` : s)
 const oneLine = (s: string) => s.replace(/\s+/g, ' ').trim()
 
+/**
+ * The stored summary reads "Label: value · Label: value (VAT note)". On paper: one line per part, the VAT
+ * note on its own last line, and no part that only repeats the plan already shown in its own row.
+ */
+export function summaryLines(stored: string, plan?: string | null): string[] {
+  const parts = stored.split(' · ').map(oneLine).filter(Boolean)
+  const last = parts.pop()
+  let vat: string | undefined
+  if (last) {
+    // Lazy match: the note itself contains parentheses, e.g. "(IVA (21 %) incluido)".
+    const m = /^(.*?\S)\s+\((.+)\)$/.exec(last)
+    if (m) {
+      parts.push(m[1]!)
+      vat = m[2]
+    } else parts.push(last)
+  }
+  const planName = plan ? oneLine(plan).toLowerCase() : ''
+  const lines = planName ? parts.filter((p) => p.slice(p.indexOf(':') + 1).trim().toLowerCase() !== planName) : parts
+  return vat ? [...lines, vat] : lines
+}
+
 const DARK = rgb(0x12 / 255, 0x0c / 255, 0x09 / 255)
 const AMBER = rgb(0xf5 / 255, 0xa7 / 255, 0x42 / 255)
 const CREAM = rgb(0xff / 255, 0xf7 / 255, 0xe8 / 255)
@@ -334,8 +355,7 @@ export async function buildThankYouPdf(data: ThankYouData, locale: ThankYouLocal
   row(copy.projectType, oneLine(data.projectType) || '—', fonts.regular, 2)
   if (data.plan?.trim()) row(copy.plan, oneLine(data.plan), fonts.regular, 2)
   if (data.quotedSummary?.trim()) {
-    // Stored as "Label: value · Label: value (VAT)": one line per part reads better on paper.
-    row(copy.quote, data.quotedSummary.split(' · ').map(oneLine).filter(Boolean).join('\n'), fonts.regular, MAX_SUMMARY_LINES)
+    row(copy.quote, summaryLines(data.quotedSummary, data.plan).join('\n'), fonts.regular, MAX_SUMMARY_LINES)
   }
   const lineH = 14.5
   const rowGap = 8

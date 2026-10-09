@@ -1,6 +1,7 @@
 import { PDFDocument, StandardFonts } from 'pdf-lib'
 import { describe, expect, it } from 'vitest'
 import {
+  summaryLines,
   buildThankYouPdf,
   pdfSafe,
   type ThankYouData,
@@ -16,7 +17,7 @@ const base: ThankYouData = {
   name: 'María José Núñez',
   projectType: 'Tienda online',
   plan: 'Tienda Online',
-  quotedSummary: 'Plan elegido: Tienda Online · Con mantenimiento: 2.650,90 € · Plazo estimado: 4–6 semanas (IVA (21 %) incluido)',
+  quotedSummary: 'Plan elegido: Tienda Online · Con mantenimiento: 1.802,90 € · Solo la web: 2.649,90 € · Plazo estimado: 4–6 semanas (IVA (21 %) incluido)',
   message: 'Queremos vender café en grano.\n\nY cápsulas compostables.',
   reference: 42,
   date,
@@ -42,12 +43,12 @@ describe('buildThankYouPdf (S22)', () => {
     ['fr', 'Merci de faire confiance à CoffeeProjects', 'Bonjour María José Núñez,', 'Prochaines étapes', 'Date : 10 octobre 2026'],
   ] as const)('prints the %s copy, the client data and our contact details', async (locale, title, greeting, steps, dateLine) => {
     const text = await pdfText(await buildThankYouPdf(base, locale))
-    for (const expected of [title, greeting, steps, dateLine, 'Tienda online', 'Tienda Online', 'Con mantenimiento: 2.650,90 €', 'contact@coffeeprojects.es', 'https://coffeeprojects.es']) {
+    for (const expected of [title, greeting, steps, dateLine, 'Tienda online', 'Tienda Online', 'Con mantenimiento: 1.802,90 €', 'IVA (21 %) incluido', 'contact@coffeeprojects.es', 'https://coffeeprojects.es']) {
       expect(text, expected).toContain(expected)
     }
     for (const step of thankYouCopy[locale].steps) expect(text).toContain(step.split(' ').slice(0, 4).join(' '))
-    // The stored summary is split on its separators, one part per line; message paragraphs are kept.
-    expect(text).toContain('Plazo estimado: 4–6 semanas (IVA (21 %) incluido)')
+    // The stored summary is split on its separators, one part per line, with the VAT note on its own line.
+    expect(text).toContain('Plazo estimado: 4–6 semanas\nIVA (21 %) incluido')
     expect(text).toContain('Queremos vender café en grano.\nY cápsulas compostables.')
     expect(text).toContain('#42')
   })
@@ -88,6 +89,20 @@ describe('buildThankYouPdf (S22)', () => {
 })
 
 describe('thank-you PDF text helpers', () => {
+  it('splits the stored summary into lines, drops the repeated plan and puts the VAT note on its own line', () => {
+    const stored = 'Plan elegido: Tienda Online · Con mantenimiento: 1.802,90 € · Solo la web: 2.649,90 € · Plazo estimado: 4-6 semanas (IVA (21 %) incluido)'
+    expect(summaryLines(stored, 'Tienda Online')).toEqual([
+      'Con mantenimiento: 1.802,90 €',
+      'Solo la web: 2.649,90 €',
+      'Plazo estimado: 4-6 semanas',
+      'IVA (21 %) incluido',
+    ])
+    expect(summaryLines('Tipo: desde 422,29 € · Plazo estimado: 1-2 semanas (VAT (21%) included)', null)).toEqual([
+      'Tipo: desde 422,29 €',
+      'Plazo estimado: 1-2 semanas',
+      'VAT (21%) included',
+    ])
+  })
   it('maps any locale to es/en/fr', () => {
     expect([thankYouLocale('en'), thankYouLocale('fr'), thankYouLocale('de'), thankYouLocale(null)]).toEqual(['en', 'fr', 'es', 'es'])
   })
