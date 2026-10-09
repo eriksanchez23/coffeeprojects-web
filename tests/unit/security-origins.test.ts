@@ -45,6 +45,18 @@ describe('siteOrigins', () => {
     expect(siteOrigins({})).toEqual({ serverURL: undefined, origins: [] })
   })
 
+  it('fails closed in production when the site URL is missing or blank (no silent CSRF allow-list bypass)', () => {
+    expect(() => siteOrigins({ NODE_ENV: 'production' })).toThrow(/NEXT_PUBLIC_SITE_URL/)
+    expect(() => siteOrigins({ NODE_ENV: 'production', NEXT_PUBLIC_SITE_URL: '   ' })).toThrow(/NEXT_PUBLIC_SITE_URL/)
+  })
+
+  it('still resolves normally in production when the site URL is set', () => {
+    expect(siteOrigins({ NODE_ENV: 'production', NEXT_PUBLIC_SITE_ENV: 'production', NEXT_PUBLIC_SITE_URL: 'https://coffeeprojects.es' }).origins).toEqual([
+      'https://coffeeprojects.es',
+      'https://www.coffeeprojects.es',
+    ])
+  })
+
   it('rejects an invalid site URL', () => {
     expect(() => siteOrigins({ NEXT_PUBLIC_SITE_URL: 'not a url' })).toThrow()
   })

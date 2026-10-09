@@ -7,7 +7,7 @@ const DEV_ORIGIN = 'http://localhost:3000'
 type Source = Record<string, string | undefined>
 
 export type SiteOrigins = {
-  /** Public origin of the site (no trailing slash), or undefined when NEXT_PUBLIC_SITE_URL is unset. */
+  /** Public origin of the site (no trailing slash), or undefined when NEXT_PUBLIC_SITE_URL is unset (non-production only: production throws). */
   serverURL: string | undefined
   /** Origins allowed to send the Payload auth cookie (csrf) and to call the API cross-origin (cors). */
   origins: string[]
@@ -21,7 +21,14 @@ const isApexHost = (hostname: string) =>
 
 export function siteOrigins(source: Source): SiteOrigins {
   const raw = source.NEXT_PUBLIC_SITE_URL?.trim()
-  if (!raw) return { serverURL: undefined, origins: [] }
+  if (!raw) {
+    // Payload treats an empty `csrf` list as "no allow-list" (any Origin is accepted), so a production boot
+    // without the site URL would silently fail open. The deploy env always sets it, CLI included.
+    if (source.NODE_ENV === 'production') {
+      throw new Error('NEXT_PUBLIC_SITE_URL is required in production (CSRF/CORS allow-list and absolute URLs)')
+    }
+    return { serverURL: undefined, origins: [] }
+  }
 
   const url = new URL(raw) // throws on an invalid URL: a misconfigured origin must not boot silently
   const origins = [url.origin]
