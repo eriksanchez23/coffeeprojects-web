@@ -84,9 +84,9 @@ export function teamEmail(c: TeamEmailContact, { adminUrl }: { adminUrl: string 
 }
 
 const copy = {
-  es: { subject: 'Hemos recibido tu solicitud — coffeeProjects', hi: 'Hola', body: 'Gracias por contarnos tu proyecto. En menos de 24 horas te escribiremos con una primera propuesta.', sign: 'El equipo de coffeeProjects' },
-  en: { subject: "We've received your request — coffeeProjects", hi: 'Hi', body: "Thanks for telling us about your project. We'll get back to you within 24 hours with a first proposal.", sign: 'The coffeeProjects team' },
-  fr: { subject: 'Nous avons bien reçu votre demande — coffeeProjects', hi: 'Bonjour', body: 'Merci de nous avoir présenté votre projet. Nous vous répondrons en moins de 24 heures avec une première proposition.', sign: "L'équipe coffeeProjects" },
+  es: { subject: 'Hemos recibido tu solicitud — CoffeeProjects', hi: 'Hola', body: 'Gracias por contarnos tu proyecto. En menos de 24 horas te escribiremos con una primera propuesta.', sign: 'El equipo de CoffeeProjects' },
+  en: { subject: "We've received your request — CoffeeProjects", hi: 'Hi', body: "Thanks for telling us about your project. We'll get back to you within 24 hours with a first proposal.", sign: 'The CoffeeProjects team' },
+  fr: { subject: 'Nous avons bien reçu votre demande — CoffeeProjects', hi: 'Bonjour', body: 'Merci de nous avoir présenté votre projet. Nous vous répondrons en moins de 24 heures avec une première proposition.', sign: "L'équipe CoffeeProjects" },
 } as const
 
 type ClientLocale = keyof typeof copy

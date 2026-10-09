@@ -1,4 +1,4 @@
-# coffeeProjects Web — Implementation Plan
+# CoffeeProjects Web — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Each task lives in its own file under `docs/plan/` and is self-contained; read this index first, then the task file, then the spec sections it references.
 
@@ -111,7 +111,7 @@ Order is strict: each task consumes interfaces produced by earlier ones (listed 
 | `NEXT_PUBLIC_SITE_ENV` | public | `development` \| `staging` \| `production` |
 | `BLOB_READ_WRITE_TOKEN` | server | Vercel Blob token |
 | `RESEND_API_KEY` | server | Resend key |
-| `EMAIL_FROM_ADDRESS` | server | `hola@coffeeprojects.es` (domain verified in Resend; sender name "coffeeProjects" is set in config) |
+| `EMAIL_FROM_ADDRESS` | server | `hola@coffeeprojects.es` (domain verified in Resend; sender name "CoffeeProjects" is set in config) |
 | `CONTACT_NOTIFY_EMAIL` | server | `contact@coffeeprojects.es` |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | public | dev/staging test key `1x00000000000000000000AA` |
 | `TURNSTILE_SECRET_KEY` | server | dev/staging test secret `1x0000000000000000000000000000000AA` |

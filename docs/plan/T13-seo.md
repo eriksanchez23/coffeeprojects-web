@@ -42,7 +42,7 @@ describe('buildMetadata', () => {
       fr: 'https://coffeeprojects.es/fr/services',
       'x-default': 'https://coffeeprojects.es/servicios',
     })
-    expect(m.openGraph).toMatchObject({ locale: 'en_US', url: 'https://coffeeprojects.es/en/services', siteName: 'coffeeProjects' })
+    expect(m.openGraph).toMatchObject({ locale: 'en_US', url: 'https://coffeeprojects.es/en/services', siteName: 'CoffeeProjects' })
   })
 
   it('marks noindex pages', async () => {
@@ -150,7 +150,7 @@ export function buildMetadata(a: {
     alternates: { canonical: url, languages },
     openGraph: {
       type: 'website',
-      siteName: 'coffeeProjects',
+      siteName: 'CoffeeProjects',
       url,
       title,
       description,
@@ -180,7 +180,7 @@ export function organizationLd(email: string) {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
     '@id': ORG_ID(),
-    name: 'coffeeProjects',
+    name: 'CoffeeProjects',
     url: env.SITE_URL,
     logo: `${env.SITE_URL}/icon.png`,
     email,
@@ -193,7 +193,7 @@ export function organizationLd(email: string) {
 }
 
 export function websiteLd(locale: Locale) {
-  return { '@context': 'https://schema.org', '@type': 'WebSite', url: env.SITE_URL, name: 'coffeeProjects', inLanguage: locale, publisher: { '@id': ORG_ID() } }
+  return { '@context': 'https://schema.org', '@type': 'WebSite', url: env.SITE_URL, name: 'CoffeeProjects', inLanguage: locale, publisher: { '@id': ORG_ID() } }
 }
 
 export function serviceLd(s: Pick<Service, 'title' | 'summary' | 'pricing'>, url: string, locale: Locale) {

@@ -6,21 +6,21 @@ export const settings: { shared: { contactEmail: string }; localized: Localized<
     es: {
       tagline: 'Sin café no hay código.',
       defaultSeo: {
-        title: 'coffeeProjects — Desarrollo web y software a medida',
+        title: 'CoffeeProjects — Desarrollo web y software a medida',
         description: 'Webs, tiendas online, bots de Discord y servidores FiveM a medida. Estudio de desarrollo en España. Propuesta en menos de 24 horas.',
       },
     },
     en: {
       tagline: 'No coffee, no code.',
       defaultSeo: {
-        title: 'coffeeProjects — Web development and custom software',
+        title: 'CoffeeProjects — Web development and custom software',
         description: 'Custom websites, online stores, Discord bots and FiveM servers. Development studio in Spain. Proposal in under 24 hours.',
       },
     },
     fr: {
       tagline: 'Pas de café, pas de code.',
       defaultSeo: {
-        title: 'coffeeProjects — Développement web et logiciels sur mesure',
+        title: 'CoffeeProjects — Développement web et logiciels sur mesure',
         description: 'Sites web, boutiques en ligne, bots Discord et serveurs FiveM sur mesure. Studio de développement en Espagne. Proposition en moins de 24 heures.',
       },
     },

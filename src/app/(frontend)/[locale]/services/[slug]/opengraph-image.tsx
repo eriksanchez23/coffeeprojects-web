@@ -4,7 +4,7 @@ import type { Locale } from '@/i18n/locales'
 import { getService } from '@/lib/cms/queries'
 import { OgCard } from '@/lib/seo/og-card'
 
-export const alt = 'coffeeProjects'
+export const alt = 'CoffeeProjects'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 

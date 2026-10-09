@@ -32,7 +32,7 @@ export default buildConfig({
     user: Users.slug,
     theme: 'dark',
     importMap: { baseDir: path.resolve(dirname) },
-    meta: { titleSuffix: ' · coffeeProjects admin', robots: 'noindex, nofollow' },
+    meta: { titleSuffix: ' · CoffeeProjects admin', robots: 'noindex, nofollow' },
     components: {
       graphics: { Logo: '/components/admin/logo#Logo', Icon: '/components/admin/icon#Icon' },
       beforeDashboard: ['/components/admin/inbox-banner#InboxBanner'],

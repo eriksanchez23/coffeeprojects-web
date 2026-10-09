@@ -36,7 +36,7 @@ const received = {
   id: 'em_123',
   from: 'erik@coffeeprojects.es',
   subject: 'Re: Nueva solicitud (Landing) — Juan',
-  text: 'Hola Juan,\nTe paso la propuesta.\n\nOn Thu, Oct 9, 2026 at 10:00 AM coffeeProjects <hola@coffeeprojects.es> wrote:\n> Nueva solicitud',
+  text: 'Hola Juan,\nTe paso la propuesta.\n\nOn Thu, Oct 9, 2026 at 10:00 AM CoffeeProjects <hola@coffeeprojects.es> wrote:\n> Nueva solicitud',
   html: null,
   authentication: { spf: 'pass', dkim: 'pass', dmarc: 'pass' },
 }
@@ -196,7 +196,7 @@ describe('POST /api/inbound/resend (S21)', () => {
     expect(new Headers(sendInit.headers).get('idempotency-key')).toBe('inbound-reply/msg_1')
     const sent = JSON.parse(String(sendInit.body))
     expect(sent).toEqual({
-      from: 'coffeeProjects <hola@coffeeprojects.es>',
+      from: 'CoffeeProjects <hola@coffeeprojects.es>',
       to: ['client@example.com'],
       reply_to: 'Erik@coffeeprojects.es',
       subject: 'Re: Nueva solicitud (Landing) — Juan',

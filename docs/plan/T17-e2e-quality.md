@@ -104,7 +104,7 @@ test('submits a valid request and lands on the thank-you page', async ({ page })
   await page.goto('/contacto')
   await page.getByLabel('Nombre *').fill('Playwright')
   await page.getByLabel('Email *').fill(`pw-${Date.now()}@example.com`)
-  await page.getByLabel('Cuéntanos tu proyecto *').fill('Prueba automática del formulario de contacto de coffeeProjects.')
+  await page.getByLabel('Cuéntanos tu proyecto *').fill('Prueba automática del formulario de contacto de CoffeeProjects.')
   await page.getByLabel(/política de privacidad/).check()
   // Turnstile test key auto-passes; wait for its hidden token input.
   await expect(page.locator('input[name="cf-turnstile-response"]')).toHaveValue(/.+/, { timeout: 15_000 })

@@ -20,7 +20,7 @@ test('submits a valid request and lands on the thank-you page', async ({ page })
   await page.goto('/contacto')
   await page.getByLabel('Nombre *').fill('Playwright')
   await page.getByLabel('Email *').fill(e2eContactEmail('contact'))
-  await page.getByLabel('Cuéntanos tu proyecto *').fill('Prueba automática del formulario de contacto de coffeeProjects.')
+  await page.getByLabel('Cuéntanos tu proyecto *').fill('Prueba automática del formulario de contacto de CoffeeProjects.')
   await page.getByLabel(/política de privacidad/).check()
   // Submitting right away (before the Turnstile token exists) must wait for the token client-side, then send.
   await page.getByRole('button', { name: 'Enviar solicitud' }).click()

@@ -27,7 +27,7 @@ export function buildMetadata(a: {
     alternates: { canonical: url, languages },
     openGraph: {
       type: 'website',
-      siteName: 'coffeeProjects',
+      siteName: 'CoffeeProjects',
       url,
       title,
       description,

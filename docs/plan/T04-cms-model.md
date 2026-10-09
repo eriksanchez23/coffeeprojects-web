@@ -692,7 +692,7 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
-    meta: { titleSuffix: ' · coffeeProjects admin' },
+    meta: { titleSuffix: ' · CoffeeProjects admin' },
   },
   collections: [Contacts, Services, Projects, TeamMembers, Faqs, Media, Users],
   globals: [Home, SiteSettings, Legal],
@@ -716,7 +716,7 @@ export default buildConfig({
     ? resendAdapter({
         apiKey: process.env.RESEND_API_KEY,
         defaultFromAddress: process.env.EMAIL_FROM_ADDRESS || 'hola@coffeeprojects.es',
-        defaultFromName: 'coffeeProjects',
+        defaultFromName: 'CoffeeProjects',
       })
     : undefined,
   sharp,

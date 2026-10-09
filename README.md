@@ -1,6 +1,6 @@
 # coffeeprojects.es
 
-Trilingual (es / en / fr) website for coffeeProjects with a team-only admin panel.
+Trilingual (es / en / fr) website for CoffeeProjects with a team-only admin panel.
 
 ## Stack
 

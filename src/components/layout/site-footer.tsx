@@ -31,7 +31,7 @@ export async function SiteFooter({ email, chatUrl }: { email: string; chatUrl?: 
         </nav>
       </Container>
       <Container className="mt-10 font-mono text-xs text-ink-3">
-        © {year} coffeeProjects. {t('rights')}
+        © {year} CoffeeProjects. {t('rights')}
       </Container>
     </footer>
   )

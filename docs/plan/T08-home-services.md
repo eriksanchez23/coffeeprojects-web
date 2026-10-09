@@ -161,7 +161,7 @@ import type { Home } from '@/payload-types'
 
 export function StatsBento({ stats }: { stats: NonNullable<Home['stats']> }) {
   return (
-    <section aria-label="coffeeProjects" className="py-10">
+    <section aria-label="CoffeeProjects" className="py-10">
       <Container className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {stats.map((s, i) => (
           <GlassCard key={s.id ?? i} className={i === 0 ? 'lg:row-span-1' : ''}>

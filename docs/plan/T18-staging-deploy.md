@@ -94,7 +94,7 @@ curl -s  -H "x-vercel-protection-bypass: $VERCEL_BYPASS_SECRET" https://staging.
 - [ ] **Step 8 [AGENT]: Write `docs/04-staging-checklist.md`** with this exact content, for the team to tick on staging:
 
 ```markdown
-# Staging validation checklist — coffeeProjects
+# Staging validation checklist — CoffeeProjects
 
 Reviewer: ______  Date: ______  Device(s): ______
 

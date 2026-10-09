@@ -1,4 +1,4 @@
-# coffeeProjects Web — Design Spec
+# CoffeeProjects Web — Design Spec
 
 > Status: **DRAFT — pending validation by Erik.** No implementation may start until this spec is approved and `03-implementation-plan.md` exists and is approved.
 > Date: 2026-10-06 · Owner: Erik (design & client relations) · Team: Diego, Juan, Erik
@@ -9,7 +9,7 @@
 
 | # | Goal | Success criteria |
 |---|------|------------------|
-| G1 | Brand-new, premium, attention-grabbing site that makes coffeeProjects look professional and trustworthy | Team sign-off on staging; no "broken" or placeholder data visible anywhere |
+| G1 | Brand-new, premium, attention-grabbing site that makes CoffeeProjects look professional and trustworthy | Team sign-off on staging; no "broken" or placeholder data visible anywhere |
 | G2 | Win clients: every page leads to a contact action | Visible CTA above the fold and at the end of every page; form completion tracked as conversion |
 | G3 | Much stronger SEO | Lighthouse ≥ 95 in all 4 categories on mobile; valid structured data; `hreflang` correct for 3 locales; Core Web Vitals "good" (LCP < 2.5s, INP < 200ms, CLS < 0.1) |
 | G4 | Ready for Meta Ads campaigns | Meta Pixel + Conversions API firing `PageView`, `ViewContent`, `Lead` with deduplication, gated by cookie consent |

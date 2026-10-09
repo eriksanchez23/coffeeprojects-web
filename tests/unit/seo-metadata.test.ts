@@ -21,7 +21,7 @@ describe('buildMetadata', () => {
       fr: 'https://coffeeprojects.es/fr/services',
       'x-default': 'https://coffeeprojects.es/servicios',
     })
-    expect(m.openGraph).toMatchObject({ locale: 'en_US', url: 'https://coffeeprojects.es/en/services', siteName: 'coffeeProjects' })
+    expect(m.openGraph).toMatchObject({ locale: 'en_US', url: 'https://coffeeprojects.es/en/services', siteName: 'CoffeeProjects' })
   })
 
   it('marks noindex pages', async () => {

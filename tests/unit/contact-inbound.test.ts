@@ -25,7 +25,7 @@ describe('relay Reply-To address (S21)', () => {
 
   it('accepts display names and any letter case (mail systems may change it)', () => {
     const address = relayAddress(7, DOMAIN, key)
-    expect(parseRelayAddress(`"coffeeProjects" <${address.toUpperCase()}>`, DOMAIN, key)).toBe(7)
+    expect(parseRelayAddress(`"CoffeeProjects" <${address.toUpperCase()}>`, DOMAIN, key)).toBe(7)
   })
 
   it('rejects a tampered id, a tampered mac, another key and another domain', () => {
@@ -123,20 +123,20 @@ describe('verifySvixSignature', () => {
 
 describe('stripQuotedReply', () => {
   it('keeps only the new text above a Gmail "On ... wrote:" header (even wrapped on two lines)', () => {
-    expect(stripQuotedReply('Hola Juan,\n\nTe enviamos la propuesta.\n\nOn Thu, Oct 9, 2026 at 10:00 AM coffeeProjects <\nhola@coffeeprojects.es> wrote:\n> Nueva solicitud')).toBe(
+    expect(stripQuotedReply('Hola Juan,\n\nTe enviamos la propuesta.\n\nOn Thu, Oct 9, 2026 at 10:00 AM CoffeeProjects <\nhola@coffeeprojects.es> wrote:\n> Nueva solicitud')).toBe(
       'Hola Juan,\n\nTe enviamos la propuesta.',
     )
   })
 
   it('cuts at the Spanish and French reply headers', () => {
-    expect(stripQuotedReply('Gracias.\r\n\r\nEl jue, 9 oct 2026 a las 10:00, coffeeProjects (<hola@coffeeprojects.es>) escribió:\r\n> x')).toBe('Gracias.')
-    expect(stripQuotedReply('Merci.\n\nLe jeu. 9 oct. 2026 à 10:00, coffeeProjects <hola@coffeeprojects.es> a écrit :\n> x')).toBe('Merci.')
+    expect(stripQuotedReply('Gracias.\r\n\r\nEl jue, 9 oct 2026 a las 10:00, CoffeeProjects (<hola@coffeeprojects.es>) escribió:\r\n> x')).toBe('Gracias.')
+    expect(stripQuotedReply('Merci.\n\nLe jeu. 9 oct. 2026 à 10:00, CoffeeProjects <hola@coffeeprojects.es> a écrit :\n> x')).toBe('Merci.')
   })
 
   it('cuts at Outlook "-----Original Message-----" and "De:/Enviado:" blocks', () => {
     expect(stripQuotedReply('Ok.\n\n-----Original Message-----\nFrom: a\nSent: b\n\nold')).toBe('Ok.')
-    expect(stripQuotedReply('Perfecto.\n\n________________________________\nDe: coffeeProjects <hola@coffeeprojects.es>\nEnviado: jueves\nPara: Erik\nAsunto: Nueva solicitud\n\nold')).toBe('Perfecto.')
-    expect(stripQuotedReply('Vale.\nFrom: coffeeProjects\nSent: Thursday\nTo: Erik\n\nold')).toBe('Vale.')
+    expect(stripQuotedReply('Perfecto.\n\n________________________________\nDe: CoffeeProjects <hola@coffeeprojects.es>\nEnviado: jueves\nPara: Erik\nAsunto: Nueva solicitud\n\nold')).toBe('Perfecto.')
+    expect(stripQuotedReply('Vale.\nFrom: CoffeeProjects\nSent: Thursday\nTo: Erik\n\nold')).toBe('Vale.')
   })
 
   it('drops ">" quoted lines and keeps the rest (inline answers)', () => {

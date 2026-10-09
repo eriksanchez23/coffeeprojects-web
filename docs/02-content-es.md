@@ -1,4 +1,4 @@
-# coffeeProjects Web — Source copy (Spanish)
+# CoffeeProjects Web — Source copy (Spanish)
 
 > Status: **DRAFT — pending validation by Erik and the team.**
 > Spanish is the source language. EN/FR translations are produced from this file during implementation and reviewed by the team.
@@ -50,7 +50,7 @@
 - **En el equipo desde:** 2026
 - **Tecnologías:** HTML, CSS, JavaScript, Astro, TypeScript, C#, Java, Python, Kotlin
 - **Repositorios públicos:** 3 (se actualiza automáticamente desde GitHub — usuario pendiente, ver Q1)
-- **Bio corta:** Tu primer contacto con coffeeProjects. Convierte tus ideas en diseños claros y se asegura de que el resultado final sea exactamente lo que necesitas.
+- **Bio corta:** Tu primer contacto con CoffeeProjects. Convierte tus ideas en diseños claros y se asegura de que el resultado final sea exactamente lo que necesitas.
 - **Bio completa:** Erik es la persona con la que hablarás primero. Se encarga del diseño y de acompañarte durante todo el proyecto: escucha lo que necesitas, lo traduce en una propuesta visual clara y vela por que cada entrega cumpla lo acordado. Su base técnica, que va del desarrollo web con Astro y TypeScript a lenguajes como C#, Java, Python y Kotlin, le permite diseñar pensando en cómo se va a construir. Así evita sorpresas y consigue que diseño y desarrollo hablen el mismo idioma. Para ti, eso significa una comunicación cercana, respuestas rápidas y un proyecto que avanza sin malentendidos.
 
 ### Diego — Frontend · Interfaces & experiencia de usuario

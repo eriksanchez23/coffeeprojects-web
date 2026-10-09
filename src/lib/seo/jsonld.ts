@@ -10,7 +10,7 @@ export function organizationLd(email: string) {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
     '@id': ORG_ID(),
-    name: 'coffeeProjects',
+    name: 'CoffeeProjects',
     url: env.SITE_URL,
     email,
     slogan: 'Sin café no hay código',
@@ -26,7 +26,7 @@ export function websiteLd(locale: Locale) {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     url: env.SITE_URL,
-    name: 'coffeeProjects',
+    name: 'CoffeeProjects',
     inLanguage: locale,
     publisher: { '@id': ORG_ID() },
   }

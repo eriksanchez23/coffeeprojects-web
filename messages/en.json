@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteName": "coffeeProjects",
-    "defaultTitle": "coffeeProjects — Web development, online stores and custom software from Spain",
+    "siteName": "CoffeeProjects",
+    "defaultTitle": "CoffeeProjects — Web development, online stores and custom software from Spain",
     "defaultDescription": "Development studio in Spain: websites, online stores, Discord bots, FiveM servers and scripts, and website maintenance. A tailored proposal in under 24 hours."
   },
   "nav": {
@@ -172,7 +172,7 @@
     "legalNav": "Legal information",
     "chat": "Chat",
     "legalDescription": "Owner details of coffeeprojects.es and the terms of use of this website.",
-    "privacyDescription": "How coffeeProjects handles your personal data, which rights you have and how to exercise them.",
+    "privacyDescription": "How CoffeeProjects handles your personal data, which rights you have and how to exercise them.",
     "cookiesDescription": "Which cookies coffeeprojects.es uses, what they are for and how to manage your consent."
   },
   "sections": {
@@ -184,13 +184,13 @@
     "includes": "// includes",
     "more": "// more",
     "heroCommand": "brew --team",
-    "statsLabel": "coffeeProjects in numbers",
+    "statsLabel": "CoffeeProjects in numbers",
     "servicesList": "List of services",
     "team": "// team",
     "projects": "// projects"
   },
   "notFound": {
-    "title": "Page not found · coffeeProjects",
+    "title": "Page not found · CoffeeProjects",
     "command": "$ cd /this-page",
     "error": "error 404: coffee not found",
     "body": "This page ran out of coffee. Let's head back home.",
