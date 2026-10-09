@@ -56,7 +56,7 @@ Plan: `docs/03-implementation-plan.md` + `docs/plan/T00..T18` · Spec: `docs/01-
 | T22 contact form price/time | S17 | delegated (writer, opus) | done (writer; awaiting review) | 41eec9d + 3135558 (migration 20261008_234103_contact_quoted_summary; quote pure fns RED→GREEN; summary rebuilt server-side, client value ignored) |
 | T23 team emails + panel reply | S18, S19 | delegated (writer, opus) | done (writer; awaiting review) | bb91126 (migration 20261008_234606_contact_replies; POST /api/contacts/:id/reply team-only; endpoint tests with mocked transport) |
 | T24 assigned requests in sidebar | S20 | delegated (writer, opus) | done (writer; awaiting review) | f099d84 (afterNavLinks server component; e2e 102 passed / 9 pre-existing skips desktop+mobile on a fresh migrated + seeded local DB, RESEND_API_KEY unset) |
-| T26 email reply sync (Resend inbound) | S21 | delegated (writer, opus) | in progress | — |
+| T26 email reply sync (Resend inbound) | S21 | delegated (writer, opus) | done (writer; awaiting review) | 4cd0e44 (privacy seed text) + b9a365c (migration 20261009_000317_contact_reply_channel; POST /api/inbound/resend; pure fns RED→GREEN incl. Svix public vector; 395 unit; e2e admin+contact 11/11 desktop on fresh migrated + seeded local DB; signed webhook smoke 401/200 on local prod server; .env.example not updated: read-denied by permission settings; end-to-end pending Resend inbound setup) |
 | T25 admin media upload + icon | user report 2026-10-09 | inline | done | 453295d |
 | T21 partners page | S16 | delegated (writer, opus) | done (writer; awaiting review) | 0415e90..db9ce5f (migration 20261008_203534_partners; global `partners`; e2e partners/a11y/admin 34/34 desktop+mobile on a fresh migrated + seeded local DB) |
 
