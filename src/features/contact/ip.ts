@@ -7,10 +7,12 @@ export function hashIp(ip: string, salt: string): string {
   return createHmac('sha256', salt).update(`${HASH_CONTEXT}:${ip}`).digest('hex')
 }
 
-/** `x-real-ip` first, then the first `x-forwarded-for` hop. Null when the platform gives neither. */
+/**
+ * Client IP from `x-real-ip` only. Behind Cloudflare -> Nginx Proxy Manager, NPM overwrites that header
+ * with the real client IP (resolved from CF-Connecting-IP), so it cannot be forged by the visitor.
+ * `x-forwarded-for` is never read: its first hop is client-controlled. Null when the header is absent;
+ * the caller then skips rate limiting for that request (Turnstile still gates it).
+ */
 export function clientIp(h: { get(name: string): string | null }): string | null {
-  const real = h.get('x-real-ip')?.trim()
-  if (real) return real
-  const first = h.get('x-forwarded-for')?.split(',')[0]?.trim()
-  return first || null
+  return h.get('x-real-ip')?.trim() || null
 }
