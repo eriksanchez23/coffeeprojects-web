@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig, FieldAccess } from 'payload'
 import { isTeam, publishedOrTeam } from '@/access'
 import { adminGroups, t } from '@/fields/labels'
 import { seoField } from '@/fields/seo'
@@ -7,6 +7,16 @@ import { revalidateCollection, revalidateCollectionDelete } from '@/hooks/revali
 import { buildPath } from '@/i18n/build-path'
 import type { Locale } from '@/i18n/locales'
 import { previewUrl } from '@/lib/cms/preview-url'
+
+/** NDA projects never store a public URL (`admin.condition` only hides the input, not the stored value). */
+export const clearNdaUrl: CollectionBeforeChangeHook = ({ data, originalDoc }) => {
+  const nda = data?.nda ?? originalDoc?.nda
+  if (nda === true && data) data.url = null
+  return data
+}
+
+/** Field-level read access: a legacy NDA row's `url` is only returned to logged-in team users. */
+export const ndaUrlReadAccess: FieldAccess = ({ req, doc }) => isTeam({ req }) === true || doc?.nda !== true
 
 export const Projects: CollectionConfig = {
   slug: 'projects',
@@ -22,6 +32,7 @@ export const Projects: CollectionConfig = {
     },
   },
   hooks: {
+    beforeChange: [clearNdaUrl],
     afterChange: [revalidateCollection('projects')],
     afterDelete: [revalidateCollectionDelete('projects')],
   },
@@ -50,7 +61,13 @@ export const Projects: CollectionConfig = {
         { label: t('En curso', 'In progress'), value: 'in-progress' },
       ],
     },
-    { name: 'url', type: 'text', label: t('URL', 'URL'), admin: { condition: (_, s) => !s?.nda } },
+    {
+      name: 'url',
+      type: 'text',
+      label: t('URL', 'URL'),
+      admin: { condition: (_, s) => !s?.nda },
+      access: { read: ndaUrlReadAccess },
+    },
     { name: 'nda', type: 'checkbox', label: t('NDA', 'NDA'), defaultValue: false },
     { name: 'featured', type: 'checkbox', label: t('Destacado', 'Featured'), defaultValue: true },
     { name: 'team', type: 'relationship', label: t('Equipo', 'Team'), relationTo: 'team-members', hasMany: true },
