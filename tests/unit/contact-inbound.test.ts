@@ -174,8 +174,11 @@ describe('sender checks', () => {
     expect(findTeamSender('', users)).toBeNull()
   })
   it('rejects mail whose authentication results show it is spoofed', () => {
-    expect(senderAuthenticated(null)).toBe(true)
-    expect(senderAuthenticated(undefined)).toBe(true)
+    // Fail closed: no authentication results (or no DMARC verdict) cannot prove the From domain.
+    expect(senderAuthenticated(null)).toBe(false)
+    expect(senderAuthenticated(undefined)).toBe(false)
+    expect(senderAuthenticated({})).toBe(false)
+    expect(senderAuthenticated({ spf: 'pass', dkim: 'pass', dmarc: null })).toBe(false)
     expect(senderAuthenticated({ spf: 'fail', dkim: 'fail', dmarc: 'pass' })).toBe(true)
     expect(senderAuthenticated({ spf: 'pass', dkim: 'pass', dmarc: 'fail' })).toBe(false)
     // Without a DMARC pass, an SPF/DKIM pass may belong to the attacker's own domain: reject.

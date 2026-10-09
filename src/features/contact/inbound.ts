@@ -102,12 +102,11 @@ export type InboundAuthentication = { spf?: AuthResult | null; dkim?: AuthResult
 
 /**
  * Resend's SPF/DKIM/DMARC results for the received email. Only DMARC proves the From domain is aligned:
- * an SPF/DKIM pass alone may belong to the sender's own (attacker) domain, so it is not enough. Missing
- * results are accepted because the secret, per-request signed relay address is still required.
+ * an SPF/DKIM pass alone may belong to the sender's own (attacker) domain, so it is not enough. Fails
+ * closed: missing results or a missing DMARC verdict cannot prove the sender, so the email is ignored.
  */
 export function senderAuthenticated(auth: InboundAuthentication | null | undefined): boolean {
-  if (!auth) return true
-  return auth.dmarc === 'pass'
+  return auth?.dmarc === 'pass'
 }
 
 const REPLY_HEADERS = [
