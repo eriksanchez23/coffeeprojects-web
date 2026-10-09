@@ -16,10 +16,10 @@ describe('buildCsp', () => {
     expect(directive(csp, 'frame-src')).toContain('https://challenges.cloudflare.com')
     expect(directive(csp, 'frame-ancestors')).toBe("frame-ancestors 'none'")
   })
-  it('allows Meta and Vercel endpoints for connect', () => {
+  it('allows Meta endpoints for connect and no Vercel-hosted endpoints (self-hosted)', () => {
     const c = directive(csp, 'connect-src')
     expect(c).toContain('https://www.facebook.com')
-    expect(c).toContain('https://vitals.vercel-insights.com')
+    expect(c).not.toContain('vercel-insights.com')
   })
   it('enables eval only in development (React Refresh)', () => {
     expect(directive(buildCsp({ dev: true }), 'script-src')).toContain("'unsafe-eval'")
@@ -28,9 +28,11 @@ describe('buildCsp', () => {
   // Extensions beyond the brief, from the inputs collected in T07/T12/T14.
   it('allows the Meta Pixel noscript/tracking image and the image hosts the site uses', () => {
     const i = directive(csp, 'img-src')
-    for (const host of ['https://www.facebook.com', 'https://*.public.blob.vercel-storage.com', 'https://avatars.githubusercontent.com', 'data:', 'blob:']) {
+    for (const host of ['https://www.facebook.com', 'https://avatars.githubusercontent.com', 'data:', 'blob:']) {
       expect(i).toContain(host)
     }
+    // Media is served same-origin from local disk, never from Vercel Blob.
+    expect(i).not.toContain('vercel-storage.com')
     expect(i).not.toMatch(/\s\*(\s|$)/)
   })
   it('loads Vercel Analytics/Speed Insights debug scripts only in development', () => {

@@ -3,6 +3,12 @@ import { isTeam } from '@/access'
 import { adminGroups, t } from '@/fields/labels'
 import { revalidateMedia, revalidateMediaDelete } from '@/hooks/revalidate'
 
+// Self-hosted media lives outside the code checkout (MEDIA_DIR, absolute path on the server).
+// Unset/blank -> undefined, so Payload falls back to its default: the slug ("media") resolved against cwd.
+export function mediaStaticDir(env: Record<string, string | undefined> = process.env): string | undefined {
+  return env.MEDIA_DIR?.trim() || undefined
+}
+
 export const Media: CollectionConfig = {
   slug: 'media',
   labels: { singular: t('Archivo multimedia', 'Media file'), plural: t('Multimedia', 'Media') },
@@ -10,6 +16,7 @@ export const Media: CollectionConfig = {
   access: { read: () => true, create: isTeam, update: isTeam, delete: isTeam },
   hooks: { afterChange: [revalidateMedia], afterDelete: [revalidateMediaDelete] },
   upload: {
+    staticDir: mediaStaticDir(),
     // Raster only: SVG can carry scripts and is served from our origin.
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'],
     focalPoint: true,
