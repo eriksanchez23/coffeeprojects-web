@@ -7,6 +7,7 @@ import { revalidateCollection, revalidateCollectionDelete } from '@/hooks/revali
 import { buildPath } from '@/i18n/build-path'
 import type { Locale } from '@/i18n/locales'
 import { previewUrl } from '@/lib/cms/preview-url'
+import { safeUrlValidator } from '@/lib/security/url'
 
 export const TeamMembers: CollectionConfig = {
   slug: 'team-members',
@@ -68,7 +69,14 @@ export const TeamMembers: CollectionConfig = {
           required: true,
           options: bilingualOptions(['github', 'linkedin', 'twitch', 'x', 'instagram', 'website', 'email'], socialNetworkLabels),
         },
-        { name: 'url', type: 'text', label: t('URL', 'URL'), required: true },
+        {
+          name: 'url',
+          type: 'text',
+          label: t('URL', 'URL'),
+          required: true,
+          // The "email" network links with mailto:; every other network needs an http(s) URL.
+          validate: safeUrlValidator({ allowMailto: (s) => s?.network === 'email' }),
+        },
         { name: 'handle', type: 'text', label: t('Usuario o alias', 'Handle') },
       ],
     },

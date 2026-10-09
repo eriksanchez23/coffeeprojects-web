@@ -7,6 +7,7 @@ import { revalidateCollection, revalidateCollectionDelete } from '@/hooks/revali
 import { buildPath } from '@/i18n/build-path'
 import type { Locale } from '@/i18n/locales'
 import { previewUrl } from '@/lib/cms/preview-url'
+import { safeUrlValidator } from '@/lib/security/url'
 
 /** NDA projects never store a public URL (`admin.condition` only hides the input, not the stored value). */
 export const clearNdaUrl: CollectionBeforeChangeHook = ({ data, originalDoc }) => {
@@ -67,6 +68,7 @@ export const Projects: CollectionConfig = {
       label: t('URL', 'URL'),
       admin: { condition: (_, s) => !s?.nda },
       access: { read: ndaUrlReadAccess },
+      validate: safeUrlValidator(),
     },
     { name: 'nda', type: 'checkbox', label: t('NDA', 'NDA'), defaultValue: false },
     { name: 'featured', type: 'checkbox', label: t('Destacado', 'Featured'), defaultValue: true },

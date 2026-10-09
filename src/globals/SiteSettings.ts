@@ -2,6 +2,7 @@ import type { GlobalConfig } from 'payload'
 import { isTeam } from '@/access'
 import { adminGroups, t } from '@/fields/labels'
 import { revalidateGlobal } from '@/hooks/revalidate'
+import { safeUrlValidator } from '@/lib/security/url'
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -21,6 +22,7 @@ export const SiteSettings: GlobalConfig = {
     {
       name: 'chatUrl',
       type: 'text',
+      validate: safeUrlValidator(),
       label: t('URL del chat', 'Chat URL'),
       admin: {
         description: t(
@@ -36,7 +38,8 @@ export const SiteSettings: GlobalConfig = {
       labels: { singular: t('Red social', 'Social link'), plural: t('Redes sociales', 'Social links') },
       fields: [
         { name: 'network', type: 'text', label: t('Red', 'Network'), required: true },
-        { name: 'url', type: 'text', label: t('URL', 'URL'), required: true },
+        // Free-text network: http(s) or mailto: links.
+        { name: 'url', type: 'text', label: t('URL', 'URL'), required: true, validate: safeUrlValidator({ allowMailto: () => true }) },
       ],
     },
     {

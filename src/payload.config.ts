@@ -24,6 +24,7 @@ import { inboundResendEndpoint } from './endpoints/inbound-resend'
 import { shouldPushSchema } from './lib/db/push'
 import { emailFrom } from './lib/email'
 import { siteOrigins } from './lib/security/origins'
+import { MAX_UPLOAD_BYTES } from './lib/security/upload'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -65,6 +66,8 @@ export default buildConfig({
   graphQL: { disable: true },
   // S21: POST /api/inbound/resend — Resend `email.received` webhook (Svix-signed) that syncs email replies.
   endpoints: [inboundResendEndpoint],
+  // Multipart parser limit for every upload (only Media): larger files get HTTP 413.
+  upload: { limits: { fileSize: MAX_UPLOAD_BYTES } },
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
