@@ -12,7 +12,8 @@ Already done: Resend domains, API key, `email.received` webhook and Vercel env v
    - Send a contact request from `/contacto` -> every panel user receives the notification, the client receives the auto-reply.
    - Answer it from the panel ("Responder") -> client receives it, request shows "Respondida" with channel `panel`.
    - Answer another notification by email (Gmail/Outlook "Reply") -> client receives it from `web@coffeeprojects.es`, request shows the reply with channel `email`.
-4. Until step 2 is done: requests are stored, notifications are skipped (logged) and "Responder" shows an error.
+   - In a request, "Agradecimiento (PDF)" -> "Enviar al cliente" -> client receives the PDF from `contact@coffeeprojects.es` (a reply lands in IONOS), the request shows it under "Agradecimientos enviados".
+4. Until step 2 is done: requests are stored, notifications are skipped (logged) and "Responder" / "Enviar al cliente" (thank-you PDF) show an error; "Descargar para revisar" works.
 
 ## 2. Small manual edits
 

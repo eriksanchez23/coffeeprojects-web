@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { isAdmin, isAdminField, isTeam, nobody } from '@/access'
 import { contactReplyEndpoint } from '@/endpoints/contact-reply'
+import { contactThankYouPdfEndpoint, contactThankYouSendEndpoint } from '@/endpoints/contact-thank-you'
 import { budgets, contactStatuses, projectTypes, timelines } from '@/features/contact/options'
 import {
   adminGroups,
@@ -28,7 +29,8 @@ export const Contacts: CollectionConfig = {
   },
   defaultSort: '-createdAt',
   // S19: POST /api/contacts/:id/reply (team only) — used by the "Responder" panel in the edit view.
-  endpoints: [contactReplyEndpoint],
+  // S22: GET /api/contacts/:id/thank-you.pdf + POST /api/contacts/:id/thank-you (team only) — "Agradecimiento (PDF)".
+  endpoints: [contactReplyEndpoint, contactThankYouPdfEndpoint, contactThankYouSendEndpoint],
   access: {
     // Public submissions go through the Server Action with the Local API (T11), never through REST.
     create: nobody,
@@ -58,6 +60,12 @@ export const Contacts: CollectionConfig = {
       type: 'ui',
       label: t('Responder', 'Reply'),
       admin: { position: 'sidebar', components: { Field: '/components/admin/contact-reply#ContactReply' } },
+    },
+    {
+      name: 'thankYouAction',
+      type: 'ui',
+      label: t('Agradecimiento (PDF)', 'Thank-you note (PDF)'),
+      admin: { position: 'sidebar', components: { Field: '/components/admin/contact-thank-you#ContactThankYou' } },
     },
     { name: 'name', type: 'text', label: t('Nombre', 'Name'), required: true, admin: readOnly, access: locked },
     { name: 'email', type: 'email', label: t('Correo electrónico', 'Email'), required: true, admin: readOnly, access: locked },
@@ -185,6 +193,25 @@ export const Contacts: CollectionConfig = {
         },
         // S21: Svix message id of the webhook delivery that stored this reply (dedupes Resend retries).
         { name: 'inboundId', type: 'text', access: locked, admin: { hidden: true } },
+      ],
+    },
+    {
+      name: 'thankYouSent',
+      type: 'array',
+      label: t('Agradecimientos enviados', 'Thank-you notes sent'),
+      labels: { singular: t('Envío', 'Send'), plural: t('Envíos', 'Sends') },
+      admin: {
+        readOnly: true,
+        description: t(
+          'Cada envío del PDF de agradecimiento al cliente desde «Agradecimiento (PDF)»',
+          'Each time the thank-you PDF was emailed to the client from "Thank-you note (PDF)"',
+        ),
+      },
+      // Written only by POST /api/contacts/:id/thank-you (overrideAccess) after the email was sent (S22).
+      access: { create: () => false, update: () => false },
+      fields: [
+        { name: 'sentAt', type: 'date', label: t('Enviado', 'Sent'), required: true, access: locked, admin: { date: { pickerAppearance: 'dayAndTime' } } },
+        { name: 'author', type: 'relationship', relationTo: 'users', label: t('Enviado por', 'Sent by'), access: locked },
       ],
     },
     {

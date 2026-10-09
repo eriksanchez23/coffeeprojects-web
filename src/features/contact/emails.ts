@@ -105,6 +105,37 @@ export function replySubject(locale: string | null | undefined): string {
   return `Re: ${copy[clientLocale(locale)].subject}`
 }
 
+const thankYouBody = {
+  es: {
+    hi: (name: string) => `Hola, ${name}:`,
+    body: 'Gracias por confiar en CoffeeProjects. Te adjuntamos un documento con el resumen de tu solicitud y los próximos pasos.',
+    questions: 'Si tienes cualquier duda, responde a este correo y te contestaremos encantados.',
+  },
+  en: {
+    hi: (name: string) => `Hi ${name},`,
+    body: 'Thank you for trusting CoffeeProjects. Attached you will find a summary of your request and the next steps.',
+    questions: 'If you have any questions, just reply to this email and we will be glad to help.',
+  },
+  fr: {
+    hi: (name: string) => `Bonjour ${name},`,
+    body: 'Merci de faire confiance à CoffeeProjects. Vous trouverez en pièce jointe un résumé de votre demande et les prochaines étapes.',
+    questions: "Pour toute question, répondez simplement à cet e-mail : nous vous répondrons avec plaisir.",
+  },
+} as const
+
+/** S22: the short email that carries the thank-you PDF, in the client's language. */
+export function thankYouEmail(name: string, locale: string | null | undefined, subject: string) {
+  const l = clientLocale(locale)
+  const c = thankYouBody[l]
+  const hi = c.hi(name.replace(/\s+/g, ' ').trim())
+  const sign = copy[l].sign
+  return {
+    subject,
+    text: [hi, '', c.body, '', c.questions, '', `— ${sign}`, 'https://coffeeprojects.es'].join('\n'),
+    html: `<p>${esc(hi)}</p><p>${esc(c.body)}</p><p>${esc(c.questions)}</p><p>— ${esc(sign)}<br/><a href="https://coffeeprojects.es">coffeeprojects.es</a></p>`,
+  }
+}
+
 /** S19: the team's reply as typed (plain text), plus an escaped HTML version that keeps its line breaks. */
 export function replyEmail(message: string) {
   return { text: message, html: `<div style="white-space:pre-wrap">${esc(message)}</div>` }

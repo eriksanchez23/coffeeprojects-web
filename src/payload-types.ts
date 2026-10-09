@@ -189,6 +189,16 @@ export interface Contact {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Each time the thank-you PDF was emailed to the client from "Thank-you note (PDF)"
+   */
+  thankYouSent?:
+    | {
+        sentAt: string;
+        author?: (number | null) | User;
+        id?: string | null;
+      }[]
+    | null;
   ipHash?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -571,6 +581,13 @@ export interface ContactsSelect<T extends boolean = true> {
         body?: T;
         channel?: T;
         inboundId?: T;
+        id?: T;
+      };
+  thankYouSent?:
+    | T
+    | {
+        sentAt?: T;
+        author?: T;
         id?: T;
       };
   ipHash?: T;

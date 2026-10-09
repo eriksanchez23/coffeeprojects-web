@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clientEmail, replyEmail, replySubject, teamEmail, teamRecipients } from '@/features/contact/emails'
+import { clientEmail, replyEmail, replySubject, teamEmail, teamRecipients, thankYouEmail } from '@/features/contact/emails'
 
 const input = {
   name: '<script>alert(1)</script>',
@@ -118,5 +118,16 @@ describe('client emails', () => {
     expect(text).toBe('Hola Ana,\n<b>gracias</b>')
     expect(html).toContain('white-space:pre-wrap')
     expect(html).toContain('&lt;b&gt;gracias&lt;/b&gt;')
+  })
+})
+
+describe('thankYouEmail (S22)', () => {
+  it('greets the client in their language and escapes the name in the HTML', () => {
+    const mail = thankYouEmail('Ana <b>  Ruiz', 'en', 'Thank you for trusting CoffeeProjects')
+    expect(mail.subject).toBe('Thank you for trusting CoffeeProjects')
+    expect(mail.text.startsWith('Hi Ana <b> Ruiz,')).toBe(true)
+    expect(mail.html).toContain('Hi Ana &lt;b&gt; Ruiz,')
+    expect(mail.html).not.toContain('<b>')
+    expect(thankYouEmail('Ana', 'de', 'x').text.startsWith('Hola, Ana:')).toBe(true)
   })
 })

@@ -1,5 +1,6 @@
 import { StatusCell as StatusCell_22956b2ffd088c8a15372659134b37da } from '../../../components/admin/status-cell'
 import { ContactReply as ContactReply_1e34f5c773ebc316c12c88ffdc0bccbc } from '../../../components/admin/contact-reply'
+import { ContactThankYou as ContactThankYou_da411c6e3652bc1cc6d515090fa42b61 } from '../../../components/admin/contact-thank-you'
 import { DefaultNewFilter as DefaultNewFilter_8efe33c020ba563f8571892ae124ffea } from '../../../components/admin/default-new-filter'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -35,6 +36,7 @@ import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e
 export const importMap = {
   "/components/admin/status-cell#StatusCell": StatusCell_22956b2ffd088c8a15372659134b37da,
   "/components/admin/contact-reply#ContactReply": ContactReply_1e34f5c773ebc316c12c88ffdc0bccbc,
+  "/components/admin/contact-thank-you#ContactThankYou": ContactThankYou_da411c6e3652bc1cc6d515090fa42b61,
   "/components/admin/default-new-filter#DefaultNewFilter": DefaultNewFilter_8efe33c020ba563f8571892ae124ffea,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,

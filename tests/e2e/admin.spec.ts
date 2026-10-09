@@ -50,6 +50,40 @@ test.describe('admin panel', () => {
     expect(after.replies ?? []).toHaveLength((contact.replies ?? []).length)
   })
 
+  test('the thank-you PDF box downloads the PDF and reports a missing email setup (S22)', async ({ page }) => {
+    const login = await page.request.post('/api/users/login', { data: { email, password } })
+    expect(login.ok()).toBe(true)
+    const found = await page.request.get('/api/contacts?where[email][equals]=e2e-inbox-2@example.com&depth=0')
+    const contact = ((await found.json()) as { docs: Record<string, unknown>[] }).docs[0]!
+    expect(contact).toBeTruthy()
+
+    await page.goto(`/admin/collections/contacts/${contact.id}`)
+    const box = page.getByTestId('contact-thank-you')
+    await expect(box).toContainText(/Agradecimiento \(PDF\)|Thank-you note \(PDF\)/)
+
+    const [download] = await Promise.all([page.waitForEvent('download'), box.getByTestId('contact-thank-you-download').click()])
+    expect(download.suggestedFilename()).toMatch(new RegExp(`^CoffeeProjects-.+-${contact.id}\\.pdf$`))
+    const pdf = await page.request.get(`/api/contacts/${contact.id}/thank-you.pdf`)
+    expect(pdf.status()).toBe(200)
+    expect(pdf.headers()['content-type']).toBe('application/pdf')
+    expect((await pdf.body()).subarray(0, 5).toString('latin1')).toBe('%PDF-')
+
+    if (!process.env.RESEND_API_KEY) {
+      await box.getByTestId('contact-thank-you-send').click()
+      await expect(box.getByTestId('contact-thank-you-error')).toContainText('RESEND_API_KEY')
+      const after = (await (await page.request.get(`/api/contacts/${contact.id}?depth=0`)).json()) as Record<string, unknown>
+      // Nothing changed on the request: same status, history and update time.
+      expect(after).toEqual(contact)
+    }
+  })
+
+  test('the thank-you endpoints reject anonymous callers', async ({ playwright, baseURL }) => {
+    const anon = await playwright.request.newContext({ baseURL })
+    expect((await anon.get('/api/contacts/1/thank-you.pdf')).status()).toBe(401)
+    expect((await anon.post('/api/contacts/1/thank-you')).status()).toBe(401)
+    await anon.dispose()
+  })
+
   test('the sidebar lists the open requests assigned to me (S20)', async ({ page }) => {
     const login = await page.request.post('/api/users/login', { data: { email, password } })
     expect(login.ok()).toBe(true)

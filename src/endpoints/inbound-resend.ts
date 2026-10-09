@@ -12,6 +12,7 @@ import {
 } from '@/features/contact/inbound'
 import { appendReply, type ContactWithReplies, hasInboundReply } from '@/features/contact/replies'
 import { emailFrom } from '@/lib/email'
+import { errorFields, ResendHttpError, resendRequest } from '@/lib/resend'
 
 /**
  * S21: POST /api/inbound/resend — Resend's `email.received` webhook. A team user who answers the team
@@ -23,9 +24,6 @@ import { emailFrom } from '@/lib/email'
  * email, forwarding it, saving) answer 500 so Resend retries; the forward uses the Svix message id as its
  * idempotency key, so a retry never emails the client twice. Logs carry reason codes only, never PII.
  */
-
-const RESEND_API = 'https://api.resend.com'
-const TIMEOUT_MS = 10_000
 
 type Ignored = 'eventType' | 'token' | 'sender' | 'contact' | 'duplicate' | 'unauthenticated' | 'empty' | 'permanent'
 type InboundError = 'notConfigured' | 'invalidSignature' | 'invalid' | 'fetchFailed' | 'sendFailed' | 'saveFailed'
@@ -45,33 +43,15 @@ function ignore(req: PayloadRequest, reason: Ignored): Response {
 }
 
 function logFailure(req: PayloadRequest, step: string, e: unknown) {
-  const err = e as { name?: unknown; status?: unknown; statusCode?: unknown; code?: unknown } | null
-  const pick = (v: unknown) => (typeof v === 'string' || typeof v === 'number' ? v : undefined)
-  req.payload.logger.error({ err: { name: pick(err?.name), status: pick(err?.status ?? err?.statusCode), code: pick(err?.code) } }, `inbound reply: ${step} failed`)
+  req.payload.logger.error({ err: errorFields(e) }, `inbound reply: ${step} failed`)
 }
 
 const strings = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : typeof v === 'string' ? [v] : [])
 // Single line, bounded like the panel reply subject: control characters never reach the email headers.
 const cleanSubject = (s: unknown) => (typeof s === 'string' ? s.replace(/\p{Cc}/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, 200) : '')
 
-class HttpError extends Error {
-  constructor(readonly status: number) {
-    super(`HTTP ${status}`)
-    this.name = 'HttpError'
-  }
-}
-
 /** A 4xx other than 429 will fail the same way on every retry: acknowledge it instead of making Resend retry. */
-const isPermanent = (e: unknown) => e instanceof HttpError && e.status >= 400 && e.status < 500 && e.status !== 429
-
-async function resend(apiKey: string, path: string, init: RequestInit = {}): Promise<unknown> {
-  const headers = new Headers(init.headers)
-  headers.set('authorization', `Bearer ${apiKey}`)
-  const res = await fetch(`${RESEND_API}${path}`, { ...init, headers, signal: AbortSignal.timeout(TIMEOUT_MS) })
-  // The response body can echo addresses or content: never surface it.
-  if (!res.ok) throw new HttpError(res.status)
-  return res.json()
-}
+const isPermanent = (e: unknown) => e instanceof ResendHttpError && e.status >= 400 && e.status < 500 && e.status !== 429
 
 export async function inboundResendHandler(req: PayloadRequest): Promise<Response> {
   const config = inboundConfig(process.env)
@@ -123,7 +103,7 @@ export async function inboundResendHandler(req: PayloadRequest): Promise<Respons
   if (typeof data.email_id !== 'string' || !data.email_id) return ignore(req, 'permanent')
   let email: ReceivedEmail
   try {
-    email = (await resend(config.apiKey, `/emails/receiving/${encodeURIComponent(data.email_id)}`)) as ReceivedEmail
+    email = (await resendRequest(config.apiKey, `/emails/receiving/${encodeURIComponent(data.email_id)}`)) as ReceivedEmail
   } catch (e) {
     logFailure(req, 'fetch', e)
     if (isPermanent(e)) return ignore(req, 'permanent')
@@ -137,7 +117,7 @@ export async function inboundResendHandler(req: PayloadRequest): Promise<Respons
 
   const from = emailFrom()
   try {
-    await resend(config.apiKey, '/emails', {
+    await resendRequest(config.apiKey, '/emails', {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'idempotency-key': `inbound-reply/${svixId}` },
       body: JSON.stringify({ from: `${from.name} <${from.address}>`, to: [contact.email], reply_to: sender.email, subject, ...replyEmail(text) }),
