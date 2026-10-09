@@ -173,6 +173,11 @@ describe('sender checks', () => {
     expect(findTeamSender('client@example.com', users)).toBeNull()
     expect(findTeamSender('', users)).toBeNull()
   })
+  it('never treats an API-key integration user as a team sender (S11)', () => {
+    const withBot = [{ id: 30, email: 'bot@coffeeprojects.es', role: 'integration' }, ...users]
+    expect(findTeamSender('bot@coffeeprojects.es', withBot)).toBeNull()
+    expect(findTeamSender('erik@coffeeprojects.es', withBot)).toEqual(users[0])
+  })
   it('rejects mail whose authentication results show it is spoofed', () => {
     // Fail closed: no authentication results (or no DMARC verdict) cannot prove the From domain.
     expect(senderAuthenticated(null)).toBe(false)

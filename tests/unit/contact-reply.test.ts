@@ -94,4 +94,14 @@ describe('POST /api/contacts/:id/reply (S19)', () => {
     const { req } = fakeReq({ payload: { update: vi.fn().mockRejectedValue(new Error('db')) } })
     expect(await call(req)).toEqual({ status: 500, body: { error: 'saveFailed' } })
   })
+  it('lets an API-key integration user reply (S11), and refuses users without a contact-managing role', async () => {
+    const bot = { id: 30, email: 'bot@coffeeprojects.es', collection: 'users', role: 'integration' }
+    const ok = fakeReq({ user: bot })
+    expect(await call(ok.req)).toEqual({ status: 200, body: { ok: true, status: 'answered' } })
+    expect(ok.payload.findByID).toHaveBeenCalledWith(expect.objectContaining({ overrideAccess: false, user: bot }))
+
+    const nobody = fakeReq({ user: { id: 31, email: 'x@coffeeprojects.es', collection: 'users' } })
+    expect(await call(nobody.req)).toEqual({ status: 401, body: { error: 'unauthorized' } })
+    expect(nobody.payload.sendEmail).not.toHaveBeenCalled()
+  })
 })

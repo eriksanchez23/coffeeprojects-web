@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin, isAdminField, isTeam, nobody } from '@/access'
+import { canManageContacts, isAdmin, isAdminField, nobody } from '@/access'
 import { contactReplyEndpoint } from '@/endpoints/contact-reply'
 import { budgets, contactStatuses, projectTypes, timelines } from '@/features/contact/options'
 import {
@@ -27,13 +27,14 @@ export const Contacts: CollectionConfig = {
     components: { beforeListTable: ['/components/admin/default-new-filter#DefaultNewFilter'] },
   },
   defaultSort: '-createdAt',
-  // S19: POST /api/contacts/:id/reply (team only) — used by the "Responder" panel in the edit view.
+  // S19: POST /api/contacts/:id/reply (team and integration users) — used by the "Responder" panel in the edit view.
   endpoints: [contactReplyEndpoint],
   access: {
     // Public submissions go through the Server Action with the Local API (T11), never through REST.
     create: nobody,
-    read: isTeam,
-    update: isTeam,
+    // S11: team and integration users (API key); field access limits updates to status/assignedTo/internalNotes.
+    read: canManageContacts,
+    update: canManageContacts,
     delete: isAdmin,
   },
   fields: [

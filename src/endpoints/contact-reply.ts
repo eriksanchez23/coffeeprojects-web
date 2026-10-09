@@ -1,11 +1,11 @@
 import type { Endpoint, PayloadRequest } from 'payload'
 import { z } from 'zod'
-import { isTeam } from '@/access'
+import { canManageContactsRole } from '@/access'
 import { replyEmail } from '@/features/contact/emails'
 import { appendReply, type ContactWithReplies } from '@/features/contact/replies'
 
 /**
- * S19: POST /api/contacts/:id/reply — a team user answers a contact request from the panel.
+ * S19: POST /api/contacts/:id/reply — a team or integration (S11) user answers a contact request from the panel.
  * Sends the email to the client (from EMAIL_FROM_ADDRESS via the Resend adapter, replyTo = the user), then
  * appends it to the request's `replies` and sets the status to `answered`. If email is not configured or the
  * send fails, nothing is stored and the status does not change.
@@ -42,7 +42,7 @@ async function readBody(req: PayloadRequest): Promise<unknown> {
 }
 
 export async function replyHandler(req: PayloadRequest): Promise<Response> {
-  if (!req.user || !(await isTeam({ req }))) return fail(401, 'unauthorized')
+  if (!req.user || !canManageContactsRole(req.user)) return fail(401, 'unauthorized')
 
   const parsed = replySchema.safeParse(await readBody(req))
   if (!parsed.success) return fail(400, 'invalid')
