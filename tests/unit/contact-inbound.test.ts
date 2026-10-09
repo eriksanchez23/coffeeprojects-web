@@ -161,7 +161,7 @@ describe('htmlToText', () => {
 })
 
 describe('sender checks', () => {
-  const users = [{ id: 3, email: 'Erik@CoffeeProjects.es' }, { id: 4, email: null }]
+  const users = [{ id: 3, email: 'Erik@CoffeeProjects.es', role: 'admin' }, { id: 4, email: null, role: 'editor' }]
   it('extracts the bare address from a From header', () => {
     expect(emailAddress('Erik <ERIK@coffeeprojects.es>')).toBe('erik@coffeeprojects.es')
     expect(emailAddress(' erik@coffeeprojects.es ')).toBe('erik@coffeeprojects.es')
@@ -177,6 +177,16 @@ describe('sender checks', () => {
     const withBot = [{ id: 30, email: 'bot@coffeeprojects.es', role: 'integration' }, ...users]
     expect(findTeamSender('bot@coffeeprojects.es', withBot)).toBeNull()
     expect(findTeamSender('erik@coffeeprojects.es', withBot)).toEqual(users[0])
+  })
+  it('fails closed: only admin/editor roles count as team senders (missing or unknown role never does)', () => {
+    const odd = [
+      { id: 40, email: 'norole@coffeeprojects.es' },
+      { id: 41, email: 'weird@coffeeprojects.es', role: 'viewer' },
+      { id: 42, email: 'ed@coffeeprojects.es', role: 'editor' },
+    ]
+    expect(findTeamSender('norole@coffeeprojects.es', odd)).toBeNull()
+    expect(findTeamSender('weird@coffeeprojects.es', odd)).toBeNull()
+    expect(findTeamSender('ed@coffeeprojects.es', odd)).toEqual(odd[2])
   })
   it('rejects mail whose authentication results show it is spoofed', () => {
     // Fail closed: no authentication results (or no DMARC verdict) cannot prove the From domain.

@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
+import { hasTeamRole } from '@/access'
 
 /**
  * S21: sync replies sent by email to the team notification. The notification's Reply-To is a signed
@@ -92,7 +93,8 @@ export function verifySvixSignature(input: {
 
 /**
  * The team user who sent the email (case-insensitive address match), or null for anybody else.
- * Integration (API-key) users never count as senders (S11); pass `role` in the user list for that check.
+ * Only admin/editor users count (fail-closed whitelist, S11): integration, unknown or missing roles never do,
+ * so pass `role` in the user list.
  */
 export function findTeamSender<U extends { email?: string | null; role?: unknown }>(
   from: string | null | undefined,
@@ -100,7 +102,7 @@ export function findTeamSender<U extends { email?: string | null; role?: unknown
 ): U | null {
   const address = emailAddress(from)
   if (!address) return null
-  return users.find((u) => u.role !== 'integration' && u.email?.trim().toLowerCase() === address) ?? null
+  return users.find((u) => hasTeamRole(u) && u.email?.trim().toLowerCase() === address) ?? null
 }
 
 type AuthResult = 'pass' | 'fail' | 'gray' | 'processing_failed' | 'unknown' | (string & {})
