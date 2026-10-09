@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { canManageContacts, isAdmin, isAdminField, nobody } from '@/access'
+import { changedFieldNames, logIntegrationAction } from '@/lib/security/integration-audit'
 import { contactReplyEndpoint } from '@/endpoints/contact-reply'
 import { budgets, contactStatuses, projectTypes, timelines } from '@/features/contact/options'
 import {
@@ -29,6 +30,20 @@ export const Contacts: CollectionConfig = {
   defaultSort: '-createdAt',
   // S19: POST /api/contacts/:id/reply (team and integration users) — used by the "Responder" panel in the edit view.
   endpoints: [contactReplyEndpoint],
+  hooks: {
+    // S11 audit trail: log-only (no side effects) line for changes made with an integration API key.
+    afterChange: [
+      ({ doc, previousDoc, operation, req }) => {
+        logIntegrationAction(req, {
+          event: 'contact_changed',
+          operation,
+          contactId: doc.id,
+          fields: changedFieldNames(previousDoc as Record<string, unknown> | undefined, doc as Record<string, unknown>),
+        })
+        return doc
+      },
+    ],
+  },
   access: {
     // Public submissions go through the Server Action with the Local API (T11), never through REST.
     create: nobody,

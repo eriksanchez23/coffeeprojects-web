@@ -2,6 +2,7 @@ import type { Endpoint, PayloadRequest } from 'payload'
 import { z } from 'zod'
 import { canManageContactsRole } from '@/access'
 import { replyEmail } from '@/features/contact/emails'
+import { logIntegrationAction } from '@/lib/security/integration-audit'
 import { appendReply, type ContactWithReplies } from '@/features/contact/replies'
 
 /**
@@ -72,6 +73,7 @@ export async function replyHandler(req: PayloadRequest): Promise<Response> {
     logFailure(req, 'save', e)
     return fail(500, 'saveFailed')
   }
+  logIntegrationAction(req, { event: 'contact_reply_sent', operation: 'reply', contactId: contact.id, fields: ['replies', 'status'] })
   return json(200, { ok: true, status: 'answered' })
 }
 

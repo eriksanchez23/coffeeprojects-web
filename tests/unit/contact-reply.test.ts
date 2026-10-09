@@ -104,4 +104,20 @@ describe('POST /api/contacts/:id/reply (S19)', () => {
     expect(await call(nobody.req)).toEqual({ status: 401, body: { error: 'unauthorized' } })
     expect(nobody.payload.sendEmail).not.toHaveBeenCalled()
   })
+
+  it('logs an audit line (ids and email of the integration user, contact id; no content) when an integration key replies', async () => {
+    const { req, payload } = fakeReq({ user: { id: 21, email: 'bot@coffeeprojects.es', collection: 'users', role: 'integration' } })
+    expect((await call(req)).status).toBe(200)
+    const logged = payload.logger.info.mock.calls.map((call) => call[0] as Record<string, unknown>)
+    expect(logged).toEqual([
+      { event: 'integration_contact_reply_sent', userId: 21, userEmail: 'bot@coffeeprojects.es', operation: 'reply', contactId: 7, fields: ['replies', 'status'] },
+    ])
+    expect(JSON.stringify(logged)).not.toContain('gracias por escribirnos')
+  })
+
+  it('does not audit-log team replies', async () => {
+    const { req, payload } = fakeReq()
+    expect((await call(req)).status).toBe(200)
+    expect(payload.logger.info).not.toHaveBeenCalled()
+  })
 })
