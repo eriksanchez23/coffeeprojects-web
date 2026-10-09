@@ -31,6 +31,7 @@ Already done: Resend domains, API key, `email.received` webhook and Vercel env v
 - Cloudflare Turnstile: real keys (hostname must match `NEXT_PUBLIC_SITE_URL`); test keys are in use now.
 - GitHub Actions secrets `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` for CI.
 - Legal company data for the `[PENDIENTE]` markers (legal pages stay noindex until filled).
+- Vercel env vars (2026-10-09): every variable is now readable (no `sensitive` ones), so `vercel env pull --environment=production` brings them all. `PAYLOAD_SECRET`, `IP_HASH_SALT`, `PREVIEW_SECRET`, `RESEND_API_KEY` and `RESEND_WEBHOOK_SECRET` were regenerated. The old Resend API key "coffeeprojects-web (Vercel)" is no longer used and can be deleted in Resend. When moving to real Turnstile keys, add both as readable too.
 
 ## 4. Decisions still open
 
