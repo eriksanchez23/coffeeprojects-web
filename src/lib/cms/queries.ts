@@ -39,7 +39,20 @@ async function listCollection<T>(collection: Slugged | 'faqs', locale: Locale, e
   })
 }
 
+// Thrown inside the cached function for an unknown slug: unstable_cache only stores resolved values, so
+// arbitrary URLs (/projects/<random>) cannot fill the data cache with null entries.
+const MISSING = Symbol('missing-slug')
+
 async function findBySlug<T extends { id: number | string }>(collection: Slugged, locale: Locale, slug: string) {
+  try {
+    return await findBySlugOrThrow<T>(collection, locale, slug)
+  } catch (err) {
+    if (err === MISSING) return null
+    throw err
+  }
+}
+
+function findBySlugOrThrow<T extends { id: number | string }>(collection: Slugged, locale: Locale, slug: string) {
   return read([collection, 'slug', locale, slug], [collection], async (draft) => {
     const payload = await payloadClient()
     const statusFilter = draft ? [] : [published]
@@ -60,7 +73,7 @@ async function findBySlug<T extends { id: number | string }>(collection: Slugged
       const es = (await query('es')).docs[0]
       if (es) found = (await payload.findByID({ collection, id: es.id, locale, draft, depth: 1, overrideAccess: draft })) as unknown as T
     }
-    if (!found) return null
+    if (!found) throw MISSING
 
     const all = await payload.findByID({ collection, id: found.id, locale: 'all', draft, depth: 0, select: { slug: true }, overrideAccess: draft })
     return { doc: found, slugs: toLocaleSlugs((all as { slug?: unknown }).slug) }
