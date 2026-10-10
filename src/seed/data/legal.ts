@@ -5,14 +5,14 @@ const P = (text: string) => ({ p: text })
 const H = (text: string) => ({ h2: text })
 
 // Factual description of what the site does (data, processors, cookies). The provider is identified as
-// CoffeeProjects (being incorporated), represented by Juan Pérez Ros. The texts were approved by the owner
+// CoffeeProjects (being incorporated), represented by its three partners (Juan Pérez Ros, Diego Mario Ralcef Bocos, Erik Sanchez Ralinov). The texts were approved by the owner
 // and carry no pending markers, so the legal pages are indexable (src/lib/legal.ts). Not legal advice.
 
 export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; cookiePolicy: unknown }> = {
   es: {
     legalNotice: lexical([
       H('Datos identificativos'),
-      P('Titular: CoffeeProjects (en constitución). Responsable: Juan Pérez Ros. NIF: en trámite (sociedad en constitución). Ubicación: Murcia, España. Email: contact@coffeeprojects.es.'),
+      P('Titular: CoffeeProjects (en constitución). Responsables: Juan Pérez Ros, Diego Mario Ralcef Bocos y Erik Sanchez Ralinov. NIF: en trámite (sociedad en constitución). Ubicación: Murcia, España. Email: contact@coffeeprojects.es.'),
       H('Objeto'),
       P('Este sitio web informa sobre los servicios de desarrollo de software de CoffeeProjects y permite solicitar presupuestos.'),
       H('Propiedad intelectual'),
@@ -22,7 +22,7 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
     ]),
     privacyPolicy: lexical([
       H('Responsable del tratamiento'),
-      P('CoffeeProjects (en constitución), responsable: Juan Pérez Ros. NIF: en trámite (sociedad en constitución). Ubicación: Murcia, España. Email: contact@coffeeprojects.es.'),
+      P('CoffeeProjects (en constitución), responsables (corresponsables del tratamiento): Juan Pérez Ros, Diego Mario Ralcef Bocos y Erik Sanchez Ralinov. NIF: en trámite (sociedad en constitución). Ubicación: Murcia, España. Email: contact@coffeeprojects.es.'),
       H('Qué datos tratamos y para qué'),
       P('Solicitudes de presupuesto: los datos que nos envías en el formulario de contacto (nombre, email, teléfono opcional, tipo de proyecto, paquete elegido junto con el resumen de precio final y plazo estimado que te mostramos, cómo nos conociste y descripción del proyecto), junto con el idioma y la página desde la que escribes. Los usamos para responder a tu solicitud, preparar un presupuesto y enviarte un email de confirmación.'),
       P('Protección del formulario: guardamos con tu solicitud un hash (huella cifrada e irreversible) de tu dirección IP, que solo sirve para limitar el número de envíos por hora, y el formulario usa la verificación anti-spam Cloudflare Turnstile.'),
@@ -50,7 +50,7 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
   en: {
     legalNotice: lexical([
       H('Company details'),
-      P('Owner: CoffeeProjects (being incorporated). Responsible person: Juan Pérez Ros. NIF (Spanish tax ID): in progress (company being incorporated). Location: Murcia, Spain. Email: contact@coffeeprojects.es.'),
+      P('Owner: CoffeeProjects (being incorporated). Responsible persons: Juan Pérez Ros, Diego Mario Ralcef Bocos and Erik Sanchez Ralinov. NIF (Spanish tax ID): in progress (company being incorporated). Location: Murcia, Spain. Email: contact@coffeeprojects.es.'),
       H('Purpose'),
       P("This website presents CoffeeProjects' software development services and lets you request quotes."),
       H('Intellectual property'),
@@ -60,7 +60,7 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
     ]),
     privacyPolicy: lexical([
       H('Data controller'),
-      P('CoffeeProjects (being incorporated), responsible person: Juan Pérez Ros. NIF (Spanish tax ID): in progress (company being incorporated). Location: Murcia, Spain. Email: contact@coffeeprojects.es.'),
+      P('CoffeeProjects (being incorporated), responsible persons (joint controllers): Juan Pérez Ros, Diego Mario Ralcef Bocos and Erik Sanchez Ralinov. NIF (Spanish tax ID): in progress (company being incorporated). Location: Murcia, Spain. Email: contact@coffeeprojects.es.'),
       H('What data we process and why'),
       P('Quote requests: the data you send through the contact form (name, email, optional phone, project type, chosen package together with the final price and estimated time summary we show you, how you found us and project description), together with the language and the page you write from. We use it to answer your request, prepare a quote and send you a confirmation email.'),
       P('Form protection: we store with your request a hash (an irreversible fingerprint) of your IP address, used only to limit the number of submissions per hour, and the form uses the Cloudflare Turnstile anti-spam check.'),
@@ -88,7 +88,7 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
   fr: {
     legalNotice: lexical([
       H("Informations sur l'éditeur"),
-      P('Éditeur : CoffeeProjects (en cours de constitution). Responsable : Juan Pérez Ros. NIF (numéro fiscal espagnol) : en cours (société en cours de constitution). Localisation : Murcia, Espagne. E-mail : contact@coffeeprojects.es.'),
+      P('Éditeur : CoffeeProjects (en cours de constitution). Responsables : Juan Pérez Ros, Diego Mario Ralcef Bocos et Erik Sanchez Ralinov. NIF (numéro fiscal espagnol) : en cours (société en cours de constitution). Localisation : Murcia, Espagne. E-mail : contact@coffeeprojects.es.'),
       H('Objet'),
       P('Ce site présente les services de développement logiciel de CoffeeProjects et permet de demander des devis.'),
       H('Propriété intellectuelle'),
@@ -98,7 +98,7 @@ export const legal: Localized<{ legalNotice: unknown; privacyPolicy: unknown; co
     ]),
     privacyPolicy: lexical([
       H('Responsable du traitement'),
-      P('CoffeeProjects (en cours de constitution), responsable : Juan Pérez Ros. NIF (numéro fiscal espagnol) : en cours (société en cours de constitution). Localisation : Murcia, Espagne. E-mail : contact@coffeeprojects.es.'),
+      P('CoffeeProjects (en cours de constitution), responsables (responsables conjoints du traitement) : Juan Pérez Ros, Diego Mario Ralcef Bocos et Erik Sanchez Ralinov. NIF (numéro fiscal espagnol) : en cours (société en cours de constitution). Localisation : Murcia, Espagne. E-mail : contact@coffeeprojects.es.'),
       H('Données traitées et finalités'),
       P('Demandes de devis : les données envoyées via le formulaire de contact (nom, e-mail, téléphone facultatif, type de projet, formule choisie avec le récapitulatif du prix final et du délai estimé que nous vous affichons, comment vous nous avez connus et description du projet), ainsi que la langue et la page depuis laquelle vous écrivez. Elles servent à répondre à votre demande, à préparer un devis et à vous envoyer un e-mail de confirmation.'),
       P('Protection du formulaire : nous conservons avec votre demande un hash (empreinte chiffrée et irréversible) de votre adresse IP, utilisé uniquement pour limiter le nombre d’envois par heure, et le formulaire utilise la vérification anti-spam Cloudflare Turnstile.'),

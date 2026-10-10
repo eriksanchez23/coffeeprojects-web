@@ -29,10 +29,13 @@ describe.each(locales)('seeded legal texts (%s)', (locale) => {
     }
   })
 
+  // S13: the three partners are the responsible persons until the company exists.
+  const RESPONSIBLES = ['Juan Pérez Ros', 'Diego Mario Ralcef Bocos', 'Erik Sanchez Ralinov']
+
   it('identify the provider: incorporating company, person, tax ID in progress, Murcia, email', () => {
     for (const doc of [legalNotice, privacyPolicy]) {
       const t = text(doc)
-      for (const fact of [incorporating[locale], 'Juan Pérez Ros', taxId[locale], 'Murcia', 'contact@coffeeprojects.es']) expect(t).toContain(fact)
+      for (const fact of [incorporating[locale], ...RESPONSIBLES, taxId[locale], 'Murcia', 'contact@coffeeprojects.es']) expect(t).toContain(fact)
     }
   })
 
