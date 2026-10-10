@@ -140,7 +140,7 @@ export async function inboundResendHandler(req: PayloadRequest): Promise<Respons
     await resend(config.apiKey, '/emails', {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'idempotency-key': `inbound-reply/${svixId}` },
-      body: JSON.stringify({ from: `${from.name} <${from.address}>`, to: [contact.email], reply_to: sender.email, subject, ...replyEmail(text) }),
+      body: JSON.stringify({ from: `${from.name} <${from.address}>`, to: [contact.email], reply_to: sender.email, subject, ...replyEmail(text, contact.locale) }),
     })
   } catch (e) {
     logFailure(req, 'send', e)

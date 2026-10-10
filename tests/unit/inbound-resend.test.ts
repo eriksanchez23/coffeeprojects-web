@@ -219,8 +219,9 @@ describe('POST /api/inbound/resend (S21)', () => {
       reply_to: 'Erik@coffeeprojects.es',
       subject: 'Re: Nueva solicitud (Landing) — Juan',
       text: 'Hola Juan,\nTe paso la propuesta.',
-      html: '<div style="white-space:pre-wrap">Hola Juan,\nTe paso la propuesta.</div>',
+      html: expect.stringContaining('Hola Juan,<br>Te paso la propuesta.'),
     })
+    expect(sent.html).toContain('max-width:600px')
 
     expect(payload.findByID).toHaveBeenCalledWith(expect.objectContaining({ collection: 'contacts', id: 7, depth: 0, overrideAccess: true }))
     const update = payload.update.mock.calls[0]![0]

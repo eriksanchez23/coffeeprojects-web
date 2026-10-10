@@ -50,7 +50,7 @@ export async function replyHandler(req: PayloadRequest): Promise<Response> {
   if (!process.env.RESEND_API_KEY) return fail(503, 'emailNotConfigured')
 
   const id = String(req.routeParams?.id ?? '')
-  let contact: ContactWithReplies & { email: string }
+  let contact: ContactWithReplies & { email: string; locale?: string | null }
   try {
     // The user's own access decides whether the request exists for them.
     contact = (await req.payload.findByID({ collection: 'contacts', id, depth: 0, overrideAccess: false, user: req.user })) as typeof contact
@@ -60,7 +60,7 @@ export async function replyHandler(req: PayloadRequest): Promise<Response> {
 
   const { subject, message } = parsed.data
   try {
-    await req.payload.sendEmail({ to: contact.email, replyTo: req.user.email, subject, ...replyEmail(message) })
+    await req.payload.sendEmail({ to: contact.email, replyTo: req.user.email, subject, ...replyEmail(message, contact.locale) })
   } catch (e) {
     logFailure(req, 'send', e)
     return fail(502, 'sendFailed')
