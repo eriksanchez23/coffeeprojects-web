@@ -20,6 +20,9 @@
  * | Vercel       | `x-vercel-id` header or `server: Vercel`                                     |
  * | Netlify      | `x-nf-request-id` header or `server: Netlify`                                |
  * | (generator)  | the `<meta name="generator">` product name, version dropped, when not already listed |
+ *
+ * The HTML is untrusted (up to 2 MB): every pattern is a literal or has bounded repetition, so a hostile page
+ * cannot make the scan quadratic.
  */
 
 export interface StackInput {
@@ -44,7 +47,7 @@ const RULES: Rule[] = [
   { name: 'Webflow', test: ({ html }) => /\bdata-wf-(page|site)=/.test(html) },
   { name: 'Wix', test: ({ html }) => html.includes('static.wixstatic.com') },
   { name: 'Squarespace', test: ({ html }) => html.includes('static1.squarespace.com') },
-  { name: 'Tailwind CSS', test: ({ html }) => /--tw-[a-z]/.test(html) || /tailwind[\w.-]*\.css/i.test(html) },
+  { name: 'Tailwind CSS', test: ({ html }) => /--tw-[a-z]/.test(html) || /tailwind[\w.-]{0,100}\.css/i.test(html) },
   { name: 'Vercel', test: ({ header }) => Boolean(header('x-vercel-id')) || /^vercel$/i.test(header('server')) },
   { name: 'Netlify', test: ({ header }) => Boolean(header('x-nf-request-id')) || /^netlify$/i.test(header('server')) },
 ]

@@ -1,5 +1,5 @@
 import { isIP } from 'node:net'
-import { gzipSync } from 'node:zlib'
+import { brotliCompressSync, gzipSync } from 'node:zlib'
 import { describe, expect, it, vi } from 'vitest'
 import {
   assertPublicUrl,
@@ -63,10 +63,11 @@ describe('isBlockedIp (S23 SSRF guard)', () => {
     '127.0.0.1', '10.1.2.3', '172.16.0.1', '172.31.255.255', '192.168.1.1', '169.254.169.254', '100.64.0.1',
     '100.100.100.200', '0.0.0.0', '224.0.0.1', '255.255.255.255', '::', '::1', 'fe80::1', 'fe80::1%eth0', 'fc00::1',
     'fd00:ec2::254', 'ff02::1', '::ffff:127.0.0.1', '::ffff:7f00:1', '::ffff:10.0.0.1', '::ffff:a9fe:a9fe',
-    '64:ff9b::a00:1', '2002:c0a8:101::1', 'not-an-ip',
+    '64:ff9b::a00:1', '64:ff9b:1::808:808', '64:ff9b:1:ffff::1', '2001::1', '2001:0:4136:e378:8000:63bf:3fff:fdd2',
+    '2002:c0a8:101::1', 'not-an-ip',
   ])('refuses %s', (ip) => expect(isBlockedIp(ip)).toBe(true))
 
-  it.each(['93.184.216.34', '8.8.8.8', '172.32.0.1', '100.128.0.1', '2606:4700::6810:84e5', '::ffff:8.8.8.8'])('allows %s', (ip) =>
+  it.each(['93.184.216.34', '8.8.8.8', '172.32.0.1', '100.128.0.1', '2606:4700::6810:84e5', '::ffff:8.8.8.8', '2001:4860:4860::8888', '64:ff9b:2::1'])('allows %s', (ip) =>
     expect(isBlockedIp(ip)).toBe(false),
   )
 })
@@ -155,6 +156,9 @@ describe('safeFetch', () => {
     const bomb = fakeTransport({ 'https://site.example/': ok(gzipSync('x'.repeat(50_000)), { 'content-encoding': 'gzip' }) })
     expect(await codeOf(safeFetch('https://site.example/', { ...opts, transport: bomb }))).toBe('tooLarge')
 
+    const brBomb = fakeTransport({ 'https://site.example/': ok(brotliCompressSync('x'.repeat(50_000)), { 'content-encoding': 'br' }) })
+    expect(await codeOf(safeFetch('https://site.example/', { ...opts, transport: brBomb }))).toBe('tooLarge')
+
     const gz = fakeTransport({ 'https://site.example/': ok(gzipSync('hello'), { 'content-encoding': 'gzip' }) })
     expect((await safeFetch('https://site.example/', { ...opts, transport: gz })).body.toString()).toBe('hello')
   })
@@ -173,6 +177,19 @@ describe('safeFetch', () => {
     const transport: Transport = (_url, init) =>
       new Promise((_ok, fail) => init.signal.addEventListener('abort', () => fail(Object.assign(new Error('aborted'), { name: 'AbortError' }))))
     expect(await codeOf(safeFetch('https://93.184.216.34/', { ...opts, timeoutMs: 20, transport }))).toBe('timeout')
+  })
+
+  it('aborts a body that trickles in after the headers once the total timeout passes', async () => {
+    const trickle = (async function* () {
+      for (;;) {
+        yield Buffer.from('x')
+        await new Promise((r) => setTimeout(r, 10))
+      }
+    })()
+    const transport = fakeTransport({ 'https://site.example/': { status: 200, headers: {}, body: trickle } })
+    const start = Date.now()
+    expect(await codeOf(safeFetch('https://site.example/', { ...opts, maxBytes: 1_000_000, timeoutMs: 100, transport }))).toBe('timeout')
+    expect(Date.now() - start).toBeLessThan(2_000)
   })
 
   it('reports non-2xx answers as httpStatus', async () => {

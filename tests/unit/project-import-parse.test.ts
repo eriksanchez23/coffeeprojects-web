@@ -36,6 +36,16 @@ describe('parsePageMeta (S23)', () => {
   })
 })
 
+describe('parsePageMeta length caps', () => {
+  it('caps the title at 200 characters and the description at 500', () => {
+    const html = `<meta property="og:site_name" content="${'Long name '.repeat(100)}"><meta name="description" content="${'word '.repeat(300)}">`
+    const meta = parsePageMeta(html, page)
+    expect(meta.title!.length).toBeLessThanOrEqual(200)
+    expect(meta.title).toMatch(/…$/)
+    expect(meta.description!.length).toBeLessThanOrEqual(500)
+  })
+})
+
 describe('cleanTitle', () => {
   it('removes " | …", " – …" and " — …" suffixes and collapses whitespace', () => {
     expect(cleanTitle('Shop  name | Home')).toBe('Shop name')

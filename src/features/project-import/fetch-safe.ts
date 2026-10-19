@@ -2,14 +2,14 @@ import { lookup as dnsLookup } from 'node:dns/promises'
 import http from 'node:http'
 import https from 'node:https'
 import { BlockList, isIP, type LookupFunction } from 'node:net'
-import { pipeline, Readable } from 'node:stream'
+import { addAbortSignal, pipeline, Readable } from 'node:stream'
 import { createBrotliDecompress, createGunzip, createInflate } from 'node:zlib'
 
 /**
  * S23: SSRF-safe GET for user-supplied URLs (the project import fetches whatever URL a team member types).
  * - http(s) only, no credentials in the URL;
  * - every address a host resolves to must be public (no loopback, RFC 1918, link-local, CGNAT, unique-local,
- *   multicast, reserved or metadata ranges; IPv4-mapped / NAT64 / 6to4 IPv6 are checked as the IPv4 they embed).
+ *   multicast, reserved, metadata, Teredo and local-use NAT64 ranges; IPv4-mapped / NAT64 / 6to4 IPv6 are checked as the IPv4 they embed).
  *   The check runs inside the socket's `lookup`, so the address we validate is the one we connect to (no DNS
  *   rebinding window); IP literals, which skip `lookup`, are checked up front;
  * - redirects are followed by hand (max 5) and every hop goes through the same checks; custom headers (API keys)
@@ -54,6 +54,8 @@ for (const [net, prefix] of [
   ['::', 128], // unspecified
   ['::1', 128],
   ['100::', 64], // discard
+  ['64:ff9b:1::', 48], // local-use NAT64 (operator-defined mapping, so the embedded IPv4 cannot be trusted)
+  ['2001::', 32], // Teredo (tunnels to an IPv4 we cannot see)
   ['2001:db8::', 32], // documentation
   ['fc00::', 7], // unique-local (AWS metadata fd00:ec2::254)
   ['fe80::', 10], // link-local
@@ -161,7 +163,7 @@ const nodeTransport: Transport = (url, { headers, signal, lookup }) =>
 
 const discard = (body: AsyncIterable<Uint8Array>) => (body as { destroy?: () => void }).destroy?.()
 
-async function readCapped(res: RawResponse, maxBytes: number): Promise<Buffer> {
+async function readCapped(res: RawResponse, maxBytes: number, signal: AbortSignal): Promise<Buffer> {
   if (Number(res.headers['content-length'] ?? 0) > maxBytes) {
     discard(res.body)
     throw new SafeFetchError('tooLarge')
@@ -179,7 +181,9 @@ async function readCapped(res: RawResponse, maxBytes: number): Promise<Buffer> {
     discard(res.body)
     throw new SafeFetchError('network')
   }
-  const stream: AsyncIterable<Uint8Array> = decoder ? pipeline(Readable.from(res.body), decoder, () => {}) : res.body
+  // The abort signal ends the read too: a body that trickles in after the headers cannot outlive the timeout.
+  const source = addAbortSignal(signal, Readable.from(res.body))
+  const stream: AsyncIterable<Uint8Array> = decoder ? pipeline(source, decoder, () => {}) : source
   const chunks: Buffer[] = []
   let total = 0
   for await (const chunk of stream) {
@@ -234,7 +238,7 @@ export async function safeFetch(raw: string, opts: SafeFetchOptions): Promise<Sa
         discard(res.body)
         throw new SafeFetchError('httpStatus', res.status)
       }
-      return { url, status: res.status, headers: res.headers, body: await readCapped(res, opts.maxBytes) }
+      return { url, status: res.status, headers: res.headers, body: await readCapped(res, opts.maxBytes, controller.signal) }
     }
   } catch (e) {
     if (controller.signal.aborted) throw new SafeFetchError('timeout')
