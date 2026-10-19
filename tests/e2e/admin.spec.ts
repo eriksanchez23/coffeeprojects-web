@@ -103,6 +103,28 @@ test.describe('admin panel', () => {
     }
   })
 
+  test('a project shows the "Import from website" box, which refuses private addresses (S23)', async ({ page }) => {
+    const login = await page.request.post('/api/users/login', { data: { email, password } })
+    expect(login.ok()).toBe(true)
+
+    await page.goto('/admin/collections/projects/create')
+    const box = page.getByTestId('project-import')
+    await expect(box).toContainText(/Importar desde la web|Import from website/)
+    await expect(box.getByTestId('project-import-run')).toBeDisabled()
+
+    // A loopback URL is refused by the server's guard before any request goes out: no real network in this test.
+    await page.locator('#field-url').fill('http://127.0.0.1:3000/')
+    await box.getByTestId('project-import-run').click()
+    await expect(box.getByTestId('project-import-error')).toContainText(/red privada o local|private or local network/)
+    await expect(page.locator('#field-title')).toHaveValue('')
+  })
+
+  test('the project import endpoint rejects anonymous callers', async ({ playwright, baseURL }) => {
+    const anon = await playwright.request.newContext({ baseURL })
+    expect((await anon.post('/api/projects/import-from-url', { data: { url: 'https://example.com' } })).status()).toBe(401)
+    await anon.dispose()
+  })
+
   test('the reply endpoint rejects anonymous callers', async ({ playwright, baseURL }) => {
     const anon = await playwright.request.newContext({ baseURL })
     const res = await anon.post('/api/contacts/1/reply', { data: { subject: 'Re: x', message: 'x' } })

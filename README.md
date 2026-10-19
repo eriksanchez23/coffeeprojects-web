@@ -45,6 +45,8 @@ Schema changes: edit the collections/globals, then `pnpm payload migrate:create 
 
 See [`.env.example`](.env.example) for the full list with comments. Staging vs production values are listed in [`docs/plan/T18-staging-deploy.md`](docs/plan/T18-staging-deploy.md).
 
+- `MICROLINK_API_KEY` (optional): Microlink key for the project cover screenshot taken by the admin's «Importar desde la web» action (`src/features/project-import`). Without it the free endpoint `api.microlink.io` is used (about 50 calls a day); with it, `pro.microlink.io` with the `x-api-key` header. Only the project's public URL is sent to Microlink.
+
 ## Deploy
 
 Vercel (`vercel.json`: region `fra1`, build command `pnpm deploy:build`), Neon Postgres, Vercel Blob. Branch `staging` is the protected, `noindex` prototype; `main` is production. The full runbook (env vars, first deploy, seeding, smoke checks, production promotion) is [`docs/plan/T18-staging-deploy.md`](docs/plan/T18-staging-deploy.md); the team validation checklist is `docs/04-staging-checklist.md` (created in its Step 8).
