@@ -123,3 +123,10 @@ Route evidence: large task (resume test fails: multi-session, external accounts,
     - charset is not detected;
     - some UI and endpoint success paths are untested.
   - **Still open:** the S22 range 90f0bac..04c23ba is not natively reviewed. Nothing is pushed.
+- **L38 (2026-10-19):** Native review of the S22 range 90f0bac..04c23ba.
+  - **Whole range:** too big to review at once (`lens_context_budget_exceeded`, because of the 12,451-line migration snapshot in 8ce3513).
+  - **90f0bac..fb49b03:** reviewed in a temporary worktree. Medium; approved and acknowledged.
+  - **8ce3513..04c23ba:** under budget, so no review was due.
+  - **8ce3513 itself:** panel send plus the migration snapshot. It cannot fit the budget without rewriting shared history, so it stays not natively reviewed; it is covered by its own tests (L35).
+  - **Follow-up — `wrapText` in thank-you-pdf.ts:** it loops forever if a single character is wider than the column. That is unreachable with the current fonts and widths. One-line fix: `cut = Math.max(1, cut)`.
+  - **Follow-up — message min-lines:** the min-lines overflow warning in the same file is still open.
