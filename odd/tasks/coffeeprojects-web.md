@@ -69,7 +69,7 @@ Plan: `docs/03-implementation-plan.md` + `docs/plan/T00..T18` · Spec: `docs/01-
 | T26 email reply sync (Resend inbound) | S21 | delegated (writer, opus) | done (writer; awaiting review) | 4cd0e44 (privacy seed text) + b9a365c (migration 20261009_000317_contact_reply_channel; POST /api/inbound/resend; pure fns RED→GREEN incl. Svix public vector; 395 unit; e2e admin+contact 11/11 desktop on fresh migrated + seeded local DB; signed webhook smoke 401/200 on local prod server; .env.example not updated: read-denied by permission settings; end-to-end pending Resend inbound setup) |
 | T25 admin media upload + icon | user report 2026-10-09 | inline | done | 453295d |
 | T21 partners page | S16 | delegated (writer, opus) | done (writer; awaiting review) | 0415e90..db9ce5f (migration 20261008_203534_partners; global `partners`; e2e partners/a11y/admin 34/34 desktop+mobile on a fresh migrated + seeded local DB) |
-| T28 project import from URL | S23 | delegated (writer, opus) | pending | — |
+| T28 project import from URL | S23 | delegated (writer, opus) | done | e33768b + 64244bc (fix round: ReDoS found by independent verifier, NAT64/Teredo blocklist, length caps, slow-body timeout); unit 515 pass, e2e admin 11/11; native review high ×2 approved + acknowledged; live Microlink check on noore-club-demo OK |
 
 Route evidence: large task (resume test fails: multi-session, external accounts, separate deliverables) → Writer trigger: one bounded writer per task.
 
@@ -114,3 +114,12 @@ Route evidence: large task (resume test fails: multi-session, external accounts,
 - **L34 (2026-10-09):** User asked to upload the database to GitHub so the other writer can host it 24/7 ("si mi ordenador no esta encendido la base de datos no funciona por lo tanto no funciona el panel"). Corrected with evidence: production (site + panel) uses the Neon cloud DB via Vercel env, independent of the local dev DB; a DB dump in git would expose client PII and password hashes (GDPR) — schema/content already in git as migrations + seed; a future move to the partner's server = direct pg_dump, not git. Not done. PDF thank-you design approved: "si" -> S22/T27.
 - **L35 (2026-10-09):** User: "vale, si has hecho ya la automatizacion de que cuando nos mande la solicitud se le mande el pdf en funcion del idioma que este usando en la web, si, haz comit" -> told: language yes, automatic send no (panel button only); proposed attaching the PDF to the automatic confirmation from contact@ -> "si". Done inline: shared sendThankYouPdf (src/features/contact/thank-you-send.ts) used by the panel endpoint and by the contact action (confirmationEmail + PDF, idempotency thank-you/<id>/auto, thankYouSent author null). 425 unit tests, typecheck, lint, build OK. Not pushed.
 - **L36 (2026-10-19):** User: "Arréglame en el panel en la parte de proyecto poder poner URL y que en base a la URL coja la portada y todo lo de la web" / "lo quiero en el panel de coffee projects que hiciste en su momento porfa, no tiene nada que ver con el noore". Spec S23, task T28. Pattern to follow: Contacts sidebar Field component plus collection endpoint (contact-thank-you). Note: commits 90f0bac..04c23ba (S22 thank-you PDF) are still not natively reviewed. Next: T28.
+- **L37 (2026-10-19):** T28 done.
+  - **What:** «Importar desde la web» on Projects. A team-only POST `/api/projects/import-from-url` with an SSRF-safe fetch (the lookup is checked on the connected address, every redirect hop is re-checked, size and time caps). Cover from a Microlink screenshot, falling back to og:image. Only empty fields are filled, and the result lands in the form for review.
+  - **Verification:** the independent verifier failed the first commit on ReDoS: one regex took 30 s on a 200 KB tag. Fixed in 64244bc; the worst measured hostile case is now 550 ms. Native review: high risk, approved twice.
+  - **Non-blocking notes:**
+    - imported covers that are later discarded stay in Media as orphans;
+    - the total latency can reach ~30 s;
+    - charset is not detected;
+    - some UI and endpoint success paths are untested.
+  - **Still open:** the S22 range 90f0bac..04c23ba is not natively reviewed. Nothing is pushed.
