@@ -130,3 +130,8 @@ Route evidence: large task (resume test fails: multi-session, external accounts,
   - **8ce3513 itself:** panel send plus the migration snapshot. It cannot fit the budget without rewriting shared history, so it stays not natively reviewed; it is covered by its own tests (L35).
   - **Follow-up — `wrapText` in thank-you-pdf.ts:** it loops forever if a single character is wider than the column. That is unreachable with the current fonts and widths. One-line fix: `cut = Math.max(1, cut)`.
   - **Follow-up — message min-lines:** the min-lines overflow warning in the same file is still open.
+- **L39 (2026-10-19):** User: "Si, súbelo" then "Si, a main".
+  - **Push:** `staging` was pushed (preview coffeeprojects-iyp7hwg0b), then fast-forwarded to `main` at 5f87fdd. That also promotes S22, whose additive migration 20261009_101518_thank_you_sent runs in `deploy:build`.
+  - **Production:** coffeeprojects-9tw3fgxaa is Ready. https://coffeeprojects-web.vercel.app answers `/` 200 and `/admin/login` 200. POST `/api/projects/import-from-url` without login gives 401.
+  - **Pre-existing, not caused by this change:** GET `/api/projects/<non-numeric>` returns 500 (same for `/api/projects/abc`). That is Payload on a public-read collection; a candidate follow-up is a 404.
+  - **Not checked live:** the import button inside the logged-in admin, because the agent does not sign in.
