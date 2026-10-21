@@ -1,3 +1,4 @@
+import { renderConfirmationEmail, renderThankYouEmail } from './email-templates/attachment'
 import { clientCopy, clientLocale } from './email-templates/copy'
 import { type ClientEmailInput, renderClientEmail } from './email-templates/client'
 import { renderReplyEmail } from './email-templates/reply'
@@ -34,9 +35,19 @@ export function clientEmail(i: ClientEmailInput) {
   return renderClientEmail(i)
 }
 
+/** S22: the automatic confirmation (with the thank-you PDF attached), branded, in the client's language. */
+export function confirmationEmail(locale: string | null | undefined) {
+  return renderConfirmationEmail(locale)
+}
+
 /** S19: default subject of a reply from the panel, on the thread of the auto-reply the client received. */
 export function replySubject(locale: string | null | undefined): string {
   return `Re: ${clientCopy[clientLocale(locale)].subject}`
+}
+
+/** S22: the short email that carries the thank-you PDF sent from the panel, branded, in the client's language. */
+export function thankYouEmail(name: string, locale: string | null | undefined, subject: string) {
+  return renderThankYouEmail(name, locale, subject)
 }
 
 /** S19: the team's reply as typed (plain text) plus an escaped, branded HTML version that keeps its line breaks. */

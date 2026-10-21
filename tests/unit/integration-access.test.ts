@@ -106,7 +106,7 @@ describe('Contacts fields for integration', () => {
       .map(([name]) => name)
       .sort()
     expect(writable).toEqual(['assignedTo', 'internalNotes', 'status'])
-    for (const name of Object.keys(fields).filter((n) => !writable.includes(n) && n !== 'replyAction')) {
+    for (const name of Object.keys(fields).filter((n) => !writable.includes(n) && n !== 'replyAction' && n !== 'thankYouAction')) {
       expect(await fields[name]!.access?.update?.(args('integration')), name).toBe(false)
     }
   })

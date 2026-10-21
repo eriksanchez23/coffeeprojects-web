@@ -1,5 +1,6 @@
 import type { CollectionBeforeChangeHook, CollectionConfig, FieldAccess } from 'payload'
 import { isTeam, publishedOrTeam } from '@/access'
+import { projectImportEndpoint } from '@/endpoints/project-import'
 import { adminGroups, t } from '@/fields/labels'
 import { seoField } from '@/fields/seo'
 import { slugField } from '@/fields/slug'
@@ -38,6 +39,7 @@ export const Projects: CollectionConfig = {
     afterDelete: [revalidateCollectionDelete('projects')],
   },
   versions: { drafts: true },
+  endpoints: [projectImportEndpoint],
   defaultSort: '-year',
   access: { read: publishedOrTeam, readVersions: isTeam, create: isTeam, update: isTeam, delete: isTeam },
   fields: [
@@ -69,6 +71,13 @@ export const Projects: CollectionConfig = {
       admin: { condition: (_, s) => !s?.nda },
       access: { read: ndaUrlReadAccess },
       validate: safeUrlValidator(),
+    },
+    {
+      // S23: fills the empty fields (and the cover) from the website at `url`; no column, values go into the form.
+      name: 'importFromUrl',
+      type: 'ui',
+      label: t('Importar desde la web', 'Import from website'),
+      admin: { condition: (_, s) => !s?.nda, components: { Field: '/components/admin/project-import#ProjectImport' } },
     },
     { name: 'nda', type: 'checkbox', label: t('NDA', 'NDA'), defaultValue: false },
     { name: 'featured', type: 'checkbox', label: t('Destacado', 'Featured'), defaultValue: true },

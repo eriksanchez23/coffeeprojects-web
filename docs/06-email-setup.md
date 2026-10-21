@@ -10,8 +10,10 @@ reply synced into the panel (S18, S19, S21).
 | Team notification for each new request + confirmation to the client (S18) | `RESEND_API_KEY`, optional `EMAIL_FROM_ADDRESS`, optional `CONTACT_NOTIFY_EMAIL` | The request is stored, nothing is emailed (an error is logged in production). |
 | "Responder" box inside a request in the panel (S19) | `RESEND_API_KEY` | The box shows an error and nothing changes. |
 | Answer by email (Reply in Gmail/Outlook) and sync to the panel (S21) | `RESEND_API_KEY`, `RESEND_INBOUND_DOMAIN`, `RESEND_WEBHOOK_SECRET` (plus the existing `PAYLOAD_SECRET`) | Reply in the notification goes straight to the client, as before, and is **not** synced. |
+| "Agradecimiento (PDF)" box inside a request: thank-you PDF emailed to the client (S22) | `RESEND_API_KEY`, optional `THANK_YOU_FROM_ADDRESS` | "Descargar para revisar" still works; "Enviar al cliente" shows an error and nothing is stored. |
 
 - `EMAIL_FROM_ADDRESS`: sender of every email (default `hola@coffeeprojects.es`). Its domain must be verified in Resend for sending.
+- `THANK_YOU_FROM_ADDRESS`: sender of the thank-you PDF email (default `contact@coffeeprojects.es`; shown as "CoffeeProjects <address>", replies go to `contact@coffeeprojects.es`, i.e. the IONOS mailbox). Its domain must be verified in Resend. Sent through the Resend API directly (attachment + `Idempotency-Key`), not through `EMAIL_FROM_ADDRESS`.
 - `RESEND_INBOUND_DOMAIN`: the receiving subdomain, e.g. `inbound.coffeeprojects.es`. Use a dedicated subdomain: Resend receives **all** mail for it.
 - `RESEND_WEBHOOK_SECRET`: the signing secret of the Resend webhook (starts with `whsec_`).
 - The relay addresses are signed with a key derived from `PAYLOAD_SECRET`. Rotating `PAYLOAD_SECRET` invalidates the Reply-To of notifications already sent (replies to them are then ignored).

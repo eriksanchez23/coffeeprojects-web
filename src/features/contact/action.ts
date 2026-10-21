@@ -15,12 +15,13 @@ import { capiConfigFromEnv, sendCapiEvent } from '@/features/tracking/capi'
 import { CONSENT_COOKIE, parseConsent } from '@/features/tracking/consent'
 import { afterSaveLead } from '@/features/tracking/lead'
 import type { Contact } from '@/payload-types'
-import { clientEmail, teamEmail, teamRecipients } from './emails'
+import { teamEmail, teamRecipients } from './emails'
 import { type ContactResult, handleContact } from './handle-contact'
 import { inboundConfig, teamReplyTo } from './inbound'
 import { clientIp, hashIp } from './ip'
 import { buildQuote, quoteLabelsFrom, quoteSummaryText } from './quote'
 import { isRateLimited } from './rate-limit'
+import { sendClientConfirmation, type ThankYouContact } from './thank-you-send'
 import { toContactRecord } from './record'
 import { formDataToObject } from './schema'
 import { verifyTurnstile } from './turnstile'
@@ -95,7 +96,8 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
       const replyTo = teamReplyTo(saved.id, input.email, inboundConfig(process.env))
       const results = await Promise.allSettled([
         ...teamRecipients(users.docs, process.env.CONTACT_NOTIFY_EMAIL).map((to) => payload.sendEmail({ to, replyTo, ...team })),
-        payload.sendEmail({ to: input.email, ...clientEmail(input) }),
+        // S22: the client's confirmation carries the thank-you PDF, from contact@, in the site language.
+        sendClientConfirmation(payload, saved as ThankYouContact, process.env.RESEND_API_KEY),
       ])
       results.forEach((r) => r.status === 'rejected' && log(r.reason))
     },
