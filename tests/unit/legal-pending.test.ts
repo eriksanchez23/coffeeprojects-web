@@ -17,9 +17,9 @@ describe('hasPendingMarkers', () => {
     expect(hasPendingMarkers(done)).toBe(false)
     expect(hasPendingMarkers(null)).toBe(false)
   })
-  it('flags the current seed texts (company data still pending)', () => {
-    expect(hasPendingMarkers(seeded.es.legalNotice)).toBe(true)
-    expect(hasPendingMarkers(seeded.fr.cookiePolicy)).toBe(true)
+  it('finds no marker in the approved seed texts', () => {
+    expect(hasPendingMarkers(seeded.es.legalNotice)).toBe(false)
+    expect(hasPendingMarkers(seeded.fr.cookiePolicy)).toBe(false)
   })
 })
 
@@ -27,13 +27,14 @@ describe('legalPagesToIndex', () => {
   const finished = { legalNotice: done, privacyPolicy: done, cookiePolicy: done }
   it('lists a legal page only when every locale has content without markers', () => {
     expect(legalPagesToIndex([finished, finished, finished])).toEqual(['/legal-notice', '/privacy', '/cookies'])
-    expect(legalPagesToIndex([finished, { ...finished, privacyPolicy: seeded.en.privacyPolicy }, finished])).toEqual([
+    const pending = lexical([{ p: 'Owner: [PENDING: legal name].' }])
+    expect(legalPagesToIndex([finished, { ...finished, privacyPolicy: pending }, finished])).toEqual([
       '/legal-notice',
       '/cookies',
     ])
     expect(legalPagesToIndex([{ ...finished, cookiePolicy: null }])).toEqual(['/legal-notice', '/privacy'])
   })
-  it('lists none with the seeded drafts', () => {
-    expect(legalPagesToIndex([seeded.es, seeded.en, seeded.fr])).toEqual([])
+  it('lists all three with the approved seed texts', () => {
+    expect(legalPagesToIndex([seeded.es, seeded.en, seeded.fr])).toEqual(['/legal-notice', '/privacy', '/cookies'])
   })
 })

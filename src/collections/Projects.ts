@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig, FieldAccess } from 'payload'
 import { isTeam, publishedOrTeam } from '@/access'
 import { projectImportEndpoint } from '@/endpoints/project-import'
 import { adminGroups, t } from '@/fields/labels'
@@ -8,6 +8,17 @@ import { revalidateCollection, revalidateCollectionDelete } from '@/hooks/revali
 import { buildPath } from '@/i18n/build-path'
 import type { Locale } from '@/i18n/locales'
 import { previewUrl } from '@/lib/cms/preview-url'
+import { safeUrlValidator } from '@/lib/security/url'
+
+/** NDA projects never store a public URL (`admin.condition` only hides the input, not the stored value). */
+export const clearNdaUrl: CollectionBeforeChangeHook = ({ data, originalDoc }) => {
+  const nda = data?.nda ?? originalDoc?.nda
+  if (nda === true && data) data.url = null
+  return data
+}
+
+/** Field-level read access: a legacy NDA row's `url` is only returned to logged-in team users. */
+export const ndaUrlReadAccess: FieldAccess = ({ req, doc }) => isTeam({ req }) === true || doc?.nda !== true
 
 export const Projects: CollectionConfig = {
   slug: 'projects',
@@ -23,6 +34,7 @@ export const Projects: CollectionConfig = {
     },
   },
   hooks: {
+    beforeChange: [clearNdaUrl],
     afterChange: [revalidateCollection('projects')],
     afterDelete: [revalidateCollectionDelete('projects')],
   },
@@ -52,7 +64,14 @@ export const Projects: CollectionConfig = {
         { label: t('En curso', 'In progress'), value: 'in-progress' },
       ],
     },
-    { name: 'url', type: 'text', label: t('URL', 'URL'), admin: { condition: (_, s) => !s?.nda } },
+    {
+      name: 'url',
+      type: 'text',
+      label: t('URL', 'URL'),
+      admin: { condition: (_, s) => !s?.nda },
+      access: { read: ndaUrlReadAccess },
+      validate: safeUrlValidator(),
+    },
     {
       // S23: fills the empty fields (and the cover) from the website at `url`; no column, values go into the form.
       name: 'importFromUrl',

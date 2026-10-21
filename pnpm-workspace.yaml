@@ -4,3 +4,6 @@ allowBuilds:
   unrs-resolver: true
   "@parcel/watcher": true
   "@swc/core": false
+overrides:
+  # Security: payload/drizzle pull undici 7.x < 7.29.1 (advisories); stay on the 7.x major.
+  "undici@>=7.0.0 <7.29.1": 7.30.0

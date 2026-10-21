@@ -161,7 +161,7 @@ describe('htmlToText', () => {
 })
 
 describe('sender checks', () => {
-  const users = [{ id: 3, email: 'Erik@CoffeeProjects.es' }, { id: 4, email: null }]
+  const users = [{ id: 3, email: 'Erik@CoffeeProjects.es', role: 'admin' }, { id: 4, email: null, role: 'editor' }]
   it('extracts the bare address from a From header', () => {
     expect(emailAddress('Erik <ERIK@coffeeprojects.es>')).toBe('erik@coffeeprojects.es')
     expect(emailAddress(' erik@coffeeprojects.es ')).toBe('erik@coffeeprojects.es')
@@ -173,9 +173,27 @@ describe('sender checks', () => {
     expect(findTeamSender('client@example.com', users)).toBeNull()
     expect(findTeamSender('', users)).toBeNull()
   })
+  it('never treats an API-key integration user as a team sender (S11)', () => {
+    const withBot = [{ id: 30, email: 'bot@coffeeprojects.es', role: 'integration' }, ...users]
+    expect(findTeamSender('bot@coffeeprojects.es', withBot)).toBeNull()
+    expect(findTeamSender('erik@coffeeprojects.es', withBot)).toEqual(users[0])
+  })
+  it('fails closed: only admin/editor roles count as team senders (missing or unknown role never does)', () => {
+    const odd = [
+      { id: 40, email: 'norole@coffeeprojects.es' },
+      { id: 41, email: 'weird@coffeeprojects.es', role: 'viewer' },
+      { id: 42, email: 'ed@coffeeprojects.es', role: 'editor' },
+    ]
+    expect(findTeamSender('norole@coffeeprojects.es', odd)).toBeNull()
+    expect(findTeamSender('weird@coffeeprojects.es', odd)).toBeNull()
+    expect(findTeamSender('ed@coffeeprojects.es', odd)).toEqual(odd[2])
+  })
   it('rejects mail whose authentication results show it is spoofed', () => {
-    expect(senderAuthenticated(null)).toBe(true)
-    expect(senderAuthenticated(undefined)).toBe(true)
+    // Fail closed: no authentication results (or no DMARC verdict) cannot prove the From domain.
+    expect(senderAuthenticated(null)).toBe(false)
+    expect(senderAuthenticated(undefined)).toBe(false)
+    expect(senderAuthenticated({})).toBe(false)
+    expect(senderAuthenticated({ spf: 'pass', dkim: 'pass', dmarc: null })).toBe(false)
     expect(senderAuthenticated({ spf: 'fail', dkim: 'fail', dmarc: 'pass' })).toBe(true)
     expect(senderAuthenticated({ spf: 'pass', dkim: 'pass', dmarc: 'fail' })).toBe(false)
     // Without a DMARC pass, an SPF/DKIM pass may belong to the attacker's own domain: reject.

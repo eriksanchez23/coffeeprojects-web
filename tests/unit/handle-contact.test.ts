@@ -134,12 +134,15 @@ describe('hashIp', () => {
 
 describe('clientIp', () => {
   const headers = (o: Record<string, string>) => ({ get: (k: string) => o[k] ?? null })
-  it('prefers x-real-ip, then the first x-forwarded-for hop', () => {
-    expect(clientIp(headers({ 'x-real-ip': '9.9.9.9', 'x-forwarded-for': '1.1.1.1, 2.2.2.2' }))).toBe('9.9.9.9')
-    expect(clientIp(headers({ 'x-forwarded-for': '1.1.1.1, 2.2.2.2' }))).toBe('1.1.1.1')
+  it('trusts x-real-ip (set by Nginx Proxy Manager from CF-Connecting-IP) and ignores x-forwarded-for', () => {
+    expect(clientIp(headers({ 'x-real-ip': ' 9.9.9.9 ', 'x-forwarded-for': '1.1.1.1, 2.2.2.2' }))).toBe('9.9.9.9')
   })
-  it('returns null when no header is present', () => {
+  it('returns null when only the client-controlled x-forwarded-for is present', () => {
+    expect(clientIp(headers({ 'x-forwarded-for': '1.1.1.1, 2.2.2.2' }))).toBeNull()
+  })
+  it('returns null when no header is present or x-real-ip is blank', () => {
     expect(clientIp(headers({}))).toBeNull()
+    expect(clientIp(headers({ 'x-real-ip': '   ' }))).toBeNull()
   })
 })
 

@@ -94,4 +94,30 @@ describe('POST /api/contacts/:id/reply (S19)', () => {
     const { req } = fakeReq({ payload: { update: vi.fn().mockRejectedValue(new Error('db')) } })
     expect(await call(req)).toEqual({ status: 500, body: { error: 'saveFailed' } })
   })
+  it('lets an API-key integration user reply (S11), and refuses users without a contact-managing role', async () => {
+    const bot = { id: 30, email: 'bot@coffeeprojects.es', collection: 'users', role: 'integration' }
+    const ok = fakeReq({ user: bot })
+    expect(await call(ok.req)).toEqual({ status: 200, body: { ok: true, status: 'answered' } })
+    expect(ok.payload.findByID).toHaveBeenCalledWith(expect.objectContaining({ overrideAccess: false, user: bot }))
+
+    const nobody = fakeReq({ user: { id: 31, email: 'x@coffeeprojects.es', collection: 'users' } })
+    expect(await call(nobody.req)).toEqual({ status: 401, body: { error: 'unauthorized' } })
+    expect(nobody.payload.sendEmail).not.toHaveBeenCalled()
+  })
+
+  it('logs an audit line (ids and email of the integration user, contact id; no content) when an integration key replies', async () => {
+    const { req, payload } = fakeReq({ user: { id: 21, email: 'bot@coffeeprojects.es', collection: 'users', role: 'integration' } })
+    expect((await call(req)).status).toBe(200)
+    const logged = payload.logger.info.mock.calls.map((call) => call[0] as Record<string, unknown>)
+    expect(logged).toEqual([
+      { event: 'integration_contact_reply_sent', userId: 21, userEmail: 'bot@coffeeprojects.es', operation: 'reply', contactId: 7, fields: ['replies', 'status'] },
+    ])
+    expect(JSON.stringify(logged)).not.toContain('gracias por escribirnos')
+  })
+
+  it('does not audit-log team replies', async () => {
+    const { req, payload } = fakeReq()
+    expect((await call(req)).status).toBe(200)
+    expect(payload.logger.info).not.toHaveBeenCalled()
+  })
 })

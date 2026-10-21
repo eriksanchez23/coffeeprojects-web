@@ -45,7 +45,16 @@ function fakeReq(opts: { body?: string; headers?: Record<string, string>; payloa
   const body = opts.body ?? JSON.stringify(event())
   const headers = new Headers(opts.headers ?? sign(body))
   const payload = {
-    find: vi.fn().mockResolvedValue({ docs: [{ id: 3, email: 'Erik@coffeeprojects.es' }, { id: 4, email: 'ana@coffeeprojects.es' }] }),
+    // Like Payload, only the selected fields come back: `role` is present only when the query selects it.
+    find: vi.fn(async (args: { select?: Record<string, boolean> }) => {
+      const users = [
+        { id: 3, email: 'Erik@coffeeprojects.es', role: 'admin' },
+        { id: 4, email: 'ana@coffeeprojects.es', role: 'editor' },
+        { id: 5, email: 'bot@coffeeprojects.es', role: 'integration' },
+      ]
+      const keep = Object.keys(args.select ?? { id: true, email: true, role: true })
+      return { docs: users.map((u) => Object.fromEntries(Object.entries(u).filter(([k]) => k === 'id' || keep.includes(k)))) }
+    }),
     findByID: vi.fn().mockResolvedValue({ id: 7, email: 'client@example.com', status: 'new', replies: [previous] }),
     update: vi.fn().mockResolvedValue({}),
     logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn() },
@@ -143,6 +152,15 @@ describe('POST /api/inbound/resend (S21)', () => {
     expect(allLogs(payload)).not.toContain('client@example.com')
   })
 
+  it('ignores an email sent from an integration user address', async () => {
+    const fetch = mockFetch()
+    const body = JSON.stringify(event({ from: 'bot@coffeeprojects.es' }))
+    const { req, payload } = fakeReq({ body })
+    expect(await call(req)).toEqual({ status: 200, body: { ok: true, ignored: 'sender' } })
+    expect(fetch).not.toHaveBeenCalled()
+    expect(payload.update).not.toHaveBeenCalled()
+  })
+
   it.each([
     ['unknown address', ['hola@inbound.coffeeprojects.es']],
     ['tampered id', [relay(7).replace('r+7.', 'r+8.')]],
@@ -201,8 +219,9 @@ describe('POST /api/inbound/resend (S21)', () => {
       reply_to: 'Erik@coffeeprojects.es',
       subject: 'Re: Nueva solicitud (Landing) — Juan',
       text: 'Hola Juan,\nTe paso la propuesta.',
-      html: '<div style="white-space:pre-wrap">Hola Juan,\nTe paso la propuesta.</div>',
+      html: expect.stringContaining('Hola Juan,<br>Te paso la propuesta.'),
     })
+    expect(sent.html).toContain('max-width:600px')
 
     expect(payload.findByID).toHaveBeenCalledWith(expect.objectContaining({ collection: 'contacts', id: 7, depth: 0, overrideAccess: true }))
     const update = payload.update.mock.calls[0]![0]

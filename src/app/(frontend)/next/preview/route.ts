@@ -3,6 +3,7 @@ import config from '@payload-config'
 import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getPayload } from 'payload'
+import { hasTeamRole } from '@/access'
 import { safePreviewPath } from '@/lib/cms/preview-url'
 
 function secretMatches(given: string | null, expected: string | undefined): boolean {
@@ -20,7 +21,8 @@ export async function GET(req: Request) {
   }
   const payload = await getPayload({ config })
   const { user } = await payload.auth({ headers: req.headers })
-  if (!user) return new Response('Login to the admin panel first', { status: 403 })
+  // Admins and editors only: integration (API-key) users never get draft mode (S11).
+  if (!hasTeamRole(user)) return new Response('Login to the admin panel first', { status: 403 })
 
   ;(await draftMode()).enable()
   redirect(path)

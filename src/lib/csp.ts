@@ -21,7 +21,6 @@ export function buildCsp({ dev }: { dev: boolean }): string {
       "'self'",
       'data:',
       'blob:',
-      'https://*.public.blob.vercel-storage.com',
       'https://avatars.githubusercontent.com',
       'https://www.facebook.com', // Pixel tracking image
     ],
@@ -31,7 +30,6 @@ export function buildCsp({ dev }: { dev: boolean }): string {
       'https://www.facebook.com',
       'https://connect.facebook.net',
       'https://challenges.cloudflare.com',
-      'https://vitals.vercel-insights.com',
       ...(dev ? ['https://va.vercel-scripts.com', 'ws:'] : []),
     ],
     'frame-src': ['https://challenges.cloudflare.com'],

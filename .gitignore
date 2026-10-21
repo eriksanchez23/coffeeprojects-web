@@ -1,5 +1,6 @@
 .superpowers/
 .atl/
+.codegraph/
 node_modules/
 
 # dependencies

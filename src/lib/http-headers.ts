@@ -5,20 +5,30 @@ type Rule = { source: string; headers: Header[] }
 
 const NOINDEX: Header = { key: 'X-Robots-Tag', value: 'noindex, nofollow' }
 
+/** Next.js config flags that are security-relevant (spread into next.config.ts; unit-testable here). */
+export const nextSecurityConfig = {
+  // Drops `X-Powered-By`; Payload's withPayload() only adds its own when this is not `false`.
+  poweredByHeader: false,
+} as const
+
 export function responseHeaders(siteEnv: 'development' | 'staging' | 'production'): Rule[] {
-  const security: Header[] = [
-    { key: 'Content-Security-Policy', value: buildCsp({ dev: process.env.NODE_ENV === 'development' }) },
+  // Shared by the public site and the admin.
+  const baseline: Header[] = [
     // No 'preload': submitting to the HSTS preload list is hard to undo and needs a team decision before go-live (R25).
     { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
     { key: 'X-Content-Type-Options', value: 'nosniff' },
-    { key: 'X-Frame-Options', value: 'DENY' },
     { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
     { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()' },
+  ]
+  const security: Header[] = [
+    { key: 'Content-Security-Policy', value: buildCsp({ dev: process.env.NODE_ENV === 'development' }) },
+    ...baseline,
+    { key: 'X-Frame-Options', value: 'DENY' },
   ]
   // The admin keeps Payload's own needs (eval/inline styles), so no CSP there; it is auth-protected and noindex.
   const rules: Rule[] = [
     { source: '/((?!admin).*)', headers: security },
-    { source: '/admin/:path*', headers: [NOINDEX, { key: 'X-Frame-Options', value: 'SAMEORIGIN' }] },
+    { source: '/admin/:path*', headers: [NOINDEX, { key: 'X-Frame-Options', value: 'SAMEORIGIN' }, ...baseline] },
   ]
   if (siteEnv !== 'production') rules.push({ source: '/:path*', headers: [NOINDEX] })
   return rules

@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
+import { hasTeamRole } from '@/access'
 
 /**
  * S21: sync replies sent by email to the team notification. The notification's Reply-To is a signed
@@ -90,11 +91,18 @@ export function verifySvixSignature(input: {
     })
 }
 
-/** The team user who sent the email (case-insensitive address match), or null for anybody else. */
-export function findTeamSender<U extends { email?: string | null }>(from: string | null | undefined, users: readonly U[]): U | null {
+/**
+ * The team user who sent the email (case-insensitive address match), or null for anybody else.
+ * Only admin/editor users count (fail-closed whitelist, S11): integration, unknown or missing roles never do,
+ * so pass `role` in the user list.
+ */
+export function findTeamSender<U extends { email?: string | null; role?: unknown }>(
+  from: string | null | undefined,
+  users: readonly U[],
+): U | null {
   const address = emailAddress(from)
   if (!address) return null
-  return users.find((u) => u.email?.trim().toLowerCase() === address) ?? null
+  return users.find((u) => hasTeamRole(u) && u.email?.trim().toLowerCase() === address) ?? null
 }
 
 type AuthResult = 'pass' | 'fail' | 'gray' | 'processing_failed' | 'unknown' | (string & {})
@@ -102,12 +110,11 @@ export type InboundAuthentication = { spf?: AuthResult | null; dkim?: AuthResult
 
 /**
  * Resend's SPF/DKIM/DMARC results for the received email. Only DMARC proves the From domain is aligned:
- * an SPF/DKIM pass alone may belong to the sender's own (attacker) domain, so it is not enough. Missing
- * results are accepted because the secret, per-request signed relay address is still required.
+ * an SPF/DKIM pass alone may belong to the sender's own (attacker) domain, so it is not enough. Fails
+ * closed: missing results or a missing DMARC verdict cannot prove the sender, so the email is ignored.
  */
 export function senderAuthenticated(auth: InboundAuthentication | null | undefined): boolean {
-  if (!auth) return true
-  return auth.dmarc === 'pass'
+  return auth?.dmarc === 'pass'
 }
 
 const REPLY_HEADERS = [

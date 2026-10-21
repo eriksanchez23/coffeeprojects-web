@@ -1,11 +1,12 @@
 import type { Endpoint, PayloadRequest } from 'payload'
 import { z } from 'zod'
-import { isTeam } from '@/access'
+import { canManageContactsRole } from '@/access'
 import { replyEmail } from '@/features/contact/emails'
+import { logIntegrationAction } from '@/lib/security/integration-audit'
 import { appendReply, type ContactWithReplies } from '@/features/contact/replies'
 
 /**
- * S19: POST /api/contacts/:id/reply — a team user answers a contact request from the panel.
+ * S19: POST /api/contacts/:id/reply — a team or integration (S11) user answers a contact request from the panel.
  * Sends the email to the client (from EMAIL_FROM_ADDRESS via the Resend adapter, replyTo = the user), then
  * appends it to the request's `replies` and sets the status to `answered`. If email is not configured or the
  * send fails, nothing is stored and the status does not change.
@@ -42,14 +43,14 @@ async function readBody(req: PayloadRequest): Promise<unknown> {
 }
 
 export async function replyHandler(req: PayloadRequest): Promise<Response> {
-  if (!req.user || !(await isTeam({ req }))) return fail(401, 'unauthorized')
+  if (!req.user || !canManageContactsRole(req.user)) return fail(401, 'unauthorized')
 
   const parsed = replySchema.safeParse(await readBody(req))
   if (!parsed.success) return fail(400, 'invalid')
   if (!process.env.RESEND_API_KEY) return fail(503, 'emailNotConfigured')
 
   const id = String(req.routeParams?.id ?? '')
-  let contact: ContactWithReplies & { email: string }
+  let contact: ContactWithReplies & { email: string; locale?: string | null }
   try {
     // The user's own access decides whether the request exists for them.
     contact = (await req.payload.findByID({ collection: 'contacts', id, depth: 0, overrideAccess: false, user: req.user })) as typeof contact
@@ -59,7 +60,7 @@ export async function replyHandler(req: PayloadRequest): Promise<Response> {
 
   const { subject, message } = parsed.data
   try {
-    await req.payload.sendEmail({ to: contact.email, replyTo: req.user.email, subject, ...replyEmail(message) })
+    await req.payload.sendEmail({ to: contact.email, replyTo: req.user.email, subject, ...replyEmail(message, contact.locale) })
   } catch (e) {
     logFailure(req, 'send', e)
     return fail(502, 'sendFailed')
@@ -72,6 +73,7 @@ export async function replyHandler(req: PayloadRequest): Promise<Response> {
     logFailure(req, 'save', e)
     return fail(500, 'saveFailed')
   }
+  logIntegrationAction(req, { event: 'contact_reply_sent', operation: 'reply', contactId: contact.id, fields: ['replies', 'status'] })
   return json(200, { ok: true, status: 'answered' })
 }
 

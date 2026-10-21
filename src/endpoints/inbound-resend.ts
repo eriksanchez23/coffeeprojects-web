@@ -86,8 +86,8 @@ export async function inboundResendHandler(req: PayloadRequest): Promise<Respons
   const contactId = addresses.map((a) => parseRelayAddress(a, config.domain, config.key)).find((id) => id !== null)
   if (!contactId) return ignore(req, 'token')
 
-  const users = await req.payload.find({ collection: 'users', depth: 0, limit: 100, pagination: false, overrideAccess: true, select: { email: true } })
-  const sender = findTeamSender(typeof data.from === 'string' ? data.from : null, users.docs as { id: number | string; email?: string | null }[])
+  const users = await req.payload.find({ collection: 'users', depth: 0, limit: 100, pagination: false, overrideAccess: true, select: { email: true, role: true } })
+  const sender = findTeamSender(typeof data.from === 'string' ? data.from : null, users.docs as { id: number | string; email?: string | null; role?: string | null }[])
   if (!sender?.email) return ignore(req, 'sender')
 
   let contact: ContactWithReplies & { email: string; locale?: string | null }
@@ -120,7 +120,7 @@ export async function inboundResendHandler(req: PayloadRequest): Promise<Respons
     await resendRequest(config.apiKey, '/emails', {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'idempotency-key': `inbound-reply/${svixId}` },
-      body: JSON.stringify({ from: `${from.name} <${from.address}>`, to: [contact.email], reply_to: sender.email, subject, ...replyEmail(text) }),
+      body: JSON.stringify({ from: `${from.name} <${from.address}>`, to: [contact.email], reply_to: sender.email, subject, ...replyEmail(text, contact.locale) }),
     })
   } catch (e) {
     logFailure(req, 'send', e)

@@ -19,9 +19,6 @@ import { getSettings } from '@/lib/cms/queries'
 import { fontVariables } from '@/lib/fonts'
 import { organizationLd, websiteLd } from '@/lib/seo/jsonld'
 
-const FAVICON = `data:image/svg+xml,${encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#0b0706"/><g fill="none" stroke="#f5a742" stroke-width="2"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9Z"/><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"/></g></svg>',
-)}`
 
 // Set by Vercel in its build and runtime environments.
 const onVercel = process.env.VERCEL === '1'
@@ -37,7 +34,6 @@ function warnIfPixelMissing(pixelId: string | undefined) {
 export const metadata: Metadata = {
   metadataBase: new URL(env.SITE_URL),
   // Inline brand cup: without an icon link browsers request /favicon.ico, which does not exist (404 in the console).
-  icons: { icon: FAVICON },
   // Covers pages without their own buildMetadata (e.g. 404); staging is never indexable.
   ...(env.isProduction ? {} : { robots: { index: false, follow: false } }),
 }

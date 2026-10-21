@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { responseHeaders, scopeClientHintsToAdmin } from '@/lib/http-headers'
+import { nextSecurityConfig, responseHeaders, scopeClientHintsToAdmin } from '@/lib/http-headers'
 
 const all = (env: 'staging' | 'production') => responseHeaders(env).flatMap((r) => r.headers)
 
@@ -36,6 +36,24 @@ describe('security headers', () => {
     expect(csp('production', 'development')).toBe(prod)
     expect(prod).not.toContain("'unsafe-eval'")
     vi.unstubAllEnvs()
+  })
+  it('hardens the admin too, keeping its noindex and SAMEORIGIN framing and no CSP', () => {
+    const admin = responseHeaders('production').find((r) => r.source === '/admin/:path*')
+    expect(admin?.headers).toEqual(
+      expect.arrayContaining([
+        { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+        { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()' },
+      ]),
+    )
+    expect(admin?.headers.filter((h) => h.key === 'X-Frame-Options')).toHaveLength(1)
+    expect(admin?.headers.map((h) => h.key)).not.toContain('Content-Security-Policy')
+  })
+  it('disables the X-Powered-By header (Next.js and Payload honour poweredByHeader: false)', () => {
+    expect(nextSecurityConfig.poweredByHeader).toBe(false)
   })
   it('sends HSTS without preload', () => {
     const hsts = responseHeaders('production').flatMap((r) => r.headers).find((h) => h.key === 'Strict-Transport-Security')
