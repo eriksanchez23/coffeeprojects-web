@@ -82,6 +82,8 @@ test('other development lives on its own page, linked from the services index', 
   await expect(main.getByRole('link', { name: /Scripts FiveM/ })).toHaveCount(0)
   await main.getByRole('link', { name: /Ver otros desarrollos/ }).click()
   await expect(page).toHaveURL(/\/otros-desarrollos$/)
+  // Cards below the fold fade in on scroll (hidden until then), like for a visitor.
+  await page.evaluate(() => window.scrollBy(0, 1200))
   await expect(page.locator('main').getByRole('link', { name: /Scripts FiveM/ })).toBeVisible()
 })
 

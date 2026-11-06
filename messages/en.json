@@ -55,7 +55,9 @@
     "price": "Price",
     "socials": "Links",
     "requestReview": "Get your free review",
-    "freeReview": "Free review"
+    "freeReview": "Free review",
+    "allPlans": "Several fixed-price plans",
+    "afterReview": "Fixed quote after the free review"
   },
   "contact": {
     "title": "Tell us what you need",
@@ -170,7 +172,11 @@
     "service": "Service",
     "withPlan": "With a plan",
     "withoutPlan": "Without a plan",
-    "teaserMaintenance": "Optional maintenance from {price}: with any plan, the website costs less."
+    "teaserMaintenance": "Optional maintenance from {price}: with any plan, the website costs less.",
+    "plansTitle": "Choose your plan",
+    "plansLead": "Every plan for a new website, at a fixed price. Price with maintenance; the price without maintenance is shown on each plan.",
+    "redesignTitle": "Already have a website you want to improve?",
+    "redesignText": "We redesign it from {price}. First we review your current site for free and give you a fixed quote based on what it needs."
   },
   "partners": {
     "rates": "Your commission depending on what the client hires",
@@ -252,7 +258,10 @@
     "pathsTitle": "Start from scratch or improve what you have?",
     "auditUrlLabel": "Your website address",
     "auditCta": "Get my free review",
-    "auditNote": "Next we ask for your email to send you the report. No commitment."
+    "auditNote": "Next we ask for your email to send you the report. No commitment.",
+    "plansLead": "Choose from all our plans:",
+    "seeAllPlans": "Compare all plans",
+    "showProject": "Show {title}"
   },
   "projects": {
     "kinds": {

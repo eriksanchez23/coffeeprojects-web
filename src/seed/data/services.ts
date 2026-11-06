@@ -46,7 +46,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: '¿Podré editar los textos yo mismo?', answer: 'Sí. Si lo necesitas, incluimos un panel de gestión para que cambies textos e imágenes sin tocar código.' },
           { question: '¿Usáis plantillas?', answer: 'No. Cada web se diseña para tu marca y tus clientes. Por eso se ve distinta a la de tu competencia.' },
         ],
-        seo: { title: 'Diseño de páginas web profesionales', description: 'Webs y landing pages a medida, rápidas y preparadas para Google. Desde 349 € + IVA, listas en 1-2 semanas.' },
+        seo: { title: 'Diseño de páginas web profesionales', description: 'Webs y landing pages a medida, rápidas y preparadas para Google. Varios planes con precio cerrado, listas en 1-2 semanas.' },
       },
       en: {
         title: 'Web design',
@@ -69,7 +69,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: 'Will I be able to edit the content myself?', answer: 'Yes. If you need it, we include an admin panel so you can change text and images without touching code.' },
           { question: 'Do you use templates?', answer: "No. Every website is designed for your brand and your customers. That's why it looks different from your competitors'." },
         ],
-        seo: { title: 'Professional web design', description: 'Custom websites and landing pages, fast and ready for Google. From €349 + VAT, ready in 1-2 weeks.' },
+        seo: { title: 'Professional web design', description: 'Custom websites and landing pages, fast and ready for Google. Several fixed-price plans, ready in 1-2 weeks.' },
       },
       fr: {
         title: 'Création de sites web',
@@ -92,12 +92,12 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: 'Pourrai-je modifier les contenus moi-même ?', answer: "Oui. Si besoin, nous incluons un panneau d'administration pour modifier textes et images sans toucher au code." },
           { question: 'Utilisez-vous des modèles ?', answer: 'Non. Chaque site est conçu pour votre marque et vos clients. C’est pourquoi il se distingue de celui de vos concurrents.' },
         ],
-        seo: { title: 'Création de sites web professionnels', description: 'Sites et landing pages sur mesure, rapides et prêts pour Google. À partir de 349 € + TVA, prêts en 1 à 2 semaines.' },
+        seo: { title: 'Création de sites web professionnels', description: 'Sites et landing pages sur mesure, rapides et prêts pour Google. Plusieurs formules à prix fixe, prêts en 1 à 2 semaines.' },
       },
     },
   },
   {
-    shared: { icon: 'refresh', contactType: 'redesign', line: 'web', pricing: { mode: 'custom' }, tags: ['SEO', 'Rendimiento', 'Accesibilidad', 'Migración'], order: 2 },
+    shared: { icon: 'refresh', contactType: 'redesign', line: 'web', pricing: { mode: 'one-off', amount: 490 }, tags: ['SEO', 'Rendimiento', 'Accesibilidad', 'Migración'], order: 2 },
     localized: {
       es: {
         title: 'Rediseño y mejora de webs',
@@ -105,7 +105,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
         promise: 'Tu web actual, renovada y trayendo clientes.',
         summary: 'Si tu web está anticuada, es lenta o no te trae contactos, la renovamos. Empezamos con una revisión gratuita y te proponemos lo que de verdad necesita: desde mejoras puntuales hasta un rediseño completo.',
         typicalTime: 'Revisión en 48 h · renovación según el alcance',
-        note: 'Presupuesto cerrado tras la revisión gratuita, sin compromiso.',
+        note: 'Desde 490 € + IVA. Presupuesto cerrado tras la revisión gratuita, sin compromiso.',
         features: [
           { text: 'Diseño: una imagen actual que transmita la confianza que merece tu negocio' },
           { text: 'Velocidad: webs que cargan en segundos, también con mala cobertura' },
@@ -120,7 +120,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: '¿Perderé mi posición en Google?', answer: 'No, si se hace bien. Mantenemos o redirigimos tus direcciones y comprobamos el posicionamiento después de publicar.' },
           { question: '¿La web estará caída mientras trabajáis?', answer: 'No. Trabajamos en una copia y solo cambiamos la web cuando la nueva está aprobada.' },
         ],
-        seo: { title: 'Rediseño web y mejora de páginas web', description: 'Renovamos tu web: diseño actual, carga rápida, adaptada al móvil y visible en Google. Revisión gratuita en 48 h y presupuesto cerrado.' },
+        seo: { title: 'Rediseño web y mejora de páginas web', description: 'Renovamos tu web: diseño actual, carga rápida, adaptada al móvil y visible en Google. Desde 490 € + IVA, con revisión gratuita en 48 h.' },
       },
       en: {
         title: 'Website redesign',
@@ -128,7 +128,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
         promise: 'Your current website, renewed and bringing in customers.',
         summary: "If your website is outdated, slow or doesn't bring you enquiries, we renew it. We start with a free review and propose what it really needs: from targeted improvements to a full redesign.",
         typicalTime: 'Review in 48 h · renewal depending on scope',
-        note: 'Fixed quote after the free review, no commitment.',
+        note: 'From €490 + VAT. Fixed quote after the free review, no commitment.',
         features: [
           { text: 'Design: a modern look that conveys the trust your business deserves' },
           { text: 'Speed: pages that load in seconds, even on a weak connection' },
@@ -143,7 +143,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: 'Will I lose my Google ranking?', answer: 'Not if it is done right. We keep or redirect your addresses and check your ranking after launch.' },
           { question: 'Will my website be down while you work?', answer: 'No. We work on a copy and only switch once the new version is approved.' },
         ],
-        seo: { title: 'Website redesign and improvement', description: 'We renew your website: modern design, fast loading, mobile-ready and visible on Google. Free review in 48 h and a fixed quote.' },
+        seo: { title: 'Website redesign and improvement', description: 'We renew your website: modern design, fast loading, mobile-ready and visible on Google. From €490 + VAT, with a free review in 48 h.' },
       },
       fr: {
         title: 'Refonte de sites web',
@@ -151,7 +151,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
         promise: 'Votre site actuel, rénové et qui vous apporte des clients.',
         summary: "Si votre site est dépassé, lent ou ne vous apporte pas de contacts, nous le rénovons. Nous commençons par un audit gratuit et vous proposons ce dont il a vraiment besoin : d'améliorations ciblées à une refonte complète.",
         typicalTime: 'Audit sous 48 h · refonte selon le périmètre',
-        note: "Devis fixe après l'audit gratuit, sans engagement.",
+        note: "À partir de 490 € HT. Devis fixe après l'audit gratuit, sans engagement.",
         features: [
           { text: 'Design : une image actuelle qui inspire la confiance que mérite votre entreprise' },
           { text: 'Vitesse : des pages qui se chargent en quelques secondes, même avec une faible connexion' },
@@ -166,7 +166,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { question: 'Vais-je perdre mon référencement Google ?', answer: 'Non, si c’est bien fait. Nous conservons ou redirigeons vos adresses et vérifions le référencement après la mise en ligne.' },
           { question: 'Mon site sera-t-il hors ligne pendant les travaux ?', answer: 'Non. Nous travaillons sur une copie et ne basculons qu’une fois la nouvelle version validée.' },
         ],
-        seo: { title: 'Refonte et amélioration de sites web', description: 'Nous rénovons votre site : design actuel, chargement rapide, adapté au mobile et visible sur Google. Audit gratuit sous 48 h et devis fixe.' },
+        seo: { title: 'Refonte et amélioration de sites web', description: 'Nous rénovons votre site : design actuel, chargement rapide, adapté au mobile et visible sur Google. À partir de 490 € HT, avec audit gratuit sous 48 h.' },
       },
     },
   },

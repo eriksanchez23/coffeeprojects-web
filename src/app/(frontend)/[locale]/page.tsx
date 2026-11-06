@@ -5,7 +5,6 @@ import { AuditOffer } from '@/components/sections/audit-offer'
 import { CtaBand } from '@/components/sections/cta-band'
 import { FaqList } from '@/components/sections/faq-list'
 import { Hero } from '@/components/sections/hero'
-import { PricingTeaser } from '@/components/sections/pricing-teaser'
 import { ProcessSteps } from '@/components/sections/process-steps'
 import { ProjectsPreview } from '@/components/sections/projects-preview'
 import { TrustStrip } from '@/components/sections/trust-strip'
@@ -13,8 +12,10 @@ import { TwoPaths } from '@/components/sections/two-paths'
 import { WhyUs } from '@/components/sections/why-us'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
-import { getFaqs, getHome, getPricing, getServices, getSettings } from '@/lib/cms/queries'
+import { getFaqs, getHome, getPricing, getProjects, getServices, getSettings } from '@/lib/cms/queries'
+import { pickShowcase } from '@/lib/showcase'
 import { formatPrice } from '@/lib/format'
+import { completeWebPlans } from '@/lib/pricing'
 import { serviceForType } from '@/features/contact/quote'
 import { JsonLd } from '@/components/seo/json-ld'
 import { buildMetadata } from '@/lib/seo/metadata'
@@ -37,11 +38,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale: raw } = await params
   const locale = raw as Locale
   setRequestLocale(locale)
-  const [home, services, pricing, faqs, tc, tn, tm] = await Promise.all([
+  const [home, services, pricing, faqs, projects, tc, tn, tm] = await Promise.all([
     getHome(locale),
     getServices(locale),
     getPricing(locale),
     getFaqs(locale),
+    getProjects(locale, { featuredOnly: true }),
     getTranslations('common'),
     getTranslations('nav'),
     getTranslations('meta'),
@@ -58,18 +60,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <PageShell locale={locale} alternates={localizedPaths('/')}>
       {faqs.length > 0 && <JsonLd data={faqLd(faqs)} />}
-      <Hero hero={hero} />
+      <Hero hero={hero} slides={pickShowcase(projects)} />
       <TrustStrip items={home.guarantees ?? []} sectorsLine={home.sectorsLine} />
       <TwoPaths
         paths={home.paths ?? {}}
         newService={serviceForType('web', services)}
         redesignService={serviceForType('redesign', services)}
         extras={extras}
+        plans={completeWebPlans(pricing.packages)}
+        locale={locale}
+        vat={pricing.vatNote ?? ''}
       />
       {home.audit && <AuditOffer audit={home.audit} />}
       <ProjectsPreview locale={locale} title={sections.projectsTitle || tn('projects')} lead={sections.projectsLead} kinds={['new-website', 'redesign', 'store']} limit={3} />
       {(home.process ?? []).length > 0 && <ProcessSteps title={sections.processTitle} steps={home.process ?? []} className="bg-bg-2" />}
-      <PricingTeaser pricing={pricing} locale={locale} />
       {(home.whyUs ?? []).length > 0 && <WhyUs title={sections.whyTitle} items={home.whyUs ?? []} />}
       {faqs.length > 0 && <FaqList title={tc('faqTitle')} items={faqs} />}
       <CtaBand />

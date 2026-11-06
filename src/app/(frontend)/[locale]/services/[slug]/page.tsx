@@ -16,9 +16,12 @@ import { Section } from '@/components/ui/section'
 import { type Locale } from '@/i18n/locales'
 import { Link } from '@/i18n/navigation'
 import { localizedPaths } from '@/i18n/paths'
-import { getAllSlugs, getFaqs, getService, getServices } from '@/lib/cms/queries'
+import { getAllSlugs, getFaqs, getPricing, getService, getServices } from '@/lib/cms/queries'
 import { contactHref, formatPriceParts } from '@/lib/format'
+import { completeMaintenancePlans, completeWebPlans, findMinPlan } from '@/lib/pricing'
 import { isWebService } from '@/lib/services'
+import { WebPlanCard } from '@/components/pricing/plan-cards'
+import { WebPlanList } from '@/components/pricing/plan-list'
 import { JsonLd } from '@/components/seo/json-ld'
 import { breadcrumbLd, faqLd, serviceLd } from '@/lib/seo/jsonld'
 import { absoluteUrl, buildMetadata } from '@/lib/seo/metadata'
@@ -53,9 +56,10 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
   if (!found) notFound()
   const { doc: s, slugs } = found
 
-  const [all, faqs, t, ts, tn, tp] = await Promise.all([
+  const [all, faqs, pricing, t, ts, tn, tp] = await Promise.all([
     getServices(locale),
     getFaqs(locale),
+    getPricing(locale),
     getTranslations('common'),
     getTranslations('sections'),
     getTranslations('nav'),
@@ -72,6 +76,10 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
     ? { name: tn('services'), href: '/services' as const }
     : { name: tn('otherDevelopment'), href: '/other-development' as const }
   const isRedesign = s.contactType === 'redesign'
+  // A new website is sold as plans: the page lists every plan instead of a single "from" price.
+  const webPlans = s.contactType === 'web' ? completeWebPlans(pricing.packages) : []
+  const maintenancePlans = completeMaintenancePlans(pricing.maintenancePlans)
+  const vat = pricing.vatNote ?? ''
 
   return (
     <PageShell locale={locale} alternates={localizedPaths('/services/[slug]', slugs)}>
@@ -95,7 +103,7 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
               <span aria-hidden className="mx-2">/</span>
               <Link href={parent.href} className="hover:text-ink-0">{parent.name}</Link>
             </nav>
-            <span className="grid h-12 w-12 place-items-center rounded-[var(--radius-md)] bg-bg-2 text-brand">
+            <span className="grid h-12 w-12 place-items-center rounded-[var(--radius-md)] bg-[linear-gradient(135deg,#c2410c,#e11d48)] text-white shadow-[var(--shadow-amber)]">
               <ServiceIcon name={s.icon} className="h-6 w-6" />
             </span>
             <p className="mt-6 text-sm font-semibold uppercase tracking-[0.14em] text-amber">{s.title}</p>
@@ -117,13 +125,23 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
           <GlassCard className="grid gap-6 self-start">
             {/* Only dt/dd groups may live inside <dl>; tags and the note follow it. */}
             <dl className="grid gap-6">
-              <div>
-                <dt className={price.prefix && !isRedesign ? 'text-xs font-semibold uppercase tracking-wider text-ink-3' : 'sr-only'}>{isRedesign ? t('price') : (price.prefix ?? t('price'))}</dt>
-                <dd className="text-3xl font-semibold text-ink-0">
-                  {isRedesign ? t('freeReview') : price.figure}
-                  {price.vat && <span className="ml-2 font-sans text-sm text-ink-2">{' '}{price.vat}</span>}
-                </dd>
-              </div>
+              {webPlans.length > 0 ? (
+                <div>
+                  <dt className="mb-3 text-xs font-semibold uppercase tracking-wider text-ink-3">{tp('plansTitle')}</dt>
+                  <dd>
+                    <WebPlanList plans={webPlans} locale={locale} vat={vat} from={t('from')} />
+                  </dd>
+                </div>
+              ) : (
+                <div>
+                  <dt className={price.prefix ? 'text-xs font-semibold uppercase tracking-wider text-ink-3' : 'sr-only'}>{price.prefix ?? t('price')}</dt>
+                  <dd className="text-3xl font-semibold text-ink-0">
+                    {price.figure}
+                    {price.vat && <span className="ml-2 font-sans text-sm text-ink-2">{' '}{price.vat}</span>}
+                  </dd>
+                  {isRedesign && <dd className="mt-2 text-sm text-ink-2">{t('afterReview')}</dd>}
+                </div>
+              )}
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-wider text-ink-3">{t('typicalTime')}</dt>
                 <dd className="text-xl text-ink-0">{s.typicalTime}</dd>
@@ -146,6 +164,27 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
           </GlassCard>
         </Container>
       </section>
+
+      {webPlans.length > 0 && (
+        <Section id="plans" eyebrow={pricing.eyebrow} title={tp('plansTitle')} lead={tp('plansLead')} className="bg-bg-2">
+          <ul className="grid items-stretch gap-x-5 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+            {webPlans.map((p) => (
+              <WebPlanCard
+                key={p.id ?? p.slug}
+                plan={p}
+                minPlanName={findMinPlan(p.minPlan, maintenancePlans)?.name}
+                locale={locale}
+                vat={vat}
+                t={tp}
+                from={t('from')}
+              />
+            ))}
+          </ul>
+          <Link href="/pricing" className="mt-8 inline-block text-sm font-medium text-brand hover:text-brand-hi">
+            {tp('viewAll')} <span aria-hidden>→</span>
+          </Link>
+        </Section>
+      )}
 
       <Section title={t('deliverables')}>
         <ul className="grid gap-4 sm:grid-cols-2" data-reveal-group>

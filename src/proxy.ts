@@ -2,12 +2,13 @@ import createMiddleware from 'next-intl/middleware'
 import { NextResponse, type NextRequest } from 'next/server'
 import { routing } from './i18n/routing'
 import { guardLockedDocuments } from './lib/security/locked-documents'
+import { guardUploadSize } from './lib/security/upload-guard'
 
 const intl = createMiddleware(routing)
 
 export default function proxy(request: NextRequest) {
   // The API is matched only so the guard can see it: next-intl must never touch it.
-  if (request.nextUrl.pathname.startsWith('/api')) return guardLockedDocuments(request) ?? NextResponse.next()
+  if (request.nextUrl.pathname.startsWith('/api')) return guardLockedDocuments(request) ?? guardUploadSize(request) ?? NextResponse.next()
   return intl(request)
 }
 

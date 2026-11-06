@@ -7,7 +7,7 @@ import { CtaBand } from '@/components/sections/cta-band'
 import { Badge } from '@/components/ui/badge'
 import { buttonClasses } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
-import { BrowserFrame, SiteSketch } from '@/components/showcase/device-frames'
+import { BrowserFrame, PhoneFrame, SiteSketch } from '@/components/showcase/device-frames'
 import { RichText } from '@/components/ui/rich-text'
 import type { Locale } from '@/i18n/locales'
 import { Link } from '@/i18n/navigation'
@@ -56,6 +56,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
   const url = projectPublicUrl(p)
   const cover = typeof p.cover === 'object' ? (p.cover as Media | null) : null
   const gallery = (p.gallery ?? []).filter((g): g is Media => typeof g === 'object' && g !== null && Boolean(g.url))
+  // Portrait images are phone captures: shown in a phone frame; the rest as plain screenshots.
+  const isPortrait = (g: Media) => (g.height ?? 0) > (g.width ?? 0)
+  const phones = gallery.filter(isPortrait)
+  const screens = gallery.filter((g) => !isPortrait(g))
 
   return (
     <PageShell locale={locale} alternates={localizedPaths('/projects/[slug]', slugs)}>
@@ -143,10 +147,21 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
           )}
 
           {p.body && <RichText data={p.body} className="mx-auto mt-16 max-w-3xl" />}
-          {gallery.length > 0 && (
+          {phones.length > 0 && (
+            <ul className="mt-16 flex flex-wrap justify-center gap-8">
+              {phones.map((g) => (
+                <li key={g.id} data-reveal className="w-[min(70vw,260px)]">
+                  <PhoneFrame>
+                    <Image src={g.url as string} alt={g.alt} width={g.width ?? 780} height={g.height ?? 1688} sizes="260px" className="block h-auto w-full" />
+                  </PhoneFrame>
+                </li>
+              ))}
+            </ul>
+          )}
+          {screens.length > 0 && (
             <ul className="mt-16 grid gap-4 md:grid-cols-2">
-              {gallery.map((g) => (
-                <li key={g.id} className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-md)] border border-line">
+              {screens.map((g) => (
+                <li key={g.id} data-reveal className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-md)] border border-line">
                   <Image src={g.url as string} alt={g.alt} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover object-top" />
                 </li>
               ))}

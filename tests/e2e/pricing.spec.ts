@@ -156,19 +156,15 @@ test('submitting with a plan stores it and keeps personal data out of the URL', 
   )
 })
 
-test('home teaser and navigation link to the pricing page', async ({ page, isMobile }) => {
+test('home "new website" path lists every plan, the redesign from-price, and links to pricing', async ({ page, isMobile }) => {
   await page.goto('/')
-  const teaser = page.locator('#pricing')
-  await expect(teaser.getByRole('heading', { level: 3 })).toHaveText([
-    /Landing Page/,
-    /Landing Premium/,
-    /Custom/,
-    /Web Corporativa/,
-    /Tienda Online/,
-    /Web Profesional/,
-  ])
-  expect(norm(await teaser.textContent())).toContain('Mantenimiento opcional desde 25 €/mes + IVA')
-  await expect(teaser.getByRole('link', { name: 'Ver todos los precios' })).toHaveAttribute('href', '/precios')
+  const paths = page.locator('#services')
+  const text = norm(await paths.textContent())
+  for (const plan of ['Landing Page', 'Landing Premium', 'Custom', 'Web Corporativa', 'Tienda Online', 'Web Profesional']) expect(text).toContain(plan)
+  expect(text).toContain('349 € + IVA')
+  expect(text).toContain('Desde 490 € + IVA')
+  expect(text).not.toContain('Desde 349')
+  await expect(paths.getByRole('link', { name: /Comparar todos los planes/ })).toHaveAttribute('href', '/precios')
   await expect(page.locator('footer').getByRole('link', { name: 'Precios' })).toHaveAttribute('href', '/precios')
   if (!isMobile) {
     await expect(page.getByRole('navigation', { name: 'Navegación principal' }).getByRole('link', { name: 'Precios' })).toHaveAttribute('href', '/precios')
@@ -189,7 +185,10 @@ test('web and maintenance services show the v4 prices and link to the plans', as
 test('the services list shows the re-priced services with the VAT note', async ({ page }) => {
   await page.goto('/servicios')
   const main = norm(await page.locator('main').textContent())
-  expect(main).toContain('Desde 349 € + IVA')
+  // A new website is sold as plans (no single "from" price); a redesign starts at 490 €.
+  expect(main).toContain('Varios planes con precio cerrado')
+  expect(main).not.toContain('Desde 349')
+  expect(main).toContain('Desde 490 € + IVA')
   expect(main).toContain('Desde 1.490 € + IVA')
   expect(main).toContain('Desde 25 €/mes + IVA')
 })

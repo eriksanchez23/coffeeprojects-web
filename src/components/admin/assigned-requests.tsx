@@ -101,7 +101,7 @@ export async function AssignedRequests({ payload, user, i18n }: Props) {
     >
       <p style={{ margin: '0 0 8px', display: 'flex', justifyContent: 'space-between', gap: 8, fontWeight: 600 }}>
         <span>{copy.title}</span>
-        <span style={{ color: '#f5a742' }}>{copy.count}</span>
+        <span style={{ color: 'var(--cp-accent)' }}>{copy.count}</span>
       </p>
       {docs.length === 0 ? (
         <p style={{ margin: 0, opacity: 0.7 }}>{copy.empty}</p>
@@ -127,7 +127,7 @@ export async function AssignedRequests({ payload, user, i18n }: Props) {
           })}
         </ol>
       )}
-      <a href={assignedListHref(user.id, adminRoute)} style={{ display: 'inline-block', marginTop: 10, color: '#f5a742' }}>
+      <a href={assignedListHref(user.id, adminRoute)} style={{ display: 'inline-block', marginTop: 10, color: 'var(--cp-accent)' }}>
         {copy.all}
       </a>
     </nav>

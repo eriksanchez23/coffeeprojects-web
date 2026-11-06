@@ -1,34 +1,36 @@
 @import 'tailwindcss';
 
-/* "Café claro" palette. Colors live in a non-inline @theme so utilities read var(--color-*): a `.on-dark` section
-   can then remap the same tokens locally (espresso bands) without a second set of class names. */
+/* "Café vivo" palette: warm light base, vivid copper-orange brand, an orange→rose accent gradient and espresso bands.
+   Colors live in a non-inline @theme so utilities read var(--color-*): a `.on-dark` section can then remap the same
+   tokens locally (espresso bands) without a second set of class names. Text colors are AA on bg-0/bg-1. */
 @theme {
-  --color-bg-0: #fbf8f3;
+  --color-bg-0: #fffaf5;
   --color-bg-1: #ffffff;
-  --color-bg-2: #f3ede4;
-  --color-bg-3: #eae1d5;
-  --color-bg-4: #e0d4c4;
-  /* Accent text/icons: caramel, 5.1:1 on bg-0. */
-  --color-amber: #9a5b1e;
-  --color-amber-hi: #7e4a17;
-  --color-amber-deep: #6f4e37;
-  /* Brand coffee: primary buttons and links (7:1 on bg-0, white on top 7.4:1). */
-  --color-brand: #6f4e37;
-  --color-brand-hi: #5a3e2b;
-  --color-espresso: #1c1410;
+  --color-bg-2: #fdf0e6;
+  --color-bg-3: #f8e2d1;
+  --color-bg-4: #f1d0b5;
+  /* Accent text/icons: copper, 5.2:1 on white. */
+  --color-amber: #c2410c;
+  --color-amber-hi: #9a3412;
+  --color-amber-deep: #7c2d12;
+  /* Brand: primary buttons and links (white on top 5.2:1). */
+  --color-brand: #c2410c;
+  --color-brand-hi: #9a3412;
+  --color-rose: #be123c;
+  --color-espresso: #1a1210;
   --color-toast: #c2410c;
-  --color-crema: #f5ede3;
-  --color-latte: #c7a17a;
-  --color-mint: #2f7a55;
-  --color-berry: #b4233c;
-  --color-sky: #2563eb;
-  --color-ink-0: #1a1411;
-  --color-ink-1: #3d332c;
-  --color-ink-2: #5f5248;
-  --color-ink-3: #6b5d52;
-  --color-line: rgb(26 20 17 / 0.1);
-  --color-line-hi: rgb(26 20 17 / 0.18);
-  --color-line-amber: rgb(111 78 55 / 0.4);
+  --color-crema: #fdf0e6;
+  --color-latte: #f0b78a;
+  --color-mint: #047857;
+  --color-berry: #be123c;
+  --color-sky: #1d4ed8;
+  --color-ink-0: #1a1210;
+  --color-ink-1: #3b2f29;
+  --color-ink-2: #5c4e46;
+  --color-ink-3: #6b5c53;
+  --color-line: rgb(26 18 16 / 0.1);
+  --color-line-hi: rgb(26 18 16 / 0.18);
+  --color-line-amber: rgb(194 65 12 / 0.38);
 }
 
 @theme inline {
@@ -44,27 +46,27 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  --shadow-amber: 0 1px 2px rgb(26 20 17 / 0.08), 0 8px 24px -12px rgb(111 78 55 / 0.45);
-  --shadow-soft: 0 1px 2px rgb(26 20 17 / 0.05), 0 20px 50px -24px rgb(26 20 17 / 0.25);
+  --shadow-amber: 0 1px 2px rgb(26 18 16 / 0.08), 0 10px 28px -12px rgb(194 65 12 / 0.55);
+  --shadow-soft: 0 1px 2px rgb(26 18 16 / 0.05), 0 24px 60px -28px rgb(124 45 18 / 0.35);
 }
 
 /* Espresso bands (final CTA, footer): same token names, dark values. */
 .on-dark {
-  --color-bg-0: #1c1410;
-  --color-bg-1: #261b15;
-  --color-bg-2: #2e221b;
-  --color-bg-3: #3a2b22;
-  --color-ink-0: #fff7ec;
-  --color-ink-1: #f0e4d6;
-  --color-ink-2: #cdbcaa;
-  --color-ink-3: #b8a693;
-  --color-amber: #f5a742;
-  --color-amber-hi: #ffc165;
-  --color-brand: #f5a742;
-  --color-brand-hi: #ffc165;
-  --color-line: rgb(255 232 181 / 0.12);
-  --color-line-hi: rgb(255 232 181 / 0.22);
-  --color-line-amber: rgb(245 167 66 / 0.45);
+  --color-bg-0: #1a1210;
+  --color-bg-1: #251914;
+  --color-bg-2: #2f2019;
+  --color-bg-3: #3b2920;
+  --color-ink-0: #fff7ef;
+  --color-ink-1: #f3e6da;
+  --color-ink-2: #d4c1b1;
+  --color-ink-3: #bba796;
+  --color-amber: #fb923c;
+  --color-amber-hi: #fdba74;
+  --color-brand: #fb923c;
+  --color-brand-hi: #fdba74;
+  --color-line: rgb(255 214 180 / 0.12);
+  --color-line-hi: rgb(255 214 180 / 0.24);
+  --color-line-amber: rgb(251 146 60 / 0.5);
   background: var(--color-bg-0);
   color: var(--color-ink-1);
 }
@@ -91,14 +93,182 @@
   :focus-visible { outline: 2px solid var(--color-brand); outline-offset: 3px; }
 }
 
-/* Soft warm wash behind the hero */
+/* Warm wash behind page heroes: copper, rose and amber light. */
 @utility hero-wash {
   background:
-    radial-gradient(70% 60% at 85% 0%, rgb(199 161 122 / 0.22), transparent 70%),
-    radial-gradient(50% 50% at 0% 100%, rgb(243 237 228 / 0.9), transparent 70%);
+    radial-gradient(60% 55% at 88% 0%, rgb(251 146 60 / 0.22), transparent 70%),
+    radial-gradient(45% 45% at 60% 15%, rgb(244 63 94 / 0.1), transparent 70%),
+    radial-gradient(50% 50% at 0% 100%, rgb(253 240 230 / 0.95), transparent 70%);
+}
+
+/* ---- Motion. Every animation below is switched off by the reduced-motion rule further down. ---- */
+
+/* Orange→rose accent for headline words. */
+@utility text-gradient {
+  background-image: linear-gradient(100deg, #c2410c 0%, #e11d48 45%, #c2410c 90%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-pan 9s ease-in-out infinite alternate;
+}
+@keyframes gradient-pan {
+  to {
+    background-position: 100% 0;
+  }
+}
+
+/* Slowly drifting colored light behind the hero and the CTA band. */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+.aurora > span {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.55;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.aurora > span:nth-child(1) {
+  width: 42rem;
+  height: 42rem;
+  right: -12rem;
+  top: -18rem;
+  background: radial-gradient(circle, rgb(251 146 60 / 0.55), transparent 65%);
+}
+.aurora > span:nth-child(2) {
+  width: 30rem;
+  height: 30rem;
+  right: 18%;
+  top: 30%;
+  background: radial-gradient(circle, rgb(244 63 94 / 0.3), transparent 65%);
+  animation-duration: 22s;
+  animation-delay: -6s;
+}
+.aurora > span:nth-child(3) {
+  width: 34rem;
+  height: 34rem;
+  left: -14rem;
+  bottom: -20rem;
+  background: radial-gradient(circle, rgb(250 204 21 / 0.28), transparent 65%);
+  animation-duration: 26s;
+  animation-delay: -12s;
+}
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-4%, 6%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(5%, -4%, 0) scale(0.96);
+  }
+}
+
+/* Glow behind the hero screenshots. */
+.hero-glow {
+  background: radial-gradient(55% 55% at 60% 45%, rgb(251 146 60 / 0.35), transparent 70%),
+    radial-gradient(40% 40% at 25% 80%, rgb(244 63 94 / 0.22), transparent 70%);
+  filter: blur(20px);
+  animation: pulse-glow 7s ease-in-out infinite alternate;
+}
+@keyframes pulse-glow {
+  to {
+    opacity: 0.65;
+    transform: scale(1.05);
+  }
+}
+
+/* Gentle floating of the device frames. */
+.hero-float {
+  animation: float 9s ease-in-out infinite;
+}
+.hero-float-slow {
+  animation: float 11s ease-in-out infinite reverse;
+}
+@keyframes float {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Light sweep across primary buttons on hover. */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-shine:hover::after {
+  transform: translateX(120%);
+}
+
+/* Cards that lift with a colored border on hover. */
+.card-lift {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-soft);
+  border-color: var(--color-line-amber);
+}
+
+/* Gradient top edge for highlighted panels. */
+.edge-gradient {
+  position: relative;
+}
+.edge-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #c2410c, #e11d48, #f59e0b);
+}
+
+/* Reading progress at the top of the page (browsers with scroll-driven animations only). */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  height: 3px;
+  z-index: 60;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, #c2410c, #e11d48, #f59e0b);
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: grow-x linear both;
+    animation-timeline: scroll(root);
+  }
+}
+@keyframes grow-x {
+  to {
+    transform: scaleX(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .scroll-progress {
+    display: none;
+  }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

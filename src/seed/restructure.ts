@@ -103,3 +103,60 @@ export async function upgradeFaqs(payload: Payload) {
   for (const doc of extra.docs) if (OLD_FAQ_EXTRA.includes(doc.question)) await payload.delete({ collection: 'faqs', id: doc.id })
   payload.logger.info('restructure: FAQ replaced with the website-focused questions')
 }
+
+/**
+ * 2026-11 price copy: a new website is sold as plans (no single "from 349 €" any more) and a redesign starts at
+ * 490 € + VAT. Text is replaced only where it is still the previous seed text; the redesign price only while it
+ * is still the old "custom" placeholder.
+ */
+const OLD_PRICE_COPY = {
+  webSeo: {
+    es: 'Webs y landing pages a medida, rápidas y preparadas para Google. Desde 349 € + IVA, listas en 1-2 semanas.',
+    en: 'Custom websites and landing pages, fast and ready for Google. From €349 + VAT, ready in 1-2 weeks.',
+    fr: 'Sites et landing pages sur mesure, rapides et prêts pour Google. À partir de 349 € + TVA, prêts en 1 à 2 semaines.',
+  },
+  redesignNote: {
+    es: 'Presupuesto cerrado tras la revisión gratuita, sin compromiso.',
+    en: 'Fixed quote after the free review, no commitment.',
+    fr: "Devis fixe après l'audit gratuit, sans engagement.",
+  },
+  redesignSeo: {
+    es: 'Renovamos tu web: diseño actual, carga rápida, adaptada al móvil y visible en Google. Revisión gratuita en 48 h y presupuesto cerrado.',
+    en: 'We renew your website: modern design, fast loading, mobile-ready and visible on Google. Free review in 48 h and a fixed quote.',
+    fr: 'Nous rénovons votre site : design actuel, chargement rapide, adapté au mobile et visible sur Google. Audit gratuit sous 48 h et devis fixe.',
+  },
+  newPrice: { es: 'Desde 349 € + IVA · 1-2 semanas', en: 'From €349 + VAT · 1-2 weeks', fr: 'À partir de 349 € + TVA · 1 à 2 semaines' },
+  redesignPrice: { es: 'Presupuesto cerrado tras la revisión gratuita', en: 'Fixed quote after the free review', fr: "Devis fixe après l'audit gratuit" },
+} as const
+
+export async function upgradePriceCopy(payload: Payload) {
+  for (const type of ['web', 'redesign'] as const) {
+    const seed = services.find((s) => s.shared.contactType === type)
+    if (!seed) continue
+    const found = await payload.find({ collection: 'services', where: { contactType: { equals: type } }, locale: 'es', limit: 1, depth: 0, draft: true })
+    const doc = found.docs[0]
+    if (!doc) continue
+    if (type === 'redesign' && doc.pricing?.mode === 'custom' && doc.pricing.amount == null)
+      await payload.update({ collection: 'services', id: doc.id, locale: 'es', data: { pricing: seed.shared.pricing, _status: 'published' } as never })
+    for (const locale of locales) {
+      const current = await payload.findByID({ collection: 'services', id: doc.id, locale, depth: 0, draft: true })
+      const l = seed.localized[locale]
+      const data: Record<string, unknown> = {}
+      const oldSeo = type === 'web' ? OLD_PRICE_COPY.webSeo : OLD_PRICE_COPY.redesignSeo
+      if (current.seo?.description === oldSeo[locale]) data.seo = { ...current.seo, description: l.seo.description }
+      if (type === 'redesign' && current.note === OLD_PRICE_COPY.redesignNote[locale]) data.note = l.note
+      if (Object.keys(data).length > 0) await payload.update({ collection: 'services', id: doc.id, locale, data: { ...data, _status: 'published' } as never })
+    }
+  }
+  for (const locale of locales) {
+    const home = await payload.findGlobal({ slug: 'home', locale, depth: 0, draft: true })
+    const paths = home.paths
+    if (!paths) continue
+    const next = homeData(locale).paths
+    const data: Record<string, unknown> = {}
+    if (paths.newPrice === OLD_PRICE_COPY.newPrice[locale]) data.newPrice = next.newPrice
+    if (paths.redesignPrice === OLD_PRICE_COPY.redesignPrice[locale]) data.redesignPrice = next.redesignPrice
+    if (Object.keys(data).length > 0)
+      await payload.updateGlobal({ slug: 'home', locale, data: { paths: { ...paths, ...data }, _status: 'published' } as never })
+  }
+}

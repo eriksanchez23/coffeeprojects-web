@@ -55,7 +55,9 @@
     "price": "Prix",
     "socials": "Réseaux",
     "requestReview": "Demandez votre audit gratuit",
-    "freeReview": "Audit gratuit"
+    "freeReview": "Audit gratuit",
+    "allPlans": "Plusieurs formules à prix fixe",
+    "afterReview": "Devis fixe après l’audit gratuit"
   },
   "contact": {
     "title": "Dites-nous ce dont vous avez besoin",
@@ -170,7 +172,11 @@
     "service": "Service",
     "withPlan": "Avec formule",
     "withoutPlan": "Sans formule",
-    "teaserMaintenance": "Maintenance facultative à partir de {price} : avec n’importe quelle formule, le site coûte moins cher."
+    "teaserMaintenance": "Maintenance facultative à partir de {price} : avec n’importe quelle formule, le site coûte moins cher.",
+    "plansTitle": "Choisissez votre formule",
+    "plansLead": "Toutes les formules pour un nouveau site, à prix fixe. Prix avec maintenance ; le prix sans maintenance figure sur chaque formule.",
+    "redesignTitle": "Vous avez déjà un site et voulez l’améliorer ?",
+    "redesignText": "Nous le refondons à partir de {price}. D’abord, nous auditons gratuitement votre site actuel et vous remettons un devis fixe selon ses besoins."
   },
   "partners": {
     "rates": "Votre commission selon ce que le client commande",
@@ -252,7 +258,10 @@
     "pathsTitle": "Repartir de zéro ou améliorer votre site ?",
     "auditUrlLabel": "Adresse de votre site",
     "auditCta": "Je veux mon audit gratuit",
-    "auditNote": "À l'étape suivante, nous vous demandons votre email pour envoyer le rapport. Sans engagement."
+    "auditNote": "À l'étape suivante, nous vous demandons votre email pour envoyer le rapport. Sans engagement.",
+    "plansLead": "Choisissez parmi toutes nos formules :",
+    "seeAllPlans": "Comparer toutes les formules",
+    "showProject": "Voir {title}"
   },
   "projects": {
     "kinds": {

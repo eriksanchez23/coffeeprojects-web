@@ -11,7 +11,7 @@ export async function ProjectCard({ project: p, headingAs: Heading = 'h3' }: { p
   const cover = typeof p.cover === 'object' ? (p.cover as Media | null) : null
   return (
     <Link href={{ pathname: '/projects/[slug]', params: { slug: p.slug } }} className="group block h-full" data-reveal>
-      <article className="flex h-full flex-col overflow-hidden rounded-[var(--radius-lg)] border border-line bg-bg-1 transition-[border-color,box-shadow] hover:border-line-amber hover:shadow-[var(--shadow-soft)]">
+      <article className="card-lift flex h-full flex-col overflow-hidden rounded-[var(--radius-lg)] border border-line bg-bg-1">
         <div className="relative aspect-[16/10] overflow-hidden border-b border-line" style={cover?.url ? undefined : { background: coverGradient(p.slug) }}>
           {cover?.url ? (
             <Image src={cover.url} alt={cover.alt} fill sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]" />

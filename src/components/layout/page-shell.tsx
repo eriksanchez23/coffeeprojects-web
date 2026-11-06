@@ -30,6 +30,7 @@ export async function PageShell({
       >
         {t('skip')}
       </a>
+      <div aria-hidden className="scroll-progress" />
       <SiteHeader />
       <main id="main" tabIndex={-1} className="outline-none">
         {/* Route navigations are transitions, so the page content cross-fades between routes. */}

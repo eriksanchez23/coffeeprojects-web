@@ -31,7 +31,7 @@ export async function ServicesGrid({ services, locale, compact = false }: { serv
               )}
               <div className="mt-auto flex items-end justify-between pt-8">
                 <div>
-                  <p className={compact ? 'font-medium text-ink-0' : 'text-lg font-semibold text-ink-0'}>{formatPrice(s.pricing, locale, labels)}</p>
+                  <p className={compact ? 'font-medium text-ink-0' : 'text-lg font-semibold text-ink-0'}>{s.contactType === 'web' ? t('allPlans') : formatPrice(s.pricing, locale, labels)}</p>
                   <p className="text-xs text-ink-3">
                     {t('typicalTime')}: {s.typicalTime}
                   </p>

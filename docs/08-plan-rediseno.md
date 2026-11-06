@@ -263,3 +263,16 @@ Producción ya no está en Vercel (corre en Proxmox desde el 2026-10-10), pero e
 | D6 | ¿Hay capturas reales de proyectos (incluido el ayuntamiento, si el NDA lo permite) y testimonios? | Necesarias para el hero y los casos; si no hay, se usan capturas de coffeeprojects.es y de prototipos (noore-club, don-panini) con permiso |
 | D7 | ¿La página de equipo sigue mostrando a los 3 (Erik, Diego, Juan)? | Sí, con roles orientados al cliente y sin estadísticas de GitHub |
 | D8 | URLs `/precios` y `/colaboradores` con 301 | **Aprobado** |
+
+## Segunda iteración (noviembre 2026)
+
+Peticiones del cliente tras ver la primera vista previa, ya implementadas:
+
+| # | Cambio |
+|---|--------|
+| I1 | **Precios**: la web nueva ya no se anuncia «desde 349 €»; la portada, la ficha de diseño web y su tarjeta muestran **todos los planes** con su precio. La **remodelación** pasa a «**desde 490 € + IVA**», con presupuesto cerrado tras la revisión gratuita (ficha, portada y aviso en `/precios`). El paso `upgradePriceCopy` del seed actualiza las bases ya sembradas solo donde sigue el texto antiguo. |
+| I2 | **Capturas reales**: Nooré Club (`noore-club-demo.vercel.app`, del panel antiguo) y Don Panini (`don-panini-prototipo.vercel.app`) llevan su URL; el seed (`src/seed/screenshots.ts`) les pone portada de escritorio y vista móvil con Microlink, el mismo servicio que «Importar desde web» del panel. coffeeprojects.es usa capturas propias guardadas en `src/seed/assets/projects/`. Solo rellena proyectos sin portada o sin galería. En Vercel exige almacenamiento Blob; en CI se desactiva (`SEED_SCREENSHOTS=0`). |
+| I3 | **Portada**: el bloque visual del hero muestra capturas reales que rotan entre proyectos (pausa al pasar el ratón y con movimiento reducido). En la ficha de proyecto, las capturas verticales se ven dentro de un marco de móvil. |
+| I4 | **Paleta «Café vivo»**: cobre `#c2410c` como color de marca, degradado naranja→rosa para acentos y espresso para las franjas oscuras; mismo cambio en el panel y en los correos. Todos los textos cumplen contraste AA. |
+| I5 | **Animaciones**: luces que se mueven tras el hero y la franja final, palabra destacada con degradado animado, marcos que flotan, brillo en los botones, tarjetas que se elevan, borde superior en degradado y barra de progreso de lectura. Todo se desactiva con «reducir movimiento». |
+| I6 | **Panel revisado** (subida de foto en Multimedia, tamaños generados, portada de proyecto visible en la web, foto de miembro del equipo, SVG rechazado, importación desde web con error controlado). Un archivo de más de 10 MB ahora devuelve un mensaje claro (413) en vez de un error genérico (`src/lib/security/upload-guard.ts`). |

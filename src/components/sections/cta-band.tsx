@@ -12,8 +12,12 @@ export async function CtaBand({ defaultType = 'web' }: { defaultType?: ProjectTy
   return (
     <section className="py-20 sm:py-24" aria-labelledby="cta-title">
       <Container>
-        <div className="on-dark relative overflow-hidden rounded-[var(--radius-lg)] px-6 py-14 sm:px-14 sm:py-20">
-          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgb(245_167_66/0.22),transparent_70%)]" />
+        <div className="on-dark relative isolate overflow-hidden rounded-[var(--radius-lg)] px-6 py-14 sm:px-14 sm:py-20">
+          <div aria-hidden className="aurora">
+            <span />
+            <span />
+            <span />
+          </div>
           <h2 id="cta-title" className="max-w-2xl text-3xl font-semibold sm:text-5xl">{t('quickTitle')}</h2>
           <p className="mt-5 max-w-2xl text-lg text-ink-2">{t('quickLead')}</p>
           <div className="mt-10 flex flex-wrap gap-3">

@@ -49,14 +49,27 @@ const IMAGE_TYPES: Record<string, { ext: string; sniff: (b: Buffer) => boolean }
 
 const mediaType = (res: SafeResponse) => (res.headers['content-type'] ?? '').split(';')[0].trim().toLowerCase()
 
+export type ShotView = 'desktop' | 'mobile'
+const VIEWPORTS: Record<ShotView, Record<string, string>> = {
+  desktop: { 'viewport.width': '1440', 'viewport.height': '900' },
+  // A phone at 2x: the screenshot shown inside the phone frame (project pages, home hero).
+  mobile: {
+    'viewport.width': '390',
+    'viewport.height': '844',
+    'viewport.deviceScaleFactor': '2',
+    'viewport.isMobile': 'true',
+    'viewport.hasTouch': 'true',
+    waitForTimeout: '2500',
+  },
+}
+
 /** Only the public page URL goes to Microlink; with a key, the pro endpoint (the key travels as a header). */
-export function microlinkUrl(target: string, pro: boolean): string {
+export function microlinkUrl(target: string, pro: boolean, view: ShotView = 'desktop'): string {
   const params = new URLSearchParams({
     url: target,
     screenshot: 'true',
     meta: 'false',
-    'viewport.width': '1440',
-    'viewport.height': '900',
+    ...VIEWPORTS[view],
     'screenshot.type': 'jpeg',
   })
   return `https://${pro ? 'pro' : 'api'}.microlink.io/?${params}`
@@ -70,12 +83,27 @@ async function downloadImage(fetch: FetchLike, url: string): Promise<{ data: Buf
   return { data: res.body, mimetype, ext: type.ext }
 }
 
-async function screenshotUrl(fetch: FetchLike, target: string, key?: string): Promise<string> {
-  const res = await fetch(microlinkUrl(target, Boolean(key)), { ...MICROLINK_LIMITS, headers: key ? { 'x-api-key': key } : {} })
+async function screenshotUrl(fetch: FetchLike, target: string, key?: string, view: ShotView = 'desktop'): Promise<string> {
+  const res = await fetch(microlinkUrl(target, Boolean(key), view), { ...MICROLINK_LIMITS, headers: key ? { 'x-api-key': key } : {} })
   const json = JSON.parse(res.body.toString('utf8')) as { status?: string; data?: { screenshot?: { url?: unknown } } }
   const url = json.data?.screenshot?.url
   if (json.status !== 'success' || typeof url !== 'string') throw new ImportError('network')
   return url
+}
+
+/**
+ * A screenshot of a public website (desktop or phone viewport) as an image file ready for Media. Used by the seed
+ * to give projects with a URL a real cover and phone view; throws when the page cannot be captured.
+ */
+export async function captureScreenshot(
+  target: string,
+  view: ShotView,
+  deps: { fetch?: FetchLike; microlinkKey?: string } = {},
+): Promise<ImageFile> {
+  const fetch: FetchLike = deps.fetch ?? safeFetch
+  const image = await downloadImage(fetch, await screenshotUrl(fetch, target, deps.microlinkKey, view))
+  const slug = new URL(target).hostname.replace(/^www\./, '').replace(/[^a-z0-9]+/gi, '-').toLowerCase()
+  return { data: image.data, mimetype: image.mimetype, name: `${view === 'mobile' ? 'mobile' : 'cover'}-${slug}.${image.ext}` }
 }
 
 export async function importFromWebsite(

@@ -62,5 +62,7 @@ run('payload migrate', 'pnpm payload migrate', migrateEnv)
 // Postflight: every migration file must now be recorded.
 run('verify migrations', 'pnpm payload run scripts/verify-migrations.ts', migrateEnv)
 // Preview databases start empty: PREVIEW_SEED=1 fills them (the seed never overwrites existing content).
+// Where uploads (panel photos, seeded screenshots) go: on Vercel only Blob storage survives the build.
+console.log(`[deploy:build] media storage: ${process.env.BLOB_READ_WRITE_TOKEN ? 'Vercel Blob' : 'local disk (MEDIA_DIR)'}`)
 if (process.env.PREVIEW_SEED === '1' && process.env.NEXT_PUBLIC_SITE_ENV !== 'production') run('seed preview content', 'pnpm seed', migrateEnv)
 run('next build', 'pnpm build', process.env)

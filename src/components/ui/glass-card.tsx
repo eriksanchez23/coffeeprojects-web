@@ -7,7 +7,7 @@ export function GlassCard({ children, className }: { children: ReactNode; classN
     <div
       className={cn(
         'relative overflow-hidden rounded-[var(--radius-lg)] border border-line bg-bg-1 p-6',
-        'transition-[border-color,box-shadow] duration-300 hover:border-line-amber hover:shadow-[var(--shadow-soft)]',
+        'card-lift',
         className,
       )}
     >

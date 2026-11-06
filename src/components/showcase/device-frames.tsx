@@ -7,9 +7,9 @@ export function BrowserFrame({ url, children, className }: { url?: string; child
   return (
     <div className={cn('overflow-hidden rounded-[var(--radius-lg)] border border-line bg-bg-1 shadow-[var(--shadow-soft)]', className)}>
       <div className="flex items-center gap-2 border-b border-line bg-bg-2 px-4 py-2.5">
-        <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[#e0d4c4]" />
-        <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[#e0d4c4]" />
-        <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[#e0d4c4]" />
+        <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+        <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+        <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
         {url && <span className="ml-3 truncate rounded-full bg-bg-1 px-3 py-0.5 text-[11px] text-ink-3">{url}</span>}
       </div>
       <div className="relative">{children}</div>
@@ -49,7 +49,7 @@ export function ShotImage({ shot, priority, sizes, className }: { shot: Shot; pr
 export function SiteSketch({ variant = 'desktop' }: { variant?: 'desktop' | 'mobile' }) {
   const mobile = variant === 'mobile'
   return (
-    <div aria-hidden className={cn('bg-bg-1', mobile ? 'aspect-[9/17] p-4' : 'aspect-[16/10] p-6')}>
+    <div aria-hidden className={cn('overflow-hidden bg-bg-1', mobile ? 'aspect-[9/17] p-4' : 'aspect-[16/10] p-6')}>
       <div className="flex items-center justify-between">
         <div className="h-3 w-16 rounded-full bg-brand/80" />
         {!mobile && (
@@ -71,7 +71,7 @@ export function SiteSketch({ variant = 'desktop' }: { variant?: 'desktop' | 'mob
             <div className="h-6 w-16 rounded-md border border-line-hi" />
           </div>
         </div>
-        <div className={cn('rounded-[var(--radius-md)] bg-[linear-gradient(135deg,#e9dccb,#c7a17a)]', mobile ? 'h-28' : 'h-full min-h-28')} />
+        <div className={cn('rounded-[var(--radius-md)] bg-[linear-gradient(135deg,#fdba74,#e11d48)]', mobile ? 'h-28' : 'h-full min-h-28')} />
       </div>
       <div className={cn('mt-6 grid gap-3', mobile ? 'grid-cols-1' : 'grid-cols-3')}>
         {[0, 1, 2].slice(0, mobile ? 2 : 3).map((i) => (

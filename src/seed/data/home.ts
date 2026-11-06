@@ -60,7 +60,7 @@ export const home: SeedDoc<HomeShared, HomeLocalized> = {
           { text: 'SEO básico y velocidad de carga' },
           { text: 'Textos legales incluidos' },
         ],
-        newPrice: 'Desde 349 € + IVA · 1-2 semanas',
+        newPrice: 'Pago único · lista en 1-2 semanas',
         redesignTitle: 'Quiero mejorar mi web',
         redesignText: 'Para quien ya tiene web pero no le da resultados. Analizamos qué falla y la renovamos: diseño actual, carga rápida, bien en el móvil y visible en Google.',
         redesignPoints: [
@@ -69,7 +69,7 @@ export const home: SeedDoc<HomeShared, HomeLocalized> = {
           { text: 'Migración sin perder tu posicionamiento' },
           { text: 'Podrás editarla tú mismo' },
         ],
-        redesignPrice: 'Presupuesto cerrado tras la revisión gratuita',
+        redesignPrice: 'Desde 490 € + IVA · presupuesto cerrado tras la revisión gratuita',
       },
       audit: {
         eyebrow: 'Revisión gratuita',
@@ -139,7 +139,7 @@ export const home: SeedDoc<HomeShared, HomeLocalized> = {
           { text: 'Basic SEO and fast loading' },
           { text: 'Legal pages included' },
         ],
-        newPrice: 'From €349 + VAT · 1-2 weeks',
+        newPrice: 'One-off payment · ready in 1-2 weeks',
         redesignTitle: 'I want to improve my website',
         redesignText: "For those who already have a website that isn't delivering. We find what's wrong and renew it: modern design, fast loading, great on mobile and visible on Google.",
         redesignPoints: [
@@ -148,7 +148,7 @@ export const home: SeedDoc<HomeShared, HomeLocalized> = {
           { text: 'Migration without losing your ranking' },
           { text: 'You can edit it yourself' },
         ],
-        redesignPrice: 'Fixed quote after the free review',
+        redesignPrice: 'From €490 + VAT · fixed quote after the free review',
       },
       audit: {
         eyebrow: 'Free review',
@@ -218,7 +218,7 @@ export const home: SeedDoc<HomeShared, HomeLocalized> = {
           { text: 'SEO de base et chargement rapide' },
           { text: 'Mentions légales incluses' },
         ],
-        newPrice: 'À partir de 349 € + TVA · 1 à 2 semaines',
+        newPrice: 'Paiement unique · prêt en 1 à 2 semaines',
         redesignTitle: 'Je veux améliorer mon site',
         redesignText: "Pour ceux qui ont déjà un site qui ne donne pas de résultats. Nous trouvons ce qui ne va pas et le rénovons : design actuel, chargement rapide, parfait sur mobile et visible sur Google.",
         redesignPoints: [
@@ -227,7 +227,7 @@ export const home: SeedDoc<HomeShared, HomeLocalized> = {
           { text: 'Migration sans perdre votre référencement' },
           { text: 'Vous pourrez le modifier vous-même' },
         ],
-        redesignPrice: "Devis fixe après l'audit gratuit",
+        redesignPrice: "À partir de 490 € HT · devis fixe après l'audit gratuit",
       },
       audit: {
         eyebrow: 'Audit gratuit',

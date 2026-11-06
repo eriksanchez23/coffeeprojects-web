@@ -1,38 +1,45 @@
-// Brand the Payload admin with the "Café claro" palette (mirrors the public site tokens). Light is the default;
-// the dark admin theme keeps the espresso surfaces.
+// Brand the Payload admin with the "Café vivo" palette (mirrors the public site tokens). Light is the default;
+// the dark admin theme keeps the espresso surfaces. `--cp-accent` is the brand color the custom admin components use.
 :root {
-  --theme-success-500: #2f7a55;
+  --theme-success-500: #047857;
 }
 
 [data-theme='light'] {
-  --theme-bg: #fbf8f3;
-  --theme-elevation-0: #fbf8f3;
-  --theme-elevation-50: #f3ede4;
-  --theme-elevation-100: #eae1d5;
-  --theme-elevation-150: #e0d4c4;
-  --theme-elevation-1000: #1a1411;
+  --cp-accent: #c2410c;
+  --theme-bg: #fffaf5;
+  --theme-elevation-0: #fffaf5;
+  --theme-elevation-50: #fdf0e6;
+  --theme-elevation-100: #f8e2d1;
+  --theme-elevation-150: #f1d0b5;
+  --theme-elevation-1000: #1a1210;
 }
 
 [data-theme='dark'] {
-  --theme-bg: #1c1410;
-  --theme-elevation-0: #1c1410;
-  --theme-elevation-50: #261b15;
-  --theme-elevation-100: #2e221b;
-  --theme-elevation-150: #3a2b22;
-  --theme-elevation-1000: #fff7ec;
+  --cp-accent: #fb923c;
+  --theme-bg: #1a1210;
+  --theme-elevation-0: #1a1210;
+  --theme-elevation-50: #251914;
+  --theme-elevation-100: #2f2019;
+  --theme-elevation-150: #3b2920;
+  --theme-elevation-1000: #fff7ef;
 }
 
 .btn--style-primary {
-  background-color: #6f4e37;
+  background-color: #c2410c;
   color: #ffffff;
 
   &:hover,
   &:focus-visible {
-    background-color: #5a3e2b;
+    background-color: #9a3412;
   }
 }
 
 [data-theme='dark'] .btn--style-primary {
-  background-color: #f5a742;
-  color: #1c1410;
+  background-color: #fb923c;
+  color: #1a1210;
+
+  &:hover,
+  &:focus-visible {
+    background-color: #fdba74;
+  }
 }

@@ -1,8 +1,8 @@
 import { getTranslations } from 'next-intl/server'
 import { Button } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
-import { BrowserFrame, PhoneFrame, ShotImage, SiteSketch } from '@/components/showcase/device-frames'
-import { heroShowcase } from '@/lib/showcase'
+import { HeroShowcase } from '@/components/showcase/hero-showcase'
+import type { ShowcaseSlide } from '@/lib/showcase'
 import type { Home } from '@/payload-types'
 
 /** "Webs profesionales que *consiguen clientes*": the text between asterisks gets the serif italic accent. */
@@ -12,7 +12,7 @@ function Accent({ text }: { text: string }) {
     <>
       {parts.map((part, i) =>
         i % 2 === 1 ? (
-          <em key={i} className="font-serif font-normal italic text-brand">
+          <em key={i} className="text-gradient font-serif font-normal italic">
             {part}
           </em>
         ) : (
@@ -23,11 +23,15 @@ function Accent({ text }: { text: string }) {
   )
 }
 
-export async function Hero({ hero }: { hero: Home['hero'] }) {
+export async function Hero({ hero, slides = [] }: { hero: Home['hero']; slides?: ShowcaseSlide[] }) {
   const t = await getTranslations('home')
-  const { desktop, mobile } = heroShowcase
   return (
     <section className="hero-wash relative isolate overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28" aria-labelledby="hero-title">
+      <div aria-hidden className="aurora">
+        <span />
+        <span />
+        <span />
+      </div>
       <Container className="grid items-center gap-14 lg:grid-cols-[1.05fr_1fr]">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber">{hero.eyebrow}</p>
@@ -58,14 +62,7 @@ export async function Hero({ hero }: { hero: Home['hero'] }) {
               ))}
           </ul>
         </div>
-        <div className="relative mx-auto w-full max-w-[600px] pb-10 lg:pb-0">
-          <BrowserFrame url={desktop?.url ?? 'tunegocio.es'}>
-            {desktop ? <ShotImage shot={desktop} priority sizes="(min-width: 1024px) 600px, 100vw" /> : <SiteSketch />}
-          </BrowserFrame>
-          <PhoneFrame className="absolute -bottom-2 -left-10 hidden w-[30%] sm:block lg:-bottom-10">
-            {mobile ? <ShotImage shot={mobile} sizes="180px" /> : <SiteSketch variant="mobile" />}
-          </PhoneFrame>
-        </div>
+        <HeroShowcase slides={slides} showLabel={t.raw('showProject') as string} />
       </Container>
     </section>
   )

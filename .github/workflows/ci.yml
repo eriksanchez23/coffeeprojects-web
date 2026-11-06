@@ -58,7 +58,9 @@ jobs:
       - if: steps.pw-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
       - run: pnpm payload migrate
+      # No network screenshots in CI: projects keep their placeholder covers (src/seed/screenshots.ts).
       - run: pnpm seed
+        env: { SEED_SCREENSHOTS: '0' }
       # Without the secrets the admin spec skips itself, so there is no test user to create.
       - if: env.E2E_ADMIN_EMAIL != ''
         run: NEXT_PUBLIC_SITE_ENV=staging pnpm e2e:user

@@ -8,7 +8,8 @@ import { partners } from './data/partners'
 import { pricing, pricingData } from './data/pricing'
 import { projects } from './data/projects'
 import { services } from './data/services'
-import { fillProjectCaseStudies, upgradeFaqs, upgradeHome, upgradePricingEyebrow, upgradeServiceOrder, upgradeWebService } from './restructure'
+import { captureProjectScreenshots } from './screenshots'
+import { fillProjectCaseStudies, upgradeFaqs, upgradeHome, upgradePriceCopy, upgradePricingEyebrow, upgradeServiceOrder, upgradeWebService } from './restructure'
 import { settings } from './data/settings'
 import { team } from './data/team'
 import { needsReprice } from './reprice'
@@ -159,6 +160,10 @@ async function run() {
   await upgradePricingEyebrow(payload)
   await fillProjectCaseStudies(payload)
   await upgradeFaqs(payload)
+  await upgradePriceCopy(payload)
+
+  // Real screenshots for projects that still have no cover or phone view.
+  await captureProjectScreenshots(payload)
 
   payload.logger.info('Seed complete')
 }

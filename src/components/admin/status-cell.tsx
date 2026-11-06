@@ -1,7 +1,7 @@
 import { contactStatusLabels } from '@/fields/labels'
 
 export const statusColors: Record<string, string> = {
-  new: '#f5a742',
+  new: '#fb923c',
   'in-progress': '#7cc5ff',
   answered: '#6ee7b7',
   archived: '#6b5d4f',

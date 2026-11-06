@@ -9,7 +9,7 @@ const base =
   'inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] font-medium transition-[transform,background-color,box-shadow] duration-300 ease-[var(--ease-out-expo)] will-change-transform disabled:opacity-50 disabled:pointer-events-none'
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-brand text-white hover:bg-brand-hi shadow-[var(--shadow-amber)] [.on-dark_&]:text-espresso',
+  primary: 'btn-shine bg-brand text-white hover:bg-brand-hi hover:-translate-y-0.5 shadow-[var(--shadow-amber)] [.on-dark_&]:text-espresso',
   ghost: 'bg-transparent text-ink-0 hover:bg-bg-2',
   outline: 'bg-bg-1 text-ink-0 border border-line-hi hover:border-line-amber hover:text-brand',
 }

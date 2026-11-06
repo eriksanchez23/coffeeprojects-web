@@ -44,7 +44,7 @@ export async function InboxBanner({ payload, user, i18n }: Props) {
     >
       <strong style={{ fontSize: 18 }}>{copy.title}</strong>
       <div style={{ marginTop: 8 }}>
-        <a href={inboxHref(payload.config.routes.admin)} style={{ color: '#f5a742' }}>
+        <a href={inboxHref(payload.config.routes.admin)} style={{ color: 'var(--cp-accent)' }}>
           {copy.cta}
         </a>
       </div>

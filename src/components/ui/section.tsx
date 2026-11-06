@@ -18,7 +18,10 @@ export function Section({ id, eyebrow, title, lead, children, className }: Props
         {(eyebrow || title || lead) && (
           <header className="mb-14 max-w-3xl">
             {eyebrow && (
-              <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-amber">{eyebrow}</p>
+              <p className="mb-4 flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.14em] text-amber">
+                <span aria-hidden className="h-0.5 w-8 rounded-full bg-[linear-gradient(90deg,#c2410c,#e11d48)]" />
+                {eyebrow}
+              </p>
             )}
             {title && (
               <h2 id={id ? `${id}-title` : undefined} className="text-3xl font-semibold sm:text-4xl lg:text-5xl">

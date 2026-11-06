@@ -55,7 +55,9 @@
     "price": "Precio",
     "socials": "Redes",
     "requestReview": "Pide tu revisión gratuita",
-    "freeReview": "Revisión gratuita"
+    "freeReview": "Revisión gratuita",
+    "allPlans": "Varios planes con precio cerrado",
+    "afterReview": "Presupuesto cerrado tras la revisión gratuita"
   },
   "contact": {
     "title": "Cuéntanos qué necesitas",
@@ -170,7 +172,11 @@
     "service": "Servicio",
     "withPlan": "Con plan",
     "withoutPlan": "Sin plan",
-    "teaserMaintenance": "Mantenimiento opcional desde {price}: con cualquier plan, la web sale más barata."
+    "teaserMaintenance": "Mantenimiento opcional desde {price}: con cualquier plan, la web sale más barata.",
+    "plansTitle": "Elige tu plan",
+    "plansLead": "Todos los planes para una web nueva, con precio cerrado. Precio con mantenimiento; el precio sin mantenimiento aparece en cada plan.",
+    "redesignTitle": "¿Ya tienes web y quieres mejorarla?",
+    "redesignText": "La remodelamos desde {price}. Antes revisamos gratis tu web actual y te damos un presupuesto cerrado según lo que necesite."
   },
   "partners": {
     "rates": "Tu comisión según lo que contrate el cliente",
@@ -252,7 +258,10 @@
     "pathsTitle": "¿Empezamos de cero o mejoramos lo que tienes?",
     "auditUrlLabel": "Dirección de tu web",
     "auditCta": "Quiero mi revisión gratuita",
-    "auditNote": "En el siguiente paso te pedimos tu email para enviarte el informe. Sin compromiso."
+    "auditNote": "En el siguiente paso te pedimos tu email para enviarte el informe. Sin compromiso.",
+    "plansLead": "Elige entre todos nuestros planes:",
+    "seeAllPlans": "Comparar todos los planes",
+    "showProject": "Ver {title}"
   },
   "projects": {
     "kinds": {
