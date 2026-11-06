@@ -289,7 +289,11 @@
     "auditNote": "À l'étape suivante, nous vous demandons votre email pour envoyer le rapport. Sans engagement.",
     "plansLead": "Choisissez parmi toutes nos formules :",
     "seeAllPlans": "Comparer toutes les formules",
-    "showProject": "Voir {title}"
+    "showProject": "Voir {title}",
+    "openProject": "Ouvrir le projet {title}",
+    "prevProject": "Projet précédent",
+    "nextProject": "Projet suivant",
+    "viewProject": "Voir le projet"
   },
   "projects": {
     "kinds": {
@@ -307,7 +311,25 @@
     "results": "Résultats",
     "indexLead": "Des sites que nous avons créés ou rénovés. Certains sont sous accord de confidentialité : nous ne montrons donc pas le nom du client.",
     "appsTitle": "Applications web",
-    "appsLead": "Des outils et applications que nous développons aussi."
+    "appsLead": "Des outils et applications que nous développons aussi.",
+    "visitSite": "Visiter le site",
+    "viewDetails": "Voir la fiche du projet",
+    "details": "Fiche du projet",
+    "website": "Site",
+    "type": "Type",
+    "sector": "Secteur",
+    "year": "Année",
+    "status": "Statut",
+    "live": "En ligne",
+    "inProgress": "En cours",
+    "prevProject": "Projet précédent",
+    "nextProject": "Projet suivant",
+    "carouselLabel": "Projets (faites glisser pour en voir plus)",
+    "scrollPrev": "Voir les projets précédents",
+    "scrollNext": "Voir plus de projets",
+    "private": "Privé (sous NDA)",
+    "notPublic": "Pas de lien public",
+    "technologies": "Technologies et langages"
   },
   "otherDevelopment": {
     "title": "Autres développements",

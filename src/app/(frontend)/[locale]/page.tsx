@@ -72,7 +72,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         vat={pricing.vatNote ?? ''}
       />
       {home.audit && <AuditOffer audit={home.audit} />}
-      <ProjectsPreview locale={locale} title={sections.projectsTitle || tn('projects')} lead={sections.projectsLead} kinds={['new-website', 'redesign', 'store']} limit={3} />
+      <ProjectsPreview locale={locale} title={sections.projectsTitle || tn('projects')} lead={sections.projectsLead} kinds={['new-website', 'redesign', 'store']} layout="carousel" />
       {(home.process ?? []).length > 0 && <ProcessSteps title={sections.processTitle} steps={home.process ?? []} className="bg-bg-2" />}
       {(home.whyUs ?? []).length > 0 && <WhyUs title={sections.whyTitle} items={home.whyUs ?? []} />}
       {faqs.length > 0 && <FaqList title={tc('faqTitle')} items={faqs} />}

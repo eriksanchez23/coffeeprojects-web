@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
@@ -27,20 +26,6 @@ export function PhoneFrame({ children, className }: { children: ReactNode; class
 }
 
 export type Shot = { src: string; alt: string; width: number; height: number }
-
-export function ShotImage({ shot, priority, sizes, className }: { shot: Shot; priority?: boolean; sizes: string; className?: string }) {
-  return (
-    <Image
-      src={shot.src}
-      alt={shot.alt}
-      width={shot.width}
-      height={shot.height}
-      priority={priority}
-      sizes={sizes}
-      className={cn('block h-auto w-full', className)}
-    />
-  )
-}
 
 /**
  * Stand-in "website" drawn with CSS, used where no real screenshot exists yet: neutral blocks in brand colors,

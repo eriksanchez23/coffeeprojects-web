@@ -5,14 +5,13 @@ import { notFound } from 'next/navigation'
 import { PageShell } from '@/components/layout/page-shell'
 import { CtaBand } from '@/components/sections/cta-band'
 import { Badge } from '@/components/ui/badge'
-import { buttonClasses } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
 import { BrowserFrame, PhoneFrame, SiteSketch } from '@/components/showcase/device-frames'
 import { RichText } from '@/components/ui/rich-text'
 import type { Locale } from '@/i18n/locales'
 import { Link } from '@/i18n/navigation'
 import { localizedPaths } from '@/i18n/paths'
-import { getAllSlugs, getProject } from '@/lib/cms/queries'
+import { getAllSlugs, getProject, getProjects } from '@/lib/cms/queries'
 import { coverGradient, projectPublicUrl } from '@/lib/project-view'
 import type { Media } from '@/payload-types'
 import { JsonLd } from '@/components/seo/json-ld'
@@ -51,7 +50,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
   const found = await getProject(locale, slug)
   if (!found) notFound()
   const { doc: p, slugs } = found
-  const [t, tn, tp] = await Promise.all([getTranslations('common'), getTranslations('nav'), getTranslations('projects')])
+  const [t, tn, tp, all] = await Promise.all([
+    getTranslations('common'),
+    getTranslations('nav'),
+    getTranslations('projects'),
+    getProjects(locale),
+  ])
+  // Previous / next project, in the same order as the projects page (websites first, then apps), wrapping around.
+  const webKinds = ['new-website', 'redesign', 'store']
+  const ordered = [...all.filter((x) => webKinds.includes(x.kind ?? 'other')), ...all.filter((x) => !webKinds.includes(x.kind ?? 'other'))]
+  const index = ordered.findIndex((x) => x.id === p.id)
+  const prev = index >= 0 && ordered.length > 1 ? ordered[(index - 1 + ordered.length) % ordered.length] : undefined
+  const next = index >= 0 && ordered.length > 1 ? ordered[(index + 1) % ordered.length] : undefined
+  const stack = p.stack ?? []
   const pageUrl = absoluteUrl(localizedPaths('/projects/[slug]', slugs)[locale])
   const url = projectPublicUrl(p)
   const cover = typeof p.cover === 'object' ? (p.cover as Media | null) : null
@@ -88,24 +99,70 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
               {p.title}
             </h1>
             <p className="mt-6 max-w-3xl text-lg text-ink-2">{p.summary}</p>
-            <div className="mt-6 flex flex-wrap items-center gap-2">
-              {p.concept && <Badge>{tp('concept')}</Badge>}
-              {p.nda && <Badge>{t('nda')}</Badge>}
-              {p.status === 'in-progress' && <Badge>{t('inProgress')}</Badge>}
-              {url && (
-                <a href={url} target="_blank" rel="noopener noreferrer" className={`${buttonClasses({ variant: 'outline' })} ml-0 sm:ml-2`}>
-                  {t('visit')} ↗
-                </a>
-              )}
-            </div>
+            {(p.concept || p.nda) && (
+              <div className="mt-6 flex flex-wrap items-center gap-2">
+                {p.concept && <Badge>{tp('concept')}</Badge>}
+                {p.nda && <Badge>{t('nda')}</Badge>}
+              </div>
+            )}
             {p.concept && <p className="mt-4 max-w-3xl text-sm text-ink-3">{tp('conceptNote')}</p>}
             {p.nda && <p className="mt-4 max-w-3xl text-sm text-ink-3">{tp('ndaNote')}</p>}
+            <section aria-labelledby="project-details" className="mt-10 rounded-[var(--radius-lg)] border border-line bg-bg-1/80 p-6 shadow-[var(--shadow-soft)] sm:p-7" data-testid="project-details">
+              <h2 id="project-details" className="text-xs font-semibold uppercase tracking-[0.14em] text-amber">
+                {tp('details')}
+              </h2>
+              <dl className="mt-5 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-[1.4fr_1.6fr_1fr_1fr]">
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wider text-ink-3">{tp('website')}</dt>
+                  <dd className="mt-1.5">
+                    {url ? (
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex max-w-full items-center gap-1.5 font-semibold text-brand underline-offset-4 hover:underline"
+                        data-testid="project-url"
+                      >
+                        <span className="truncate">{new URL(url).hostname}</span> <span aria-hidden>↗</span>
+                      </a>
+                    ) : (
+                      <span className="text-ink-2">{p.nda ? tp('private') : tp('notPublic')}</span>
+                    )}
+                  </dd>
+                </div>
+                {stack.length > 0 && (
+                  <div>
+                    <dt className="text-xs font-medium uppercase tracking-wider text-ink-3">{tp('technologies')}</dt>
+                    <dd className="mt-1.5">
+                      <ul className="flex flex-wrap gap-1.5" data-testid="project-stack">
+                        {stack.map((s) => (
+                          <li key={s} className="rounded-full bg-bg-2 px-2.5 py-1 font-mono text-xs text-ink-1">
+                            {s}
+                          </li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                )}
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wider text-ink-3">{tp('type')}</dt>
+                  <dd className="mt-1.5 text-ink-0">{[tp(`kinds.${p.kind ?? 'other'}`), p.sector].filter(Boolean).join(' · ')}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wider text-ink-3">{tp('status')}</dt>
+                  <dd className="mt-1.5 text-ink-0">
+                    {p.status === 'in-progress' ? tp('inProgress') : tp('live')}
+                    {p.year ? <span className="text-ink-3"> · {p.year}</span> : null}
+                  </dd>
+                </div>
+              </dl>
+            </section>
           </Container>
         </header>
         <Container className="max-w-5xl">
           <BrowserFrame url={url ? new URL(url).hostname : undefined}>
             {cover?.url ? (
-              <Image src={cover.url} alt={cover.alt} width={cover.width ?? 1600} height={cover.height ?? 1000} priority sizes="(min-width: 1024px) 1024px, 100vw" className="block h-auto w-full" />
+              <Image src={cover.url} alt={cover.alt} width={cover.width ?? 1600} height={cover.height ?? 1000} preload sizes="(min-width: 1024px) 1024px, 100vw" className="block h-auto w-full" />
             ) : (
               <div style={{ background: coverGradient(p.slug) }} className="p-8 sm:p-14">
                 <div className="overflow-hidden rounded-[var(--radius-md)] border border-line shadow-[var(--shadow-soft)]">
@@ -167,10 +224,29 @@ export default async function ProjectPage({ params }: { params: Promise<{ locale
               ))}
             </ul>
           )}
-          {(p.stack ?? []).length > 0 && (
-            <p className="mt-16 border-t border-line pt-6 text-sm text-ink-3">
-              {t('stack')}: {(p.stack ?? []).join(' · ')}
-            </p>
+          {(prev || next) && (
+            <nav aria-label={tn('projects')} className="mt-20 grid gap-4 border-t border-line pt-8 sm:grid-cols-2">
+              {prev && (
+                <Link
+                  href={{ pathname: '/projects/[slug]', params: { slug: prev.slug } }}
+                  className="group rounded-[var(--radius-md)] border border-line p-5 transition-colors hover:border-line-amber"
+                  data-testid="project-prev"
+                >
+                  <span className="text-xs font-semibold uppercase tracking-wider text-ink-3">← {tp('prevProject')}</span>
+                  <span className="mt-1 block font-semibold text-ink-0 group-hover:text-brand">{prev.title}</span>
+                </Link>
+              )}
+              {next && (
+                <Link
+                  href={{ pathname: '/projects/[slug]', params: { slug: next.slug } }}
+                  className="group rounded-[var(--radius-md)] border border-line p-5 text-right transition-colors hover:border-line-amber sm:col-start-2"
+                  data-testid="project-next"
+                >
+                  <span className="text-xs font-semibold uppercase tracking-wider text-ink-3">{tp('nextProject')} →</span>
+                  <span className="mt-1 block font-semibold text-ink-0 group-hover:text-brand">{next.title}</span>
+                </Link>
+              )}
+            </nav>
           )}
         </Container>
       </article>

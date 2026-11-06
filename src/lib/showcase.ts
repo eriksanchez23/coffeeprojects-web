@@ -2,7 +2,8 @@ import type { Shot } from '@/components/showcase/device-frames'
 import type { Media, Project } from '@/payload-types'
 import { projectPublicUrl } from './project-view'
 
-export type ShowcaseSlide = { slug: string; title: string; url: string; desktop: Shot; mobile?: Shot }
+/** `url` is the hostname shown in the browser frame; `stack` the technologies, shown under the frame. */
+export type ShowcaseSlide = { slug: string; title: string; url: string; stack: string[]; desktop: Shot; mobile?: Shot }
 
 const asShot = (m: unknown): Shot | null => {
   const media = m && typeof m === 'object' ? (m as Media) : null
@@ -27,6 +28,7 @@ export function pickShowcase(projects: Project[], limit = 3): ShowcaseSlide[] {
       slug: p.slug,
       title: p.title,
       url: url ? new URL(url).hostname : p.title,
+      stack: (p.stack ?? []).slice(0, 4),
       desktop,
       mobile: phone && phone.height > phone.width ? phone : undefined,
       own: Boolean(url && /(^|\.)coffeeprojects\.es$/.test(new URL(url).hostname)),

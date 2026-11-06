@@ -31,14 +31,16 @@ export default function ScrollEffectsRuntime() {
       const mm = gsap.matchMedia()
 
       mm.add(MOTION_OK, () => {
-        // 1. Reveal cards in batches
+        // 1. Reveal cards in batches. They start as soon as their top edge crosses the bottom of the viewport and
+        //    finish quickly, so even a fast scroll (or a fling on a phone) never lands on blank space.
         const reveals = gsap.utils.toArray<HTMLElement>('[data-reveal]').filter(belowFold)
         if (reveals.length > 0) {
-          gsap.set(reveals, { autoAlpha: 0, y: 40 })
+          gsap.set(reveals, { autoAlpha: 0, y: 24 })
           ScrollTrigger.batch(reveals, {
-            start: 'top 88%',
+            start: 'top bottom',
             once: true,
-            onEnter: (els) => gsap.to(els, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08 }),
+            interval: 0.05,
+            onEnter: (els) => gsap.to(els, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.05, overwrite: true }),
           })
         }
 
@@ -50,10 +52,10 @@ export default function ScrollEffectsRuntime() {
             const split = SplitText.create(el, { type: 'words', mask: 'words' })
             gsap.from(split.words, {
               yPercent: 110,
-              duration: 1.1,
-              ease: 'expo.out',
-              stagger: 0.04,
-              scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+              duration: 0.7,
+              ease: 'power3.out',
+              stagger: 0.03,
+              scrollTrigger: { trigger: el, start: 'top bottom', once: true },
             })
           })
 
@@ -80,9 +82,9 @@ export default function ScrollEffectsRuntime() {
             const obj = { v: 0 }
             gsap.to(obj, {
               v: to,
-              duration: 1.8,
+              duration: 1.2,
               ease: 'power3.out',
-              scrollTrigger: { trigger: display, start: 'top 90%', once: true },
+              scrollTrigger: { trigger: display, start: 'top 95%', once: true },
               onUpdate: () => {
                 display.textContent = obj.v.toFixed(decimals)
               },

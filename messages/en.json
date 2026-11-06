@@ -289,7 +289,11 @@
     "auditNote": "Next we ask for your email to send you the report. No commitment.",
     "plansLead": "Choose from all our plans:",
     "seeAllPlans": "Compare all plans",
-    "showProject": "Show {title}"
+    "showProject": "Show {title}",
+    "openProject": "Open the {title} project",
+    "prevProject": "Previous project",
+    "nextProject": "Next project",
+    "viewProject": "View project"
   },
   "projects": {
     "kinds": {
@@ -307,7 +311,25 @@
     "results": "Results",
     "indexLead": "Websites we have built or renewed. Some are under a confidentiality agreement, so we don't show the client's name.",
     "appsTitle": "Web apps",
-    "appsLead": "Tools and applications we also build."
+    "appsLead": "Tools and applications we also build.",
+    "visitSite": "Visit the website",
+    "viewDetails": "View project details",
+    "details": "Project details",
+    "website": "Website",
+    "type": "Type",
+    "sector": "Sector",
+    "year": "Year",
+    "status": "Status",
+    "live": "Live",
+    "inProgress": "In progress",
+    "prevProject": "Previous project",
+    "nextProject": "Next project",
+    "carouselLabel": "Projects (swipe to see more)",
+    "scrollPrev": "See previous projects",
+    "scrollNext": "See more projects",
+    "private": "Private (under NDA)",
+    "notPublic": "No public link",
+    "technologies": "Technologies and languages"
   },
   "otherDevelopment": {
     "title": "Other development",

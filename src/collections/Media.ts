@@ -26,6 +26,12 @@ export const Media: CollectionConfig = {
     // Raster only: SVG can carry scripts and is served from our origin.
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'],
     focalPoint: true,
+    // Self-hosted files (served by /api/media/file) can be cached by browsers and the image optimizer for a week:
+    // a re-upload gets a new file name, so a URL never changes its content.
+    modifyResponseHeaders: ({ headers }) => {
+      headers.set('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400')
+      return headers
+    },
     imageSizes: [
       { name: 'card', width: 800 },
       { name: 'og', width: 1200, height: 630, position: 'centre' },

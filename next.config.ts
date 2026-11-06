@@ -20,7 +20,12 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
+      // Media stored in Vercel Blob (preview/Vercel deployments), served from its CDN.
+      { protocol: 'https', hostname: '*.public.blob.vercel-storage.com', pathname: '/**' },
     ],
+    // Optimized images are kept for a week (Blob files already say one year): a project screenshot never
+    // changes under the same name, since Payload renames re-uploads.
+    minimumCacheTTL: 604800,
     localPatterns: [
       {
         pathname: '/api/media/file/**',

@@ -91,7 +91,9 @@ export default buildConfig({
       // Keep the plugin's fields (e.g. _objectKey) in the schema even when disabled locally, so generated
       // migrations match production, where the token is set and the plugin queries those columns.
       alwaysInsertFields: true,
-      collections: { media: true },
+      // Media is public (read: () => true): its URLs point straight at the Blob CDN instead of streaming every
+      // file through Payload's /api/media/file route (a serverless function per image, cold starts included).
+      collections: { media: { disablePayloadAccessControl: true } },
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
     }),
   ],

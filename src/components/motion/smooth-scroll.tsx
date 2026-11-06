@@ -11,7 +11,8 @@ export default function SmoothScroll() {
   useEffect(() => {
     const lenis = new Lenis({
       autoRaf: false,
-      lerp: 0.1,
+      // A little snappier than Lenis' default (0.1): the page follows the wheel closely and never feels behind.
+      lerp: 0.14,
       // In-page anchors are handled below: Lenis' own handler smooth-scrolls on top of the native jump.
       anchors: false,
       stopInertiaOnNavigate: true,

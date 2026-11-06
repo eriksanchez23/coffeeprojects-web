@@ -62,7 +62,16 @@ export async function Hero({ hero, slides = [] }: { hero: Home['hero']; slides?:
               ))}
           </ul>
         </div>
-        <HeroShowcase slides={slides} dotLabels={slides.map((s) => t('showProject', { title: s.title }))} />
+        <HeroShowcase
+          slides={slides}
+          labels={{
+            dots: slides.map((s) => t('showProject', { title: s.title })),
+            open: slides.map((s) => t('openProject', { title: s.title })),
+            prev: t('prevProject'),
+            next: t('nextProject'),
+            viewProject: t('viewProject'),
+          }}
+        />
       </Container>
     </section>
   )

@@ -103,6 +103,14 @@
 
 /* ---- Motion. Every animation below is switched off by the reduced-motion rule further down. ---- */
 
+/* Horizontal carousels: still scrollable by touch, trackpad, drag and keyboard, without a visible scrollbar. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Orange→rose accent for headline words. */
 @utility text-gradient {
   background-image: linear-gradient(100deg, #c2410c 0%, #e11d48 45%, #c2410c 90%);
