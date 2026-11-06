@@ -11,10 +11,10 @@ const INTERVAL_MS = 5000
 /**
  * Home hero visual: real screenshots of our projects in a browser and a phone frame, cross-fading from one project
  * to the next every few seconds (paused on hover/focus and for reduced motion). The first slide is server-rendered
- * and loads with priority, so the hero paints the same with or without JS. `showLabel` names each dot, with
- * `{title}` replaced by the project title.
+ * and loads with priority, so the hero paints the same with or without JS. `dotLabels[i]` is the accessible name of
+ * the dot that shows slide i (translated on the server).
  */
-export function HeroShowcase({ slides, showLabel }: { slides: ShowcaseSlide[]; showLabel: string }) {
+export function HeroShowcase({ slides, dotLabels }: { slides: ShowcaseSlide[]; dotLabels: string[] }) {
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
   const reduced = useReducedMotion()
@@ -89,7 +89,7 @@ export function HeroShowcase({ slides, showLabel }: { slides: ShowcaseSlide[]; s
               key={s.slug}
               type="button"
               onClick={() => setActive(i)}
-              aria-label={showLabel.replace('{title}', s.title)}
+              aria-label={dotLabels[i] ?? s.title}
               aria-pressed={i === active}
               className={cn('h-2 rounded-full transition-all duration-500', i === active ? 'w-8 bg-brand' : 'w-2 bg-line-hi hover:bg-ink-3')}
             />

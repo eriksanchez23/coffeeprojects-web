@@ -62,7 +62,7 @@ export async function Hero({ hero, slides = [] }: { hero: Home['hero']; slides?:
               ))}
           </ul>
         </div>
-        <HeroShowcase slides={slides} showLabel={t.raw('showProject') as string} />
+        <HeroShowcase slides={slides} dotLabels={slides.map((s) => t('showProject', { title: s.title }))} />
       </Container>
     </section>
   )
