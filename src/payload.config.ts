@@ -2,6 +2,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { resendAdapter } from '@payloadcms/email-resend'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { resolveDatabaseUrl } from './lib/db/database-url'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { en } from 'payload/i18n/en'
@@ -71,7 +72,7 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URL || '' },
+    pool: { connectionString: resolveDatabaseUrl(process.env.DATABASE_URL) },
     migrationDir: path.resolve(dirname, 'migrations'),
     // Dev push only under `next dev`; seeds, builds and deploys rely on migrations (src/lib/db/push.ts).
     push: shouldPushSchema(),
