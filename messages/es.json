@@ -160,7 +160,21 @@
       "maintenanceOption": "Plan {name} — {monthly}/mes · la web te sale por {web}",
       "noneOption": "Sin mantenimiento — la web te sale por {web}",
       "hint": "Precios sin IVA. Con cualquier plan de mantenimiento la web sale más barata.",
-      "maintenanceHint": "Incluye hosting, dominio, SSL, copias de seguridad y cambios cada mes. Puedes contratarlo más adelante."
+      "maintenanceHint": "Incluye hosting, dominio, SSL, copias de seguridad y cambios cada mes. Puedes contratarlo más adelante.",
+      "detailsTitle": "Qué incluye tu elección",
+      "yourWeb": "Tu web",
+      "yourMaintenance": "Tu mantenimiento",
+      "seePlan": "Ver el plan en precios",
+      "seeMaintenance": "Ver el mantenimiento en precios",
+      "compare": "Comparar con y sin mantenimiento",
+      "allPlans": "Ver y comparar todos los planes",
+      "newTab": "se abre en una pestaña nueva",
+      "notIncluded": "No incluido:",
+      "maintenanceMeta": "{monthly}/mes + IVA · permanencia de {months, plural, one {# mes} other {# meses}}",
+      "saving": "Con este plan la web te sale {amount} más barata (sin IVA).",
+      "noneTitle": "Solo la web",
+      "noneText": "Instalamos la web en el hosting y el dominio que contrates tú. Después, los cambios y arreglos se cobran aparte con la tarifa «sin plan».",
+      "noneExtra": "Sin mantenimiento la web cuesta {amount} más (sin IVA). Puedes contratarlo más adelante."
     }
   },
   "pricing": {

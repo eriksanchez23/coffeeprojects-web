@@ -160,7 +160,21 @@
       "maintenanceOption": "Formule {name} — {monthly}/mois · votre site coûte {web}",
       "noneOption": "Sans maintenance — votre site coûte {web}",
       "hint": "Prix hors TVA. Avec n’importe quelle formule de maintenance, le site coûte moins cher.",
-      "maintenanceHint": "Comprend hébergement, domaine, SSL, sauvegardes et modifications chaque mois. Vous pouvez l’ajouter plus tard."
+      "maintenanceHint": "Comprend hébergement, domaine, SSL, sauvegardes et modifications chaque mois. Vous pouvez l’ajouter plus tard.",
+      "detailsTitle": "Ce que comprend votre choix",
+      "yourWeb": "Votre site",
+      "yourMaintenance": "Votre maintenance",
+      "seePlan": "Voir cette formule sur la page des tarifs",
+      "seeMaintenance": "Voir cette maintenance sur la page des tarifs",
+      "compare": "Comparer avec et sans maintenance",
+      "allPlans": "Voir et comparer toutes les formules",
+      "newTab": "s’ouvre dans un nouvel onglet",
+      "notIncluded": "Non inclus :",
+      "maintenanceMeta": "{monthly}/mois HT · engagement de {months, plural, one {# mois} other {# mois}}",
+      "saving": "Avec cette formule, votre site vous coûte {amount} de moins (HT).",
+      "noneTitle": "Le site seul",
+      "noneText": "Nous installons le site sur l’hébergement et le domaine que vous souscrivez vous-même. Ensuite, les modifications et corrections sont facturées à part au tarif « sans formule ».",
+      "noneExtra": "Sans maintenance, le site coûte {amount} de plus (HT). Vous pourrez la souscrire plus tard."
     }
   },
   "pricing": {

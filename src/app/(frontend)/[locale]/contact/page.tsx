@@ -60,8 +60,14 @@ export default async function ContactPage({
   const maintenancePlans = completeMaintenancePlans(pricing.maintenancePlans)
   const euro = (n: number) => formatEuro(n, locale)
   const from = (text: string, isFrom: boolean | null | undefined) => (isFrom ? quoteLabels.from.replace('{price}', text) : text)
+  // Each choice also carries what it includes and a link to its card on the pricing page (opened in a new tab so
+  // the form keeps what the visitor typed).
+  const pricingPath = localizedPaths('/pricing')[locale]
+  const items = (rows: { text: string; excluded?: boolean | null }[] | null | undefined) =>
+    (rows ?? []).map((r) => ({ text: r.text, excluded: Boolean(r.excluded) }))
   const webOptions: WebPlanOption[] = packages.map((p) => {
     const allowed = allowedMaintenance(p.minPlan, maintenancePlans)
+    const saving = (p.priceWebOnly as number) - (p.priceWithMaintenance as number)
     const webWith = from(euro(p.priceWithMaintenance as number), p.fromPrice)
     const webOnly = from(euro(p.priceWebOnly as number), p.fromPrice)
     const type = p.contactType ?? 'web'
@@ -76,12 +82,37 @@ export default async function ContactPage({
       contactType: type,
       label: t('webPlan.option', { name: p.name, with: webWith, without: webOnly }),
       defaultMaintenance: allowed[0]?.slug ?? 'none',
+      info: {
+        name: p.name,
+        pitch: p.pitch ?? undefined,
+        lead: p.itemsLead ?? undefined,
+        items: items(p.items),
+        href: `${pricingPath}#plan-${p.slug}`,
+      },
       maintenance: allowed.map((m) => ({
         slug: m.slug,
         label: t('webPlan.maintenanceOption', { name: m.name, monthly: euro(m.monthlyPrice as number), web: webWith }),
         quote: quoteFor({ name: m.name, monthlyPrice: m.monthlyPrice as number }),
+        info: {
+          name: m.name,
+          pitch: m.pitch ?? undefined,
+          meta: t('webPlan.maintenanceMeta', { monthly: euro(m.monthlyPrice as number), months: m.permanenceMonths as number }),
+          note: saving > 0 ? t('webPlan.saving', { amount: euro(saving) }) : undefined,
+          items: items(m.items),
+          href: `${pricingPath}#maintenance-${m.slug}`,
+        },
       })),
-      none: { label: t('webPlan.noneOption', { web: webOnly }), quote: quoteFor('none') },
+      none: {
+        label: t('webPlan.noneOption', { web: webOnly }),
+        quote: quoteFor('none'),
+        info: {
+          name: t('webPlan.noneTitle'),
+          pitch: t('webPlan.noneText'),
+          note: saving > 0 ? t('webPlan.noneExtra', { amount: euro(saving) }) : undefined,
+          items: [],
+          href: `${pricingPath}#pricing-comparison-title`,
+        },
+      },
     }
   })
   const alternates = localizedPaths('/contact')
@@ -114,6 +145,7 @@ export default async function ContactPage({
               prefill={{ type, plan, url: prefillUrl }}
               quotes={quotes}
               webOptions={webOptions}
+              pricingHref={pricingPath}
               siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ''}
             />
           </GlassCard>

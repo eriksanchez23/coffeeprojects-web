@@ -77,6 +77,42 @@ test('a new website: choose the type of website, then maintenance or none, and t
   await expect(page.locator('#quote-summary')).toHaveAttribute('aria-live', 'polite')
 })
 
+test('the chosen website and maintenance show what they include, with links to their pricing cards', async ({ page, context }) => {
+  await page.goto('/contacto')
+  const planSelect = page.getByLabel('Tipo de web')
+  const maintenance = page.getByLabel('Mantenimiento', { exact: true })
+  // Nothing chosen yet: a link to compare every plan.
+  await expect(page.getByTestId('plan-details')).toHaveCount(0)
+  await expect(page.getByRole('link', { name: /Ver y comparar todos los planes/ })).toHaveAttribute('href', '/precios')
+
+  await planSelect.selectOption('tienda-online')
+  const web = page.getByTestId('plan-info')
+  const plan = page.getByTestId('maintenance-info')
+  await expect(web).toContainText('Tienda Online')
+  await expect(web).toContainText('Catálogo sin límite de productos')
+  await expect(web.getByRole('link', { name: /Ver el plan en precios/ })).toHaveAttribute('href', '/precios#plan-tienda-online')
+  await expect(plan).toContainText('Plus')
+  await expect(plan).toContainText(/45\s€\/mes \+ IVA · permanencia de 24 meses/)
+  await expect(plan).toContainText(/la web te sale 700\s€ más barata/)
+  await expect(plan.getByRole('link', { name: /Ver el mantenimiento en precios/ })).toHaveAttribute('href', '/precios#maintenance-plus')
+
+  await maintenance.selectOption('pro')
+  await expect(plan).toContainText(/79\s€\/mes \+ IVA · permanencia de 12 meses/)
+  await expect(plan.getByRole('link', { name: /Ver el mantenimiento en precios/ })).toHaveAttribute('href', '/precios#maintenance-pro')
+
+  await maintenance.selectOption('none')
+  await expect(plan).toContainText('Solo la web')
+  await expect(plan).toContainText(/cuesta 700\s€ más/)
+  await expect(plan.getByRole('link', { name: /Comparar con y sin mantenimiento/ })).toHaveAttribute('href', '/precios#pricing-comparison-title')
+
+  // The link opens the pricing page in a new tab (the form keeps what was typed) on the plan's card.
+  const [pricing] = await Promise.all([context.waitForEvent('page'), web.getByRole('link', { name: /Ver el plan en precios/ }).click()])
+  await pricing.waitForLoadState()
+  await expect(pricing).toHaveURL(/\/precios#plan-tienda-online$/)
+  await expect(pricing.locator('#plan-tienda-online')).toBeInViewport()
+  await expect(page.getByLabel('Tipo de web')).toHaveValue('tienda-online')
+})
+
 test('the quote summary is localized', async ({ page }) => {
   await page.goto('/en/contact?type=ecommerce')
   await expect(page.getByTestId('quote-summary')).toContainText(/from €1,802\.90/)

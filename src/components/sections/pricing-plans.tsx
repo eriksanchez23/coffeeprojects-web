@@ -93,7 +93,7 @@ export async function PricingPlans({ pricing, locale }: Props) {
 
           {comparison?.title && (comparison.rows ?? []).length > 0 && (
             <section aria-labelledby="pricing-comparison-title" className="mt-16">
-              <h3 id="pricing-comparison-title" className="text-2xl font-semibold sm:text-3xl">
+              <h3 id="pricing-comparison-title" className="scroll-mt-28 text-2xl font-semibold sm:text-3xl">
                 {comparison.title}
               </h3>
               {comparison.intro && <p className="mt-3 mb-8 max-w-3xl text-ink-2">{comparison.intro}</p>}

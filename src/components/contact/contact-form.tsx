@@ -9,6 +9,7 @@ import type { QuoteLine } from '@/features/contact/quote'
 import { readConsentFromDocument } from '@/features/tracking/consent'
 import { Link } from '@/i18n/navigation'
 import { clsx } from 'clsx'
+import { type PlanInfo, PlanInfoCard } from './plan-info'
 import { TurnstileWidget } from './turnstile-widget'
 
 // `plan` is a pricing package slug the page already validated against the pricing global.
@@ -23,8 +24,9 @@ export type WebPlanOption = {
   contactType: ProjectType
   label: string
   defaultMaintenance: string
-  maintenance: { slug: string; label: string; quote: QuoteLine[] }[]
-  none: { label: string; quote: QuoteLine[] }
+  info: PlanInfo
+  maintenance: { slug: string; label: string; quote: QuoteLine[]; info: PlanInfo }[]
+  none: { label: string; quote: QuoteLine[]; info: PlanInfo }
 }
 
 type Path = 'web' | 'existing' | 'other'
@@ -46,6 +48,7 @@ export function ContactForm({
   prefill,
   quotes,
   webOptions = [],
+  pricingHref,
   siteKey,
 }: {
   locale: string
@@ -57,6 +60,8 @@ export function ContactForm({
    */
   quotes: Partial<Record<ProjectType, QuoteLine[]>>
   webOptions?: WebPlanOption[]
+  /** The pricing page in this locale, for the "see every plan" link. */
+  pricingHref?: string
   siteKey: string
 }) {
   const t = useTranslations('contact')
@@ -143,11 +148,12 @@ export function ContactForm({
     setMaintenance(webOptions.find((o) => o.slug === slug)?.defaultMaintenance ?? 'none')
   }
   const selectedType: ProjectType = path === 'web' ? (option?.contactType ?? 'web') : path === 'existing' ? existingType : otherType
-  const webQuote = option
+  const maintenanceOption = option
     ? maintenanceChoice === 'none'
-      ? option.none.quote
-      : (option.maintenance.find((m) => m.slug === maintenanceChoice)?.quote ?? option.none.quote)
+      ? option.none
+      : (option.maintenance.find((m) => m.slug === maintenanceChoice) ?? option.none)
     : null
+  const webQuote = maintenanceOption?.quote ?? null
   const quote = path === 'web' && webOptions.length > 0 ? (webQuote ?? []) : (quotes[selectedType] ?? [])
   const checkedIssues = new Set((values.websiteIssues ?? '').split(','))
   const pathCards: { value: Path; title: string; text: string }[] = [
@@ -241,6 +247,31 @@ export function ContactForm({
               </select>
               <p id="maintenance-hint" className="mt-1 text-xs text-ink-3">{t('webPlan.maintenanceHint')}</p>
             </div>
+          )}
+          {option && maintenanceOption ? (
+            <section aria-label={t('webPlan.detailsTitle')} className="grid gap-3 sm:grid-cols-2" data-testid="plan-details">
+              <PlanInfoCard
+                info={option.info}
+                eyebrow={t('webPlan.yourWeb')}
+                linkLabel={t('webPlan.seePlan')}
+                newTab={t('webPlan.newTab')}
+                notIncluded={t('webPlan.notIncluded')}
+                testId="plan-info"
+              />
+              <PlanInfoCard
+                info={maintenanceOption.info}
+                eyebrow={t('webPlan.yourMaintenance')}
+                linkLabel={maintenanceChoice === 'none' ? t('webPlan.compare') : t('webPlan.seeMaintenance')}
+                newTab={t('webPlan.newTab')}
+                notIncluded={t('webPlan.notIncluded')}
+                testId="maintenance-info"
+              />
+            </section>
+          ) : (
+            pricingHref && <a href={pricingHref} target="_blank" rel="noopener" className="justify-self-start text-sm font-semibold text-brand underline-offset-4 hover:underline">
+              {t('webPlan.allPlans')} <span aria-hidden>↗</span>
+              <span className="sr-only"> ({t('webPlan.newTab')})</span>
+            </a>
           )}
         </div>
       )}

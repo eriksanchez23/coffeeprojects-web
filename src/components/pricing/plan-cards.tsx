@@ -17,6 +17,8 @@ function cardClasses(featured: boolean | null | undefined) {
     featured
       ? 'border-line-amber bg-bg-2 bg-[linear-gradient(180deg,rgb(245_167_66/0.12),transparent_45%)] shadow-[var(--shadow-amber)]'
       : 'border-line bg-bg-1/60 transition-colors duration-300 hover:border-line-hi',
+    // Linked from the contact form (/pricing#plan-…, #maintenance-…): the card a visitor lands on is outlined.
+    'has-[h3:target]:outline has-[h3:target]:outline-2 has-[h3:target]:outline-offset-4 has-[h3:target]:outline-brand',
   )
 }
 
@@ -68,7 +70,7 @@ export function WebPlanCard({ plan, minPlanName, locale, vat, t, from }: WebCard
   return (
     <li data-reveal className={cardClasses(plan.featured)}>
       <Badges featured={plan.featured} isNew={plan.isNew} t={t} />
-      <h3 id={titleId} className="font-display text-2xl font-semibold">
+      <h3 id={titleId} className="scroll-mt-36 font-display text-2xl font-semibold">
         {plan.name}
       </h3>
       {plan.pitch && <p className="mt-2 text-sm text-ink-2">{plan.pitch}</p>}
@@ -122,7 +124,7 @@ export function MaintenancePlanCard({ plan, locale, vat, t, perMonth }: Maintena
   return (
     <li data-reveal className={cardClasses(plan.featured)}>
       <Badges featured={plan.featured} t={t} />
-      <h3 id={titleId} className="font-display text-2xl font-semibold">
+      <h3 id={titleId} className="scroll-mt-36 font-display text-2xl font-semibold">
         {plan.name}
       </h3>
       {plan.pitch && <p className="mt-2 text-sm text-ink-2">{plan.pitch}</p>}

@@ -160,7 +160,21 @@
       "maintenanceOption": "{name} plan — {monthly}/month · your website costs {web}",
       "noneOption": "No maintenance — your website costs {web}",
       "hint": "Prices exclude VAT. With any maintenance plan the website costs less.",
-      "maintenanceHint": "Includes hosting, domain, SSL, backups and monthly changes. You can add it later."
+      "maintenanceHint": "Includes hosting, domain, SSL, backups and monthly changes. You can add it later.",
+      "detailsTitle": "What your choice includes",
+      "yourWeb": "Your website",
+      "yourMaintenance": "Your maintenance",
+      "seePlan": "See this plan on the pricing page",
+      "seeMaintenance": "See this maintenance plan on the pricing page",
+      "compare": "Compare with and without maintenance",
+      "allPlans": "See and compare every plan",
+      "newTab": "opens in a new tab",
+      "notIncluded": "Not included:",
+      "maintenanceMeta": "{monthly}/month + VAT · {months, plural, one {# month} other {# months}} minimum term",
+      "saving": "With this plan your website costs {amount} less (VAT excluded).",
+      "noneTitle": "Website only",
+      "noneText": "We install the website on the hosting and domain you take out yourself. After that, changes and fixes are charged separately at the \"no plan\" rate.",
+      "noneExtra": "Without maintenance the website costs {amount} more (VAT excluded). You can add it later."
     }
   },
   "pricing": {
