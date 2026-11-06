@@ -17,6 +17,15 @@ export function findMinPlan<T extends Slugged>(slug: string | null | undefined, 
   return slug ? plans.find((p) => p.slug === slug) : undefined
 }
 
+/**
+ * Maintenance plans that unlock a web plan's reduced price: its minimum plan and every plan listed after it
+ * (the pricing global lists them from basic to complete). Without a minimum plan, all of them.
+ */
+export function allowedMaintenance<T extends Slugged>(minPlan: string | null | undefined, plans: readonly T[]): T[] {
+  const from = minPlan ? plans.findIndex((p) => p.slug === minPlan) : 0
+  return from < 0 ? [...plans] : plans.slice(from)
+}
+
 /** Web plans that can be shown: both prices present (rows left by an older schema have none). */
 export function completeWebPlans<T extends WebPlanPrices>(plans: readonly T[] | null | undefined): T[] {
   return (plans ?? []).filter((p) => isAmount(p.priceWithMaintenance) && isAmount(p.priceWebOnly))

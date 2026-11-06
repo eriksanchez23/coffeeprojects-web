@@ -105,7 +105,11 @@
       "perMonth": "{price}/mois",
       "custom": "Sur mesure (sur devis)",
       "vat": "TVA (21 %) incluse",
-      "hint": "Prix indicatif selon le type de projet ; nous vous confirmerons le montant exact dans notre proposition."
+      "hint": "Prix indicatif selon le type de projet ; nous vous confirmerons le montant exact dans notre proposition.",
+      "maintenance": "Maintenance",
+      "noMaintenance": "Sans maintenance",
+      "webPrice": "Prix du site",
+      "pickPlan": "Choisissez le type de site pour voir son prix."
     },
     "errors": {
       "required": "Ce champ est obligatoire.",
@@ -147,7 +151,17 @@
     },
     "auditOnly": "Pour l'instant, je veux seulement l'audit gratuit",
     "auditOnlyHint": "Nous vous envoyons un court rapport sous 48 h avec ce qui ne va pas et comment le corriger.",
-    "messageOptional": "Dites-nous en plus (facultatif)"
+    "messageOptional": "Dites-nous en plus (facultatif)",
+    "webPlan": {
+      "label": "Type de site",
+      "placeholder": "Je ne sais pas encore, aidez-moi à choisir",
+      "option": "{name} — {with} avec maintenance · {without} sans maintenance",
+      "maintenanceLabel": "Maintenance",
+      "maintenanceOption": "Formule {name} — {monthly}/mois · votre site coûte {web}",
+      "noneOption": "Sans maintenance — votre site coûte {web}",
+      "hint": "Prix hors TVA. Avec n’importe quelle formule de maintenance, le site coûte moins cher.",
+      "maintenanceHint": "Comprend hébergement, domaine, SSL, sauvegardes et modifications chaque mois. Vous pouvez l’ajouter plus tard."
+    }
   },
   "pricing": {
     "recommended": "Recommandé",

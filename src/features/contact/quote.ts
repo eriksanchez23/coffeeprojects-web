@@ -13,8 +13,10 @@ export const VAT_RATE = 0.21
 
 /** A price with VAT; `null` when the service has no numeric price (custom quote, external store). */
 export type QuotePrice = { amount: number; from: boolean; monthly: boolean } | null
+/** Maintenance chosen with a web plan: a monthly plan (the web then costs its "with maintenance" price) or none. */
+export type QuoteMaintenance = { name: string; monthly: QuotePrice } | 'none'
 export type Quote = {
-  plan?: { name: string; withMaintenance: QuotePrice; webOnly: QuotePrice }
+  plan?: { name: string; withMaintenance: QuotePrice; webOnly: QuotePrice; maintenance?: QuoteMaintenance }
   /** Only without a plan: the matching service's "from" price. */
   price?: QuotePrice
   time?: string
@@ -26,6 +28,7 @@ export type QuoteService = {
   pricing?: { mode?: string | null; amount?: number | null } | null
 }
 export type QuotePlan = { name: string; priceWithMaintenance: number; priceWebOnly: number; fromPrice?: boolean | null }
+export type QuoteMaintenancePlan = { name: string; monthlyPrice: number }
 
 /** Message templates (`contact.quote` in messages/*.json); `{price}` is replaced in `from` and `perMonth`. */
 export type QuoteLabels = {
@@ -38,10 +41,13 @@ export type QuoteLabels = {
   perMonth: string
   custom: string
   vat: string
+  maintenance: string
+  noMaintenance: string
+  webPrice: string
 }
 export type QuoteLine = { label: string; value: string }
 
-const LABEL_KEYS = ['plan', 'price', 'withMaintenance', 'webOnly', 'time', 'from', 'perMonth', 'custom', 'vat'] as const
+const LABEL_KEYS = ['plan', 'price', 'withMaintenance', 'webOnly', 'time', 'from', 'perMonth', 'custom', 'vat', 'maintenance', 'noMaintenance', 'webPrice'] as const
 
 /**
  * Labels from next-intl's `t` for the `contact` namespace. Messages are precompiled at build time, so `t.raw`
@@ -70,7 +76,21 @@ function servicePrice(service: QuoteService | undefined): QuotePrice {
   return { amount: withVat(amount), from: true, monthly: mode === 'monthly' }
 }
 
-export function buildQuote({ type, plan, services }: { type: string; plan?: QuotePlan; services: readonly QuoteService[] }): Quote {
+/**
+ * `maintenance`: the visitor's choice for the web plan (`'none'` = web only); omitted when not chosen yet, in
+ * which case both web prices are shown. Ignored without a plan.
+ */
+export function buildQuote({
+  type,
+  plan,
+  maintenance,
+  services,
+}: {
+  type: string
+  plan?: QuotePlan
+  maintenance?: QuoteMaintenancePlan | 'none'
+  services: readonly QuoteService[]
+}): Quote {
   const service = serviceForType(type, services)
   const time = service?.typicalTime?.trim() || undefined
   const quote: Quote = plan
@@ -79,6 +99,12 @@ export function buildQuote({ type, plan, services }: { type: string; plan?: Quot
           name: plan.name,
           withMaintenance: { amount: withVat(plan.priceWithMaintenance), from: Boolean(plan.fromPrice), monthly: false },
           webOnly: { amount: withVat(plan.priceWebOnly), from: Boolean(plan.fromPrice), monthly: false },
+          ...(maintenance && {
+            maintenance:
+              maintenance === 'none'
+                ? ('none' as const)
+                : { name: maintenance.name, monthly: { amount: withVat(maintenance.monthlyPrice), from: false, monthly: true } },
+          }),
         },
       }
     : { price: servicePrice(service) }
@@ -94,13 +120,21 @@ function formatPrice(price: QuotePrice, locale: Locale, labels: QuoteLabels): st
 
 /** Label/value rows shown in the form summary. */
 export function quoteLines(quote: Quote, locale: Locale, labels: QuoteLabels): QuoteLine[] {
-  const lines: QuoteLine[] = quote.plan
-    ? [
-        { label: labels.plan, value: quote.plan.name },
-        { label: labels.withMaintenance, value: formatPrice(quote.plan.withMaintenance, locale, labels) },
-        { label: labels.webOnly, value: formatPrice(quote.plan.webOnly, locale, labels) },
-      ]
-    : [{ label: labels.price, value: formatPrice(quote.price ?? null, locale, labels) }]
+  const plan = quote.plan
+  const m = plan?.maintenance
+  const lines: QuoteLine[] = !plan
+    ? [{ label: labels.price, value: formatPrice(quote.price ?? null, locale, labels) }]
+    : !m
+      ? [
+          { label: labels.plan, value: plan.name },
+          { label: labels.withMaintenance, value: formatPrice(plan.withMaintenance, locale, labels) },
+          { label: labels.webOnly, value: formatPrice(plan.webOnly, locale, labels) },
+        ]
+      : [
+          { label: labels.plan, value: plan.name },
+          { label: labels.maintenance, value: m === 'none' ? labels.noMaintenance : `${m.name} · ${formatPrice(m.monthly, locale, labels)}` },
+          { label: labels.webPrice, value: formatPrice(m === 'none' ? plan.webOnly : plan.withMaintenance, locale, labels) },
+        ]
   if (quote.time) lines.push({ label: labels.time, value: quote.time })
   return lines
 }
@@ -112,4 +146,28 @@ export function quoteSummaryText(quote: Quote, locale: Locale, labels: QuoteLabe
     .join(' · ')
   // Plain spaces: the stored text is read in the admin and in emails, where NBSPs only get in the way.
   return `${body} (${labels.vat})`.replace(/[  ]/g, ' ')
+}
+
+type SummaryPricing = {
+  packages?: (QuotePlan & { slug: string; minPlan?: string | null })[] | null
+  maintenancePlans?: { slug: string; name: string; monthlyPrice?: number | null }[] | null
+}
+
+/**
+ * The summary stored on a lead, rebuilt from the CMS (never from the client): the project type's service, and for a
+ * web plan the maintenance choice, accepted only when valid for that plan (otherwise both web prices are listed).
+ */
+export function leadQuoteSummary(
+  input: { projectType: string; plan?: string; maintenance?: string; locale: Locale },
+  { services, pricing, labels, resolveMaintenance }: {
+    services: readonly QuoteService[]
+    pricing: SummaryPricing
+    labels: QuoteLabels
+    resolveMaintenance: (value: unknown, minPlan: string | null | undefined, plans: { slug: string; name: string; monthlyPrice: number }[]) => { name: string; monthlyPrice: number } | 'none' | undefined
+  },
+): string {
+  const plan = input.plan ? (pricing.packages ?? []).find((p) => p.slug === input.plan) : undefined
+  const maintenancePlans = (pricing.maintenancePlans ?? []).filter((m): m is { slug: string; name: string; monthlyPrice: number } => isAmount(m.monthlyPrice))
+  const maintenance = plan ? resolveMaintenance(input.maintenance, plan.minPlan, maintenancePlans) : undefined
+  return quoteSummaryText(buildQuote({ type: input.projectType, plan, maintenance, services }), input.locale, labels)
 }

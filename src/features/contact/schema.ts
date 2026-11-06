@@ -43,6 +43,8 @@ export const contactSchema = z.object({
   howFound: optionalText(200),
   // Pricing package from /pricing CTAs; checked against the pricing global in handleContact.
   plan: z.preprocess(parsePlan, z.string().optional()),
+  // Maintenance chosen with that plan ('none' = web only); checked against the plan in the Server Action.
+  maintenance: z.preprocess(parsePlan, z.string().optional()),
   nda: checkbox.default(false),
   privacy: checkbox.refine((v) => v === true, 'privacy'),
   marketingConsent: checkbox.default(false),

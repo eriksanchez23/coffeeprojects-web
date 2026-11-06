@@ -113,7 +113,11 @@ test('a web plan CTA carries type and plan to the contact page, which shows the 
 
   await expect(page.getByTestId('selected-plan')).toContainText('Web Corporativa')
   await expect(page.locator('input[name="projectType"]')).toHaveValue('web')
-  await expect(page.locator('input[type="hidden"][name="plan"]')).toHaveValue('web-corporativa')
+  await expect(page.locator('select[name="plan"]')).toHaveValue('web-corporativa')
+  // The store CTA opens the same "new website" path with the store preselected.
+  await page.goto('/contacto?type=ecommerce&plan=tienda-online')
+  await expect(page.locator('select[name="plan"]')).toHaveValue('tienda-online')
+  await expect(page.locator('input[name="projectType"]')).toHaveValue('ecommerce')
 
   await page.goto('/precios')
   await expect(page.getByRole('link', { name: 'Quiero este plan' }).first()).toHaveAttribute('href', '/contacto?type=maintenance')
@@ -123,7 +127,7 @@ test('an unknown plan is ignored by the contact page', async ({ page }) => {
   for (const plan of ['premium', 'esencial']) {
     await page.goto(`/contacto?type=web&plan=${plan}`)
     await expect(page.getByTestId('selected-plan')).toHaveCount(0)
-    await expect(page.locator('input[name="plan"]')).toHaveCount(0)
+    await expect(page.locator('select[name="plan"]')).toHaveValue('')
   }
 })
 
@@ -152,7 +156,7 @@ test('submitting with a plan stores it and keeps personal data out of the URL', 
   expect(docs[0]).toMatchObject({ plan: 'landing-page', projectType: 'web' })
   // S17: the lead keeps the price/time summary the visitor saw, rebuilt on the server.
   expect(docs[0]!.quotedSummary).toBe(
-    'Plan elegido: Landing Page · Con mantenimiento: 422,29 € · Solo la web: 713,90 € · Plazo estimado: 1-2 semanas (IVA (21 %) incluido)',
+    'Plan elegido: Landing Page · Mantenimiento: Esencial · 30,25 €/mes · Precio de la web: 422,29 € · Plazo estimado: 1-2 semanas (IVA (21 %) incluido)',
   )
 })
 
@@ -164,7 +168,8 @@ test('home "new website" path lists every plan, the redesign from-price, and lin
   expect(text).toContain('349 € + IVA')
   expect(text).toContain('Desde 490 € + IVA')
   expect(text).not.toContain('Desde 349')
-  await expect(paths.getByRole('link', { name: /Comparar todos los planes/ })).toHaveAttribute('href', '/precios')
+  // CSS lookup: on small screens the card fades in only once scrolled to.
+  await expect(paths.locator('a', { hasText: 'Comparar todos los planes' })).toHaveAttribute('href', '/precios')
   await expect(page.locator('footer').getByRole('link', { name: 'Precios' })).toHaveAttribute('href', '/precios')
   if (!isMobile) {
     await expect(page.getByRole('navigation', { name: 'Navegación principal' }).getByRole('link', { name: 'Precios' })).toHaveAttribute('href', '/precios')

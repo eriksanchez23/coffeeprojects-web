@@ -105,7 +105,11 @@
       "perMonth": "{price}/mes",
       "custom": "A medida (bajo presupuesto)",
       "vat": "IVA (21 %) incluido",
-      "hint": "Precio orientativo según el tipo de proyecto; te confirmaremos el importe exacto en la propuesta."
+      "hint": "Precio orientativo según el tipo de proyecto; te confirmaremos el importe exacto en la propuesta.",
+      "maintenance": "Mantenimiento",
+      "noMaintenance": "Sin mantenimiento",
+      "webPrice": "Precio de la web",
+      "pickPlan": "Elige el tipo de web para ver su precio."
     },
     "errors": {
       "required": "Este campo es obligatorio.",
@@ -147,7 +151,17 @@
     },
     "auditOnly": "De momento solo quiero la revisión gratuita",
     "auditOnlyHint": "Te enviamos un informe breve en un máximo de 48 h con lo que falla y cómo arreglarlo.",
-    "messageOptional": "Cuéntanos más (opcional)"
+    "messageOptional": "Cuéntanos más (opcional)",
+    "webPlan": {
+      "label": "Tipo de web",
+      "placeholder": "Aún no lo sé, ayudadme a elegir",
+      "option": "{name} — {with} con mantenimiento · {without} sin mantenimiento",
+      "maintenanceLabel": "Mantenimiento",
+      "maintenanceOption": "Plan {name} — {monthly}/mes · la web te sale por {web}",
+      "noneOption": "Sin mantenimiento — la web te sale por {web}",
+      "hint": "Precios sin IVA. Con cualquier plan de mantenimiento la web sale más barata.",
+      "maintenanceHint": "Incluye hosting, dominio, SSL, copias de seguridad y cambios cada mes. Puedes contratarlo más adelante."
+    }
   },
   "pricing": {
     "recommended": "Recomendado",

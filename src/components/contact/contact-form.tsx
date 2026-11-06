@@ -14,6 +14,19 @@ import { TurnstileWidget } from './turnstile-widget'
 // `plan` is a pricing package slug the page already validated against the pricing global.
 type Prefill = { type?: string; plan?: string; url?: string }
 
+/**
+ * A web plan in the "new website" select: its label (prices VAT excluded), the maintenance plans that unlock its
+ * reduced price, and the VAT-included summary for each choice. Built on the server from the pricing global.
+ */
+export type WebPlanOption = {
+  slug: string
+  contactType: ProjectType
+  label: string
+  defaultMaintenance: string
+  maintenance: { slug: string; label: string; quote: QuoteLine[] }[]
+  none: { label: string; quote: QuoteLine[] }
+}
+
 type Path = 'web' | 'existing' | 'other'
 const otherTypes = projectTypes.filter((p) => p !== 'web' && !isExistingSiteType(p))
 const pathOf = (type: ProjectType): Path => (type === 'web' ? 'web' : isExistingSiteType(type) ? 'existing' : 'other')
@@ -32,6 +45,7 @@ export function ContactForm({
   sourcePath,
   prefill,
   quotes,
+  webOptions = [],
   siteKey,
 }: {
   locale: string
@@ -42,6 +56,7 @@ export function ContactForm({
    * Display only: the Server Action rebuilds the summary it stores from the CMS.
    */
   quotes: Partial<Record<ProjectType, QuoteLine[]>>
+  webOptions?: WebPlanOption[]
   siteKey: string
 }) {
   const t = useTranslations('contact')
@@ -110,12 +125,30 @@ export function ContactForm({
   })
   const initialType = values.projectType ?? prefill.type
   const defaultType = projectTypes.find((p) => p === initialType) ?? 'web'
-  const [selectedType, setSelectedType] = useState<ProjectType>(defaultType)
-  const path = pathOf(selectedType)
-  const [lastOther, setLastOther] = useState<ProjectType>(path === 'other' ? defaultType : 'ecommerce')
-  const choosePath = (next: Path) =>
-    setSelectedType(next === 'web' ? 'web' : next === 'existing' ? 'redesign' : lastOther)
-  const quote = quotes[selectedType] ?? []
+  // A plan from the pricing page (an online store or a custom plan included) always opens the "new website" path.
+  const initialPlan = values.plan ?? prefill.plan ?? ''
+  const prefilledPlan = webOptions.some((o) => o.slug === initialPlan)
+  const submittedPath = (['web', 'existing', 'other'] as const).find((p) => p === values.path)
+  const [path, setPath] = useState<Path>(submittedPath ?? (prefilledPlan ? 'web' : pathOf(defaultType)))
+  const [otherType, setOtherType] = useState<ProjectType>(pathOf(defaultType) === 'other' ? defaultType : 'ecommerce')
+  const [existingType, setExistingType] = useState<ProjectType>(defaultType === 'audit' ? 'audit' : 'redesign')
+  // "New website": the type of website (a pricing plan) and, for it, a maintenance plan or none.
+  const [planSlug, setPlanSlug] = useState(prefilledPlan ? initialPlan : '')
+  const option = webOptions.find((o) => o.slug === planSlug)
+  const [maintenance, setMaintenance] = useState(values.maintenance ?? option?.defaultMaintenance ?? 'none')
+  const maintenanceChoice =
+    option && (maintenance === 'none' || option.maintenance.some((m) => m.slug === maintenance)) ? maintenance : (option?.defaultMaintenance ?? 'none')
+  const choosePlan = (slug: string) => {
+    setPlanSlug(slug)
+    setMaintenance(webOptions.find((o) => o.slug === slug)?.defaultMaintenance ?? 'none')
+  }
+  const selectedType: ProjectType = path === 'web' ? (option?.contactType ?? 'web') : path === 'existing' ? existingType : otherType
+  const webQuote = option
+    ? maintenanceChoice === 'none'
+      ? option.none.quote
+      : (option.maintenance.find((m) => m.slug === maintenanceChoice)?.quote ?? option.none.quote)
+    : null
+  const quote = path === 'web' && webOptions.length > 0 ? (webQuote ?? []) : (quotes[selectedType] ?? [])
   const checkedIssues = new Set((values.websiteIssues ?? '').split(','))
   const pathCards: { value: Path; title: string; text: string }[] = [
     { value: 'web', title: t('paths.web.title'), text: t('paths.web.text') },
@@ -136,7 +169,6 @@ export function ContactForm({
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="sourcePath" value={sourcePath} />
-      {prefill.plan && <input type="hidden" name="plan" value={prefill.plan} />}
       {/* Honeypot: hidden from humans and assistive tech */}
       <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
         <label htmlFor="cp_hp">{t('honeypot')}</label>
@@ -151,7 +183,7 @@ export function ContactForm({
               key={c.value}
               className="relative flex cursor-pointer flex-col rounded-[var(--radius-md)] border border-line-hi bg-bg-1 p-4 transition-colors has-[:checked]:border-brand has-[:checked]:bg-bg-2 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand"
             >
-              <input type="radio" name="path" value={c.value} checked={path === c.value} onChange={() => choosePath(c.value)} className="sr-only" />
+              <input type="radio" name="path" value={c.value} checked={path === c.value} onChange={() => setPath(c.value)} className="sr-only" />
               <span className="font-semibold text-ink-0">{c.title}</span>
               <span className="mt-1 text-xs text-ink-2">{c.text}</span>
             </label>
@@ -166,11 +198,7 @@ export function ContactForm({
           <select
             id="projectType-other"
             value={selectedType}
-            onChange={(e) => {
-              const next = otherTypes.find((p) => p === e.target.value) ?? 'ecommerce'
-              setSelectedType(next)
-              setLastOther(next)
-            }}
+            onChange={(e) => setOtherType(otherTypes.find((p) => p === e.target.value) ?? 'ecommerce')}
             className={field}
             aria-invalid={Boolean(errors.projectType)}
             aria-describedby={errors.projectType ? 'projectType-error' : undefined}
@@ -180,6 +208,40 @@ export function ContactForm({
             ))}
           </select>
           {err('projectType')}
+        </div>
+      )}
+
+      {path === 'web' && webOptions.length > 0 && (
+        <div className="grid gap-5 rounded-[var(--radius-md)] border border-line p-4 sm:p-5">
+          <div>
+            <label htmlFor="plan" className={label}>{t('webPlan.label')}</label>
+            <select id="plan" name="plan" value={planSlug} onChange={(e) => choosePlan(e.target.value)} className={field} aria-describedby="plan-hint">
+              <option value="">{t('webPlan.placeholder')}</option>
+              {webOptions.map((o) => (
+                <option key={o.slug} value={o.slug}>{o.label}</option>
+              ))}
+            </select>
+            <p id="plan-hint" className="mt-1 text-xs text-ink-3">{t('webPlan.hint')}</p>
+          </div>
+          {option && (
+            <div>
+              <label htmlFor="maintenance" className={label}>{t('webPlan.maintenanceLabel')}</label>
+              <select
+                id="maintenance"
+                name="maintenance"
+                value={maintenanceChoice}
+                onChange={(e) => setMaintenance(e.target.value)}
+                className={field}
+                aria-describedby="maintenance-hint"
+              >
+                {option.maintenance.map((m) => (
+                  <option key={m.slug} value={m.slug}>{m.label}</option>
+                ))}
+                <option value="none">{option.none.label}</option>
+              </select>
+              <p id="maintenance-hint" className="mt-1 text-xs text-ink-3">{t('webPlan.maintenanceHint')}</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -215,7 +277,7 @@ export function ContactForm({
             <input
               type="checkbox"
               checked={selectedType === 'audit'}
-              onChange={(e) => setSelectedType(e.target.checked ? 'audit' : 'redesign')}
+              onChange={(e) => setExistingType(e.target.checked ? 'audit' : 'redesign')}
               className="mt-0.5 accent-[var(--color-brand)]"
             />
             <span>
@@ -232,12 +294,13 @@ export function ContactForm({
           data-testid="quote-summary"
         >
           <h2 id="quote-title" className="text-xs font-semibold uppercase tracking-wider text-amber">{t('quote.title')}</h2>
+          {path === 'web' && webOptions.length > 0 && !option && <p className="mt-3 text-sm text-ink-2">{t('quote.pickPlan')}</p>}
           <dl id="quote-summary" aria-live="polite" aria-atomic="true" className="mt-3 grid gap-1.5 text-sm">
             {quote.map((line, i) => (
               <div
                 key={line.label}
                 className="flex flex-wrap items-baseline justify-between gap-x-3"
-                data-testid={prefill.plan && i === 0 ? 'selected-plan' : undefined}
+                data-testid={option && i === 0 ? 'selected-plan' : undefined}
               >
                 <dt className="text-ink-2">{line.label}</dt>
                 <dd className="text-base font-semibold text-ink-0">{line.value}</dd>

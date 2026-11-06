@@ -105,7 +105,11 @@
       "perMonth": "{price}/month",
       "custom": "Tailored (on quote)",
       "vat": "VAT (21%) included",
-      "hint": "Indicative price for this type of project; we will confirm the exact amount in our proposal."
+      "hint": "Indicative price for this type of project; we will confirm the exact amount in our proposal.",
+      "maintenance": "Maintenance",
+      "noMaintenance": "No maintenance",
+      "webPrice": "Website price",
+      "pickPlan": "Choose the type of website to see its price."
     },
     "errors": {
       "required": "This field is required.",
@@ -147,7 +151,17 @@
     },
     "auditOnly": "For now I only want the free review",
     "auditOnlyHint": "We'll send you a short report within 48 h with what's wrong and how to fix it.",
-    "messageOptional": "Tell us more (optional)"
+    "messageOptional": "Tell us more (optional)",
+    "webPlan": {
+      "label": "Type of website",
+      "placeholder": "Not sure yet, help me choose",
+      "option": "{name} — {with} with maintenance · {without} without maintenance",
+      "maintenanceLabel": "Maintenance",
+      "maintenanceOption": "{name} plan — {monthly}/month · your website costs {web}",
+      "noneOption": "No maintenance — your website costs {web}",
+      "hint": "Prices exclude VAT. With any maintenance plan the website costs less.",
+      "maintenanceHint": "Includes hosting, domain, SSL, backups and monthly changes. You can add it later."
+    }
   },
   "pricing": {
     "recommended": "Recommended",

@@ -9,7 +9,8 @@ export function toContactRecord(
   data: ContactInput & { ipHash: string },
   { marketing, attribution }: { marketing: boolean; attribution: Attribution | null },
 ) {
-  const { privacy, nda, marketingConsent: _formValue, ...rest } = data
+  // `maintenance` has no column: the choice is stored in the quoted summary, with its price.
+  const { privacy, nda, marketingConsent: _formValue, maintenance: _maintenance, ...rest } = data
   return {
     ...rest,
     // The "existing website" paths may omit the message (the URL is the key data); the column is required.

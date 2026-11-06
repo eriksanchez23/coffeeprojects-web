@@ -6,13 +6,15 @@ import { Container } from '@/components/ui/container'
 import { GlassCard } from '@/components/ui/glass-card'
 import { projectTypes } from '@/features/contact/options'
 import { resolvePlan } from '@/features/contact/plan'
+import type { WebPlanOption } from '@/components/contact/contact-form'
 import { buildQuote, quoteLabelsFrom, quoteLines } from '@/features/contact/quote'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import { getPricing, getServices, getSettings } from '@/lib/cms/queries'
 import { JsonLd } from '@/components/seo/json-ld'
 import { breadcrumbLd } from '@/lib/seo/jsonld'
-import { completeWebPlans } from '@/lib/pricing'
+import { allowedMaintenance, completeMaintenancePlans, completeWebPlans } from '@/lib/pricing'
+import { formatEuro } from '@/lib/format'
 import { absoluteUrl, buildMetadata } from '@/lib/seo/metadata'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -48,12 +50,40 @@ export default async function ContactPage({
   // ?plan= from the pricing CTAs: kept only when it is a package of the published pricing global.
   const packages = completeWebPlans(pricing.packages)
   const plan = resolvePlan(Array.isArray(sp.plan) ? sp.plan[0] : sp.plan, packages.map((p) => p.slug))
-  const planDoc = packages.find((p) => p.slug === plan)
   // S17: price with VAT + estimated time for every project type, so the select can switch them client-side.
+  // Web plans (with or without maintenance) have their own quotes in `webOptions` below.
   const quoteLabels = quoteLabelsFrom(t)
-  const quotes = Object.fromEntries(
-    projectTypes.map((type) => [type, quoteLines(buildQuote({ type, plan: planDoc, services }), locale, quoteLabels)]),
-  )
+  const quotes = Object.fromEntries(projectTypes.map((type) => [type, quoteLines(buildQuote({ type, services }), locale, quoteLabels)]))
+  // "New website" path: every web plan with its prices (VAT excluded, like the pricing page) and the maintenance
+  // plans that unlock its reduced price, plus the VAT-included summary for each combination, so the two selects
+  // can switch it client-side. The Server Action rebuilds the stored summary from the CMS.
+  const maintenancePlans = completeMaintenancePlans(pricing.maintenancePlans)
+  const euro = (n: number) => formatEuro(n, locale)
+  const from = (text: string, isFrom: boolean | null | undefined) => (isFrom ? quoteLabels.from.replace('{price}', text) : text)
+  const webOptions: WebPlanOption[] = packages.map((p) => {
+    const allowed = allowedMaintenance(p.minPlan, maintenancePlans)
+    const webWith = from(euro(p.priceWithMaintenance as number), p.fromPrice)
+    const webOnly = from(euro(p.priceWebOnly as number), p.fromPrice)
+    const type = p.contactType ?? 'web'
+    const quoteFor = (maintenance: { name: string; monthlyPrice: number } | 'none') =>
+      quoteLines(
+        buildQuote({ type, plan: p as Parameters<typeof buildQuote>[0]['plan'], maintenance, services }),
+        locale,
+        quoteLabels,
+      )
+    return {
+      slug: p.slug,
+      contactType: type,
+      label: t('webPlan.option', { name: p.name, with: webWith, without: webOnly }),
+      defaultMaintenance: allowed[0]?.slug ?? 'none',
+      maintenance: allowed.map((m) => ({
+        slug: m.slug,
+        label: t('webPlan.maintenanceOption', { name: m.name, monthly: euro(m.monthlyPrice as number), web: webWith }),
+        quote: quoteFor({ name: m.name, monthlyPrice: m.monthlyPrice as number }),
+      })),
+      none: { label: t('webPlan.noneOption', { web: webOnly }), quote: quoteFor('none') },
+    }
+  })
   const alternates = localizedPaths('/contact')
 
   return (
@@ -83,6 +113,7 @@ export default async function ContactPage({
               sourcePath={alternates[locale]}
               prefill={{ type, plan, url: prefillUrl }}
               quotes={quotes}
+              webOptions={webOptions}
               siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ''}
             />
           </GlassCard>

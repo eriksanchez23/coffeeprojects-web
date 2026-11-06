@@ -8,7 +8,7 @@ import { buildPath } from '@/i18n/build-path'
 import { type Locale, locales } from '@/i18n/locales'
 import { payloadClient } from '@/lib/cms/client'
 import { getPlanSlugs, getPricing, getServices } from '@/lib/cms/queries'
-import { completeWebPlans } from '@/lib/pricing'
+import { completeMaintenancePlans, completeWebPlans } from '@/lib/pricing'
 import { env } from '@/lib/env'
 import { ATTR_COOKIE, parseAttributionCookie } from '@/features/tracking/attribution'
 import { capiConfigFromEnv, sendCapiEvent } from '@/features/tracking/capi'
@@ -19,7 +19,8 @@ import { teamEmail, teamRecipients } from './emails'
 import { type ContactResult, handleContact } from './handle-contact'
 import { inboundConfig, teamReplyTo } from './inbound'
 import { clientIp, hashIp } from './ip'
-import { buildQuote, quoteLabelsFrom, quoteSummaryText } from './quote'
+import { resolveMaintenance } from './plan'
+import { leadQuoteSummary, quoteLabelsFrom } from './quote'
 import { isRateLimited } from './rate-limit'
 import { sendClientConfirmation, type ThankYouContact } from './thank-you-send'
 import { toContactRecord } from './record'
@@ -72,8 +73,12 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
         getPricing(input.locale),
         getTranslations({ locale: input.locale, namespace: 'contact' }),
       ])
-      const plan = input.plan ? completeWebPlans(pricing.packages).find((p) => p.slug === input.plan) : undefined
-      return quoteSummaryText(buildQuote({ type: input.projectType, plan, services }), input.locale, quoteLabelsFrom(t))
+      return leadQuoteSummary(input, {
+        services,
+        pricing: { packages: completeWebPlans(pricing.packages), maintenancePlans: completeMaintenancePlans(pricing.maintenancePlans) },
+        labels: quoteLabelsFrom(t),
+        resolveMaintenance,
+      })
     },
     createContact: async (data) => {
       saved = await payload.create({ collection: 'contacts', overrideAccess: true, data: toContactRecord(data, { marketing, attribution }) })

@@ -30,22 +30,43 @@ test('submits a valid request and lands on the thank-you page', async ({ page })
   expect(page.url()).not.toContain('@')
 })
 
-test('shows the final price with VAT and the estimated time instead of budget/timeline inputs (S17)', async ({ page }) => {
+test('a new website: choose the type of website, then maintenance or none, and the price follows (S17)', async ({ page }) => {
   await page.goto('/contacto?type=web&plan=landing-page')
   const summary = page.getByTestId('quote-summary')
-  await expect(summary).toContainText('Landing Page')
-  // Landing Page: 349 € / 590 € + 21 % VAT.
-  await expect(summary).toContainText(/Con mantenimiento\s*422,29\s€/)
-  await expect(summary).toContainText(/Solo la web\s*713,90\s€/)
+  const planSelect = page.getByLabel('Tipo de web')
+  const maintenance = page.getByLabel('Mantenimiento', { exact: true })
+  await expect(planSelect).toHaveValue('landing-page')
+  // Each type of website shows its price with and without maintenance (VAT excluded, like the pricing page).
+  await expect(planSelect.locator('option[value="landing-page"]')).toHaveText(/Landing Page — 349\s€ con mantenimiento · 590\s€ sin mantenimiento/)
+  // The plan's minimum maintenance comes preselected; the summary shows prices with 21 % VAT.
+  await expect(maintenance).toHaveValue('esencial')
+  await expect(summary).toContainText(/Mantenimiento\s*Esencial · 30,25\s€\/mes/)
+  await expect(summary).toContainText(/Precio de la web\s*422,29\s€/)
   await expect(summary).toContainText(/Plazo estimado\s*1-2 semanas/)
   await expect(summary).toContainText('IVA (21 %) incluido')
+
+  await maintenance.selectOption('none')
+  await expect(summary).toContainText(/Mantenimiento\s*Sin mantenimiento/)
+  await expect(summary).toContainText(/Precio de la web\s*713,90\s€/)
+
+  // An online store only offers the maintenance plans that unlock its reduced price, and is sent as a store.
+  await planSelect.selectOption('tienda-online')
+  await expect(maintenance.locator('option')).toHaveText([/^Plan Plus/, /^Plan Pro/, /^Sin mantenimiento/])
+  await expect(maintenance).toHaveValue('plus')
+  await expect(summary).toContainText(/Plus · 54,45\s€\/mes/)
+  await expect(summary).toContainText(/Precio de la web\s*1\.802,90\s€/)
+  await expect(page.locator('input[name="projectType"]')).toHaveValue('ecommerce')
+
+  // "Not sure yet": no maintenance select and no price until a type of website is chosen.
+  await planSelect.selectOption('')
+  await expect(maintenance).toHaveCount(0)
+  await expect(summary).toContainText('Elige el tipo de web para ver su precio.')
+  await expect(page.locator('input[name="projectType"]')).toHaveValue('web')
+
   await expect(page.getByLabel(/Presupuesto estimado/)).toHaveCount(0)
-  await expect(page.getByLabel(/Plazo deseado/)).toHaveCount(0)
   await expect(page.locator('select[name="budget"], select[name="timeline"]')).toHaveCount(0)
 
-  // Without a plan the summary follows the chosen path and, for "another project", the project type select.
-  await page.goto('/contacto')
-  await expect(summary).toContainText(/Precio final\s*desde 422,29\s€/)
+  // Another project: the summary follows the project type select.
   await page.getByText('Otro proyecto', { exact: true }).click()
   await page.getByLabel('Tipo de proyecto *').selectOption('ecommerce')
   await expect(summary).toContainText(/desde 1\.802,90\s€/)

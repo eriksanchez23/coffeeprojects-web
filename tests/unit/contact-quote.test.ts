@@ -12,6 +12,9 @@ const labels = {
   perMonth: '{price}/mes',
   custom: 'A medida (bajo presupuesto)',
   vat: 'IVA (21 %) incluido',
+  maintenance: 'Mantenimiento',
+  noMaintenance: 'Sin mantenimiento',
+  webPrice: 'Precio de la web',
   hint: 'x',
 }
 
@@ -106,6 +109,26 @@ describe('quoteLines / quoteSummaryText', () => {
   it('only uses characters that the WIN1252 dev database can store', () => {
     const text = quoteSummaryText(buildQuote({ type: 'web', plan: pro, services }), 'fr', { ...labels, from: 'à partir de {price}' })
     expect(text).not.toMatch(/[ →]/)
+  })
+})
+
+describe('maintenance chosen with a web plan', () => {
+  it('with a maintenance plan: its monthly fee and the reduced web price, VAT included', () => {
+    expect(ql(buildQuote({ type: 'web', plan: landing, maintenance: { name: 'Esencial', monthlyPrice: 25 }, services }))).toEqual([
+      { label: 'Plan', value: 'Landing Page' },
+      { label: 'Mantenimiento', value: 'Esencial · 30,25 €/mes' },
+      { label: 'Precio de la web', value: '422,29 €' },
+      { label: 'Plazo estimado', value: '1-2 semanas' },
+    ])
+  })
+
+  it('without maintenance: the web-only price', () => {
+    expect(ql(buildQuote({ type: 'web', plan: pro, maintenance: 'none', services }))).toEqual([
+      { label: 'Plan', value: 'Web Profesional' },
+      { label: 'Mantenimiento', value: 'Sin mantenimiento' },
+      { label: 'Precio de la web', value: 'desde 3.133,90 €' },
+      { label: 'Plazo estimado', value: '1-2 semanas' },
+    ])
   })
 })
 
