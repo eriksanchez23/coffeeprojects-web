@@ -39,6 +39,11 @@ export function responseHeaders(siteEnv: 'development' | 'staging' | 'production
 export const legacyRedirects = [
   { source: '/legal', destination: '/aviso-legal', statusCode: 301 as const },
   { source: '/en/legal', destination: '/en/legal-notice', statusCode: 301 as const },
+  // 2026-11 website-focused restructure: renamed pages keep their old indexed URLs alive.
+  { source: '/presupuestos', destination: '/precios', statusCode: 301 as const },
+  { source: '/gana-dinero', destination: '/colaboradores', statusCode: 301 as const },
+  { source: '/en/earn-with-us', destination: '/en/partners', statusCode: 301 as const },
+  { source: '/fr/gagnez-avec-nous', destination: '/fr/partenaires', statusCode: 301 as const },
 ]
 
 const CLIENT_HINT_KEYS = new Set(['accept-ch', 'critical-ch', 'vary'])

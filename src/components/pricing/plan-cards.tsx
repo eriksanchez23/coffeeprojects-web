@@ -25,12 +25,12 @@ function Badges({ featured, isNew, t }: { featured?: boolean | null; isNew?: boo
   return (
     <p className="absolute -top-3 left-7 flex gap-2">
       {featured && (
-        <span className="rounded-full bg-amber px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-widest text-bg-0">
+        <span className="rounded-full bg-amber px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-bg-0">
           {t('recommended')}
         </span>
       )}
       {isNew && (
-        <span className="rounded-full border border-line-amber bg-bg-2 px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-widest text-amber-hi">
+        <span className="rounded-full border border-line-amber bg-bg-2 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-amber-hi">
           {t('new')}
         </span>
       )}
@@ -41,7 +41,7 @@ function Badges({ featured, isNew, t }: { featured?: boolean | null; isNew?: boo
 function InclusionList({ items, name, lead, t }: { items: Item[]; name: string; lead?: string | null; t: PricingT }) {
   return (
     <div className="mt-6 flex-1">
-      {lead && <p className="mb-3 font-mono text-xs uppercase tracking-widest text-ink-3">{lead}</p>}
+      {lead && <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-ink-3">{lead}</p>}
       <ul aria-label={t('includes', { name })} className="grid content-start gap-3">
         {items.map((item, i) => (
           <li key={item.id ?? i} className={cn('flex items-start gap-3 text-sm', item.excluded ? 'text-ink-3' : 'text-ink-1')}>
@@ -75,7 +75,7 @@ export function WebPlanCard({ plan, minPlanName, locale, vat, t, from }: WebCard
 
       <dl className="mt-6 grid gap-3 border-b border-line pb-6">
         <div>
-          <dt className="font-mono text-xs uppercase tracking-widest text-ink-3">{t('withMaintenance')}</dt>
+          <dt className="text-xs font-semibold uppercase tracking-wider text-ink-3">{t('withMaintenance')}</dt>
           <dd className="mt-1 flex flex-wrap items-baseline gap-x-2">
             {plan.fromPrice && <span className="text-sm text-ink-2">{from}</span>}{' '}
             <span className={cn('font-display text-5xl', plan.featured ? 'text-amber-hi' : 'text-ink-0')}>
@@ -85,7 +85,7 @@ export function WebPlanCard({ plan, minPlanName, locale, vat, t, from }: WebCard
           </dd>
         </div>
         <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-          <dt className="font-mono text-xs uppercase tracking-widest text-ink-3">{t('webOnly')}</dt>
+          <dt className="text-xs font-semibold uppercase tracking-wider text-ink-3">{t('webOnly')}</dt>
           <dd className="text-ink-1">
             {plan.fromPrice ? t('fromPrice', { price: webOnly }) : webOnly} <span className="text-sm text-ink-3">{vat}</span>
           </dd>
@@ -96,7 +96,7 @@ export function WebPlanCard({ plan, minPlanName, locale, vat, t, from }: WebCard
 
       {minPlanName && (
         <p className="mt-6 flex flex-wrap items-baseline justify-between gap-x-3 border-t border-line pt-4 text-sm">
-          <span className="font-mono text-xs uppercase tracking-widest text-ink-3">{t('minPlan')}</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-ink-3">{t('minPlan')}</span>
           <span className="font-medium text-amber">{minPlanName}</span>
         </p>
       )}
@@ -129,7 +129,7 @@ export function MaintenancePlanCard({ plan, locale, vat, t, perMonth }: Maintena
 
       <dl className="mt-6 grid gap-3 border-b border-line pb-6">
         <div>
-          <dt className="font-mono text-xs uppercase tracking-widest text-ink-3">{t('monthlyFee')}</dt>
+          <dt className="text-xs font-semibold uppercase tracking-wider text-ink-3">{t('monthlyFee')}</dt>
           <dd className="mt-1 flex flex-wrap items-baseline gap-x-2">
             <span className={cn('font-display text-5xl', plan.featured ? 'text-amber-hi' : 'text-ink-0')}>
               {formatEuro(plan.monthlyPrice, locale)}
@@ -139,7 +139,7 @@ export function MaintenancePlanCard({ plan, locale, vat, t, perMonth }: Maintena
           </dd>
         </div>
         <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-          <dt className="font-mono text-xs uppercase tracking-widest text-ink-3">{t('permanence')}</dt>
+          <dt className="text-xs font-semibold uppercase tracking-wider text-ink-3">{t('permanence')}</dt>
           <dd className="text-ink-1">{t('months', { months: plan.permanenceMonths })}</dd>
         </div>
       </dl>

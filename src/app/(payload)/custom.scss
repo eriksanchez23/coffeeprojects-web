@@ -1,18 +1,38 @@
-// Brand the Payload admin with the coffee + terminal palette (mirrors the T02 tokens).
+// Brand the Payload admin with the "Café claro" palette (mirrors the public site tokens). Light is the default;
+// the dark admin theme keeps the espresso surfaces.
 :root {
-  --theme-success-500: #6ee7b7;
+  --theme-success-500: #2f7a55;
+}
+
+[data-theme='light'] {
+  --theme-bg: #fbf8f3;
+  --theme-elevation-0: #fbf8f3;
+  --theme-elevation-50: #f3ede4;
+  --theme-elevation-100: #eae1d5;
+  --theme-elevation-150: #e0d4c4;
+  --theme-elevation-1000: #1a1411;
 }
 
 [data-theme='dark'] {
-  --theme-bg: #0b0706;
-  --theme-elevation-0: #0b0706;
-  --theme-elevation-50: #120c09;
-  --theme-elevation-100: #1a1310;
-  --theme-elevation-150: #241812;
-  --theme-elevation-1000: #fff7e8;
+  --theme-bg: #1c1410;
+  --theme-elevation-0: #1c1410;
+  --theme-elevation-50: #261b15;
+  --theme-elevation-100: #2e221b;
+  --theme-elevation-150: #3a2b22;
+  --theme-elevation-1000: #fff7ec;
 }
 
 .btn--style-primary {
+  background-color: #6f4e37;
+  color: #ffffff;
+
+  &:hover,
+  &:focus-visible {
+    background-color: #5a3e2b;
+  }
+}
+
+[data-theme='dark'] .btn--style-primary {
   background-color: #f5a742;
-  color: #0b0706;
+  color: #1c1410;
 }

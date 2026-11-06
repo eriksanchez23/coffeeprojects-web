@@ -116,7 +116,7 @@ export async function PricingPlans({ pricing, locale }: Props) {
               <dl className="mt-8 grid gap-4 md:grid-cols-2">
                 {(pricing.permanenceRules ?? []).map((r, i) => (
                   <div key={r.id ?? i} data-reveal className="rounded-[var(--radius-md)] border border-line bg-bg-1/60 p-6">
-                    <dt className="font-mono text-xs uppercase tracking-widest text-amber">{r.title}</dt>
+                    <dt className="text-xs font-semibold uppercase tracking-wider text-amber">{r.title}</dt>
                     <dd className="mt-3 text-sm text-ink-1">{r.text}</dd>
                   </div>
                 ))}

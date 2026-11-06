@@ -1,8 +1,8 @@
 {
   "meta": {
     "siteName": "CoffeeProjects",
-    "defaultTitle": "CoffeeProjects — Développement web, boutiques en ligne et logiciels sur mesure depuis l'Espagne",
-    "defaultDescription": "Studio de développement en Espagne : sites web, boutiques en ligne, bots Discord, serveurs et scripts FiveM, et maintenance de sites. Une proposition personnalisée en moins de 24 heures."
+    "defaultTitle": "Création de sites web professionnels et refonte | CoffeeProjects",
+    "defaultDescription": "Nous créons des sites neufs et rénovons ceux qui ne fonctionnent plus : rapides, beaux et pensés pour gagner des clients. Prix fixe et réponse sous 24 h."
   },
   "nav": {
     "services": "Services",
@@ -19,7 +19,10 @@
     "home": "Accueil",
     "mainNav": "Navigation principale",
     "mobileNav": "Navigation mobile",
-    "partners": "Gagnez avec nous"
+    "partners": "Programme partenaires",
+    "howWeWork": "Notre méthode",
+    "otherDevelopment": "Autres développements",
+    "breadcrumb": "Fil d'Ariane"
   },
   "common": {
     "from": "À partir de",
@@ -27,7 +30,7 @@
     "learnMore": "Voir les détails",
     "requestQuote": "Demander un devis",
     "viewServices": "Voir les services",
-    "viewProjects": "Voir les projets",
+    "viewProjects": "Voir tous les projets",
     "viewProfile": "Voir le profil",
     "backHome": "Retour à l'accueil",
     "nda": "Sous NDA",
@@ -50,18 +53,20 @@
     "perMonth": "/mois",
     "plusVat": "+ TVA",
     "price": "Prix",
-    "socials": "Réseaux"
+    "socials": "Réseaux",
+    "requestReview": "Demandez votre audit gratuit",
+    "freeReview": "Audit gratuit"
   },
   "contact": {
-    "title": "Parlez-nous de votre projet",
-    "lead": "Envoyez-nous les détails et nous vous répondrons en moins de 24 heures avec une première proposition, sans engagement.",
+    "title": "Dites-nous ce dont vous avez besoin",
+    "lead": "Nous répondons sous 24 heures avec une première proposition. Sans engagement.",
     "eyebrow": "Contact",
     "name": "Nom",
     "email": "E-mail",
     "phone": "Téléphone (facultatif)",
     "projectType": "Type de projet",
     "message": "Parlez-nous de votre projet",
-    "messageHint": "Plus vous êtes précis, plus notre devis sera juste.",
+    "messageHint": "Plus vous êtes précis, plus la proposition sera juste.",
     "howFound": "Comment nous avez-vous connus ? (facultatif)",
     "nda": "Je souhaite signer un NDA avant de partager des détails",
     "moreDetails": "Plus de détails (facultatif)",
@@ -71,19 +76,21 @@
     "sending": "Envoi…",
     "verifying": "Vérification…",
     "required": "Obligatoire",
-    "guarantees": "Réponse < 24 h · Sans spam ni engagement · Données protégées (RGPD)",
+    "guarantees": "Réponse sous 24 h · Sans engagement · Données protégées (RGPD)",
     "replyBy": "Erik, votre interlocuteur, vous répondra avec le spécialiste le plus adapté à votre projet.",
-    "quickTitle": "On parle de votre projet ?",
-    "quickLead": "Partagez votre idée et recevez une première proposition en moins de 24 heures, sans engagement.",
-    "quickCta": "Recevoir ma proposition",
+    "quickTitle": "On parle de votre site ?",
+    "quickLead": "Dites-nous ce dont vous avez besoin et nous répondons sous 24 h avec une première proposition. Sans engagement.",
+    "quickCta": "Demander un devis",
     "projectTypes": {
-      "web": "Site web / landing page",
+      "web": "Nouveau site / landing page",
       "ecommerce": "Boutique en ligne",
       "fivem-script": "Script FiveM",
       "fivem-server": "Serveur FiveM",
       "discord-bot": "Bot Discord",
-      "maintenance": "Maintenance de site",
-      "custom": "Développement sur mesure"
+      "maintenance": "Maintenance web",
+      "custom": "Développement sur mesure",
+      "redesign": "Améliorer mon site actuel",
+      "audit": "Audit gratuit de mon site"
     },
     "quote": {
       "title": "Prix final et délai estimé",
@@ -106,15 +113,46 @@
       "privacy": "Vous devez accepter la politique de confidentialité.",
       "captcha": "Nous n'avons pas pu vérifier que vous n'êtes pas un robot. Veuillez réessayer.",
       "rateLimited": "Vous avez envoyé plusieurs demandes d'affilée. Patientez un peu ou écrivez-nous à contact@coffeeprojects.es.",
-      "generic": "Une erreur est survenue. Réessayez ou écrivez-nous à contact@coffeeprojects.es."
-    }
+      "generic": "Une erreur est survenue. Réessayez ou écrivez-nous à contact@coffeeprojects.es.",
+      "invalidUrl": "Saisissez une adresse web valide (par ex. votresite.com)."
+    },
+    "quickEmail": "Écrivez-nous",
+    "paths": {
+      "legend": "De quoi avez-vous besoin ?",
+      "web": {
+        "title": "Un nouveau site",
+        "text": "Partir de zéro avec un site professionnel."
+      },
+      "existing": {
+        "title": "Améliorer mon site",
+        "text": "Refonte, vitesse, mobile ou Google."
+      },
+      "other": {
+        "title": "Un autre projet",
+        "text": "Boutique, maintenance, sur mesure, bots ou FiveM."
+      }
+    },
+    "currentUrl": "Adresse de votre site actuel",
+    "issuesLegend": "Qu'est-ce qui ne va pas ? (facultatif)",
+    "issues": {
+      "slow": "Il est lent",
+      "mobile": "S'affiche mal sur mobile",
+      "google": "Je n'apparais pas sur Google",
+      "outdated": "Design dépassé",
+      "editing": "Je ne peux pas le modifier",
+      "no-leads": "Il ne m'apporte pas de clients",
+      "other": "Autre"
+    },
+    "auditOnly": "Pour l'instant, je veux seulement l'audit gratuit",
+    "auditOnlyHint": "Nous vous envoyons un court rapport sous 48 h avec ce qui ne va pas et comment le corriger.",
+    "messageOptional": "Dites-nous en plus (facultatif)"
   },
   "pricing": {
     "recommended": "Recommandé",
     "new": "Nouveau",
     "includes": "Ce que comprend {name}",
     "notIncluded": "Non inclus :",
-    "viewAll": "Voir les tarifs",
+    "viewAll": "Voir tous les tarifs",
     "seePackages": "Voir les formules et tarifs",
     "withMaintenance": "Avec maintenance",
     "webOnly": "Site seul",
@@ -144,9 +182,9 @@
     "perMonth": "{price}/mois"
   },
   "thanks": {
-    "title": "Bien reçu ! Le café est déjà en préparation.",
-    "body": "Nous avons bien reçu votre demande. Nous vous écrirons en moins de 24 heures avec une première proposition.",
-    "cta": "En attendant, découvrez nos projets"
+    "title": "Bien reçu ! Nous répondons sous 24 h.",
+    "body": "Nous vous avons envoyé une copie par email. En attendant, découvrez quelques-uns de nos projets.",
+    "cta": "Voir les projets"
   },
   "consent": {
     "title": "Nous utilisons des cookies",
@@ -162,38 +200,83 @@
     "policy": "Politique de cookies"
   },
   "footer": {
-    "tagline": "Pas de café, pas de code.",
+    "tagline": "Pas de café, pas de code. Pas d'engagement, pas de projet.",
     "rights": "Tous droits réservés.",
     "legal": "Mentions légales",
     "privacy": "Confidentialité",
     "cookies": "Cookies",
     "manageCookies": "Gérer les cookies",
-    "remote": "Nous travaillons à distance avec des clients du monde entier.",
+    "remote": "Studio de design et développement web en Espagne. Nous travaillons à distance avec des clients du monde entier.",
     "legalNav": "Mentions légales",
     "chat": "Chat",
     "legalDescription": "Informations légales sur l'éditeur de coffeeprojects.es et conditions d'utilisation du site.",
     "privacyDescription": "Comment CoffeeProjects traite vos données personnelles, vos droits et la manière de les exercer.",
-    "cookiesDescription": "Quels cookies coffeeprojects.es utilise, à quoi ils servent et comment gérer votre consentement."
+    "cookiesDescription": "Quels cookies coffeeprojects.es utilise, à quoi ils servent et comment gérer votre consentement.",
+    "responseTime": "Réponse sous 24 h",
+    "colServices": "Services",
+    "colOther": "Autres développements",
+    "colStudio": "Studio",
+    "colLegal": "Mentions",
+    "seeAll": "Tout voir"
   },
   "sections": {
-    "services": "// services",
-    "why": "// pourquoi nous",
-    "process": "// processus",
-    "stack": "// stack",
-    "faq": "// faq",
-    "includes": "// inclus",
-    "more": "// plus",
+    "services": "Services",
+    "why": "Pourquoi CoffeeProjects",
+    "process": "Méthode",
+    "stack": "Technologies",
+    "faq": "Questions fréquentes",
+    "includes": "Ce qui est inclus",
+    "more": "Autres services",
     "heroCommand": "brew --team",
     "statsLabel": "CoffeeProjects en chiffres",
     "servicesList": "Liste des services",
-    "team": "// équipe",
-    "projects": "// projets"
+    "team": "Équipe",
+    "projects": "Projets",
+    "otherTitle": "Besoin d'un autre type de développement ?",
+    "otherLead": "Nous réalisons aussi du développement sur mesure, des automatisations et des bots.",
+    "otherCta": "Voir les autres développements"
   },
   "notFound": {
     "title": "Page introuvable · CoffeeProjects",
-    "command": "$ cd /cette-page",
-    "error": "error 404: coffee not found",
-    "body": "Cette page est à court de café. Retournons à l'accueil.",
-    "cta": "Retour à l'accueil"
+    "error": "Erreur 404",
+    "body": "L'adresse a peut-être changé ou le lien est mal saisi.",
+    "cta": "Retour à l'accueil",
+    "ctaServices": "Voir les services"
+  },
+  "home": {
+    "ctaNew": "Je veux un nouveau site",
+    "ctaImprove": "Je veux améliorer mon site",
+    "seeNew": "Voir la création de sites",
+    "seeRedesign": "Voir la refonte de sites",
+    "servicesEyebrow": "Services",
+    "pathsTitle": "Repartir de zéro ou améliorer votre site ?",
+    "auditUrlLabel": "Adresse de votre site",
+    "auditCta": "Je veux mon audit gratuit",
+    "auditNote": "À l'étape suivante, nous vous demandons votre email pour envoyer le rapport. Sans engagement."
+  },
+  "projects": {
+    "kinds": {
+      "new-website": "Nouveau site",
+      "redesign": "Refonte",
+      "store": "Boutique en ligne",
+      "app": "Application web",
+      "other": "Autre"
+    },
+    "concept": "Proposition de design",
+    "conceptNote": "Proposition de design préparée par CoffeeProjects ; ce n'est pas un site publié par l'entreprise.",
+    "ndaNote": "Par confidentialité, nous ne montrons ni le nom du client ni de liens.",
+    "challenge": "Le défi",
+    "solution": "Ce que nous avons fait",
+    "results": "Résultats",
+    "indexLead": "Des sites que nous avons créés ou rénovés. Certains sont sous accord de confidentialité : nous ne montrons donc pas le nom du client.",
+    "appsTitle": "Applications web",
+    "appsLead": "Des outils et applications que nous développons aussi."
+  },
+  "otherDevelopment": {
+    "title": "Autres développements",
+    "lead": "En plus des sites web, nous développons des logiciels sur mesure et des projets pour les communautés en ligne. Même équipe, même exigence.",
+    "listLabel": "Liste des autres développements",
+    "seoTitle": "Développement sur mesure, bots Discord et FiveM",
+    "seoDescription": "Logiciels sur mesure, automatisations, bots Discord et développement FiveM. Même équipe et prix fixe."
   }
 }

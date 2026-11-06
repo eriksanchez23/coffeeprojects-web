@@ -1,47 +1,77 @@
 @import 'tailwindcss';
 
-@theme inline {
-  --color-bg-0: #0b0706;
-  --color-bg-1: #120c09;
-  --color-bg-2: #1a1310;
-  --color-bg-3: #241812;
-  --color-bg-4: #2e1f16;
-  --color-amber: #f5a742;
-  --color-amber-hi: #ffc165;
-  --color-amber-deep: #c7782a;
-  --color-toast: #ff6b35;
-  --color-crema: #ffe8b5;
+/* "Café claro" palette. Colors live in a non-inline @theme so utilities read var(--color-*): a `.on-dark` section
+   can then remap the same tokens locally (espresso bands) without a second set of class names. */
+@theme {
+  --color-bg-0: #fbf8f3;
+  --color-bg-1: #ffffff;
+  --color-bg-2: #f3ede4;
+  --color-bg-3: #eae1d5;
+  --color-bg-4: #e0d4c4;
+  /* Accent text/icons: caramel, 5.1:1 on bg-0. */
+  --color-amber: #9a5b1e;
+  --color-amber-hi: #7e4a17;
+  --color-amber-deep: #6f4e37;
+  /* Brand coffee: primary buttons and links (7:1 on bg-0, white on top 7.4:1). */
+  --color-brand: #6f4e37;
+  --color-brand-hi: #5a3e2b;
+  --color-espresso: #1c1410;
+  --color-toast: #c2410c;
+  --color-crema: #f5ede3;
   --color-latte: #c7a17a;
-  --color-mint: #6ee7b7;
-  --color-berry: #e85d75;
-  --color-sky: #7cc5ff;
-  --color-ink-0: #fff7e8;
-  --color-ink-1: #e8dcc8;
-  --color-ink-2: #a89584;
-  /* WCAG AA (4.5:1) for small text on bg-0..bg-2; the old #6b5d4f measured ~3:1. */
-  --color-ink-3: #907e6c;
-  --color-line: rgb(255 232 181 / 0.08);
-  --color-line-hi: rgb(255 232 181 / 0.16);
-  --color-line-amber: rgb(245 167 66 / 0.32);
+  --color-mint: #2f7a55;
+  --color-berry: #b4233c;
+  --color-sky: #2563eb;
+  --color-ink-0: #1a1411;
+  --color-ink-1: #3d332c;
+  --color-ink-2: #5f5248;
+  --color-ink-3: #6b5d52;
+  --color-line: rgb(26 20 17 / 0.1);
+  --color-line-hi: rgb(26 20 17 / 0.18);
+  --color-line-amber: rgb(111 78 55 / 0.4);
+}
 
-  --font-display: var(--ff-display), ui-sans-serif, system-ui, sans-serif;
+@theme inline {
+  --font-display: var(--ff-body), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--ff-serif), ui-serif, Georgia, serif;
   --font-sans: var(--ff-body), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--ff-mono), ui-monospace, monospace;
 
   --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  --shadow-amber: 0 0 0 1px rgb(245 167 66 / 0.3), 0 20px 60px -15px rgb(245 167 66 / 0.35);
-  --shadow-soft: 0 30px 80px -30px rgb(0 0 0 / 0.6);
+  --shadow-amber: 0 1px 2px rgb(26 20 17 / 0.08), 0 8px 24px -12px rgb(111 78 55 / 0.45);
+  --shadow-soft: 0 1px 2px rgb(26 20 17 / 0.05), 0 20px 50px -24px rgb(26 20 17 / 0.25);
+}
+
+/* Espresso bands (final CTA, footer): same token names, dark values. */
+.on-dark {
+  --color-bg-0: #1c1410;
+  --color-bg-1: #261b15;
+  --color-bg-2: #2e221b;
+  --color-bg-3: #3a2b22;
+  --color-ink-0: #fff7ec;
+  --color-ink-1: #f0e4d6;
+  --color-ink-2: #cdbcaa;
+  --color-ink-3: #b8a693;
+  --color-amber: #f5a742;
+  --color-amber-hi: #ffc165;
+  --color-brand: #f5a742;
+  --color-brand-hi: #ffc165;
+  --color-line: rgb(255 232 181 / 0.12);
+  --color-line-hi: rgb(255 232 181 / 0.22);
+  --color-line-amber: rgb(245 167 66 / 0.45);
+  background: var(--color-bg-0);
+  color: var(--color-ink-1);
 }
 
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light;
     background: var(--color-bg-0);
     color: var(--color-ink-1);
     -webkit-font-smoothing: antialiased;
@@ -56,31 +86,16 @@
     letter-spacing: -0.02em;
     text-wrap: balance;
   }
-  ::selection { background: var(--color-amber); color: var(--color-bg-0); }
-  :focus-visible { outline: 2px solid var(--color-amber-hi); outline-offset: 3px; }
+  h1, h2, h3 { letter-spacing: -0.025em; }
+  ::selection { background: var(--color-brand); color: #fff; }
+  :focus-visible { outline: 2px solid var(--color-brand); outline-offset: 3px; }
 }
 
-/* Film grain overlay used by the body wrapper */
-@utility grain {
-  position: relative;
-  &::after {
-    content: '';
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    opacity: 0.06;
-    /* Pre-rendered 160px tile of the former inline feTurbulence SVG (same noise, ~5 KB WebP): the filter was
-       re-rasterized on paint and cost ~150 ms of first paint on a throttled mobile CPU. */
-    background-image: url("/grain.webp");
-  }
-}
-
-/* Soft amber "steam" glow */
-@utility steam-glow {
+/* Soft warm wash behind the hero */
+@utility hero-wash {
   background:
-    radial-gradient(60% 50% at 50% 0%, rgb(245 167 66 / 0.18), transparent 70%),
-    radial-gradient(40% 40% at 80% 20%, rgb(255 107 53 / 0.08), transparent 70%);
+    radial-gradient(70% 60% at 85% 0%, rgb(199 161 122 / 0.22), transparent 70%),
+    radial-gradient(50% 50% at 0% 100%, rgb(243 237 228 / 0.9), transparent 70%);
 }
 
 @media (prefers-reduced-motion: reduce) {

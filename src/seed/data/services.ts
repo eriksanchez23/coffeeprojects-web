@@ -2,8 +2,9 @@ import type { SeedDoc } from '../types'
 
 type QA = { question: string; answer: string }
 type ServiceShared = {
-  icon: 'globe' | 'shopping-cart' | 'code' | 'server' | 'bot' | 'wrench' | 'sparkles'
-  contactType: 'web' | 'ecommerce' | 'fivem-script' | 'fivem-server' | 'discord-bot' | 'maintenance' | 'custom'
+  icon: 'globe' | 'refresh' | 'shopping-cart' | 'code' | 'server' | 'bot' | 'wrench' | 'sparkles'
+  contactType: 'web' | 'redesign' | 'ecommerce' | 'fivem-script' | 'fivem-server' | 'discord-bot' | 'maintenance' | 'custom'
+  line: 'web' | 'other'
   pricing: { mode: 'one-off' | 'monthly' | 'custom' | 'store'; amount?: number; storeUrl?: string }
   tags: string[]
   order: number
@@ -22,72 +23,155 @@ type ServiceLocalized = {
 
 export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
   {
-    shared: { icon: 'globe', contactType: 'web', pricing: { mode: 'one-off', amount: 349 }, tags: ['Astro', 'Next.js', 'Tailwind', 'GSAP', 'Vercel'], order: 1 },
+    shared: { icon: 'globe', contactType: 'web', line: 'web', pricing: { mode: 'one-off', amount: 349 }, tags: ['Next.js', 'Astro', 'Payload CMS', 'SEO'], order: 1 },
     localized: {
       es: {
-        title: 'Webs & landing pages',
+        title: 'Diseño de páginas web',
         slug: 'webs-y-landing-pages',
-        promise: 'Una web rápida, bonita y pensada para traer clientes.',
-        summary: 'Sitios rápidos, orientados a conversión y optimizados para SEO, con stack moderno y despliegue incluido.',
+        promise: 'Una web profesional que trabaja por tu negocio.',
+        summary: 'Diseñamos y desarrollamos tu web desde cero: landing page, web corporativa o web profesional con panel propio. Rápida, adaptada al móvil y preparada para aparecer en Google.',
         typicalTime: '1-2 semanas',
         note: 'Mantenimiento opcional desde 25 €/mes + IVA: con cualquier plan, la web sale más barata.',
         features: [
-          { text: 'Landing de producto o campaña' },
-          { text: 'Web corporativa' },
-          { text: 'Blog o portfolio' },
-          { text: 'SEO técnico y rendimiento Lighthouse 95+' },
-          { text: 'Despliegue y hosting incluidos' },
+          { text: 'Diseño a medida de tu marca, sin plantillas genéricas' },
+          { text: 'Adaptada a móvil, tablet y ordenador' },
+          { text: 'Carga rápida y SEO técnico desde el primer día' },
+          { text: 'Formulario de contacto y botón de WhatsApp' },
+          { text: 'Alta de tu ficha de Google Business Profile' },
+          { text: 'Textos legales (aviso legal, privacidad y cookies)' },
+          { text: 'Panel para editar textos e imágenes (según plan)' },
         ],
         faq: [
           { question: '¿Cuánto tarda una web?', answer: 'Una landing sencilla suele estar lista en 1-2 semanas. Tras la primera llamada te damos un plazo concreto según el alcance real.' },
           { question: '¿Podré editar los textos yo mismo?', answer: 'Sí. Si lo necesitas, incluimos un panel de gestión para que cambies textos e imágenes sin tocar código.' },
+          { question: '¿Usáis plantillas?', answer: 'No. Cada web se diseña para tu marca y tus clientes. Por eso se ve distinta a la de tu competencia.' },
         ],
-        seo: { title: 'Diseño de páginas web y landing pages', description: 'Webs y landing pages rápidas, optimizadas para SEO y orientadas a conseguir clientes. Desde 349 € + IVA, listas en 1-2 semanas.' },
+        seo: { title: 'Diseño de páginas web profesionales', description: 'Webs y landing pages a medida, rápidas y preparadas para Google. Desde 349 € + IVA, listas en 1-2 semanas.' },
       },
       en: {
-        title: 'Websites & landing pages',
+        title: 'Web design',
         slug: 'websites-and-landing-pages',
-        promise: 'A fast, beautiful website built to bring you clients.',
-        summary: 'Fast, conversion-focused, SEO-optimized websites with a modern stack and deployment included.',
+        promise: 'A professional website that works for your business.',
+        summary: 'We design and build your website from scratch: landing page, business website or professional website with its own admin panel. Fast, mobile-ready and prepared to show up on Google.',
         typicalTime: '1-2 weeks',
         note: 'Optional maintenance from €25/month + VAT: with any plan, the website costs less.',
         features: [
-          { text: 'Product or campaign landing page' },
-          { text: 'Corporate website' },
-          { text: 'Blog or portfolio' },
-          { text: 'Technical SEO and Lighthouse 95+ performance' },
-          { text: 'Deployment and hosting included' },
+          { text: 'Custom design for your brand, no generic templates' },
+          { text: 'Works on mobile, tablet and desktop' },
+          { text: 'Fast loading and technical SEO from day one' },
+          { text: 'Contact form and WhatsApp button' },
+          { text: 'Google Business Profile listing set up' },
+          { text: 'Legal pages (legal notice, privacy and cookies)' },
+          { text: 'Admin panel to edit text and images (depending on plan)' },
         ],
         faq: [
           { question: 'How long does a website take?', answer: 'A simple landing page is usually ready in 1-2 weeks. After the first call we give you a concrete timeline based on the real scope.' },
           { question: 'Will I be able to edit the content myself?', answer: 'Yes. If you need it, we include an admin panel so you can change text and images without touching code.' },
+          { question: 'Do you use templates?', answer: "No. Every website is designed for your brand and your customers. That's why it looks different from your competitors'." },
         ],
-        seo: { title: 'Website and landing page design', description: 'Fast, SEO-optimized websites and landing pages built to win clients. From €349 + VAT, ready in 1-2 weeks.' },
+        seo: { title: 'Professional web design', description: 'Custom websites and landing pages, fast and ready for Google. From €349 + VAT, ready in 1-2 weeks.' },
       },
       fr: {
-        title: 'Sites web & landing pages',
+        title: 'Création de sites web',
         slug: 'sites-web-et-landing-pages',
-        promise: 'Un site rapide, élégant et pensé pour vous apporter des clients.',
-        summary: 'Des sites rapides, orientés conversion et optimisés pour le SEO, avec une stack moderne et la mise en ligne incluse.',
+        promise: 'Un site professionnel qui travaille pour votre entreprise.',
+        summary: 'Nous concevons et développons votre site de zéro : landing page, site vitrine ou site professionnel avec son propre panneau. Rapide, adapté au mobile et prêt pour Google.',
         typicalTime: '1 à 2 semaines',
         note: 'Maintenance facultative à partir de 25 €/mois + TVA : avec n’importe quelle formule, le site coûte moins cher.',
         features: [
-          { text: 'Landing page produit ou campagne' },
-          { text: "Site vitrine d'entreprise" },
-          { text: 'Blog ou portfolio' },
-          { text: 'SEO technique et performance Lighthouse 95+' },
-          { text: 'Mise en ligne et hébergement inclus' },
+          { text: 'Design sur mesure pour votre marque, sans modèle générique' },
+          { text: 'Adapté au mobile, à la tablette et à l’ordinateur' },
+          { text: 'Chargement rapide et SEO technique dès le premier jour' },
+          { text: 'Formulaire de contact et bouton WhatsApp' },
+          { text: 'Création de votre fiche Google Business Profile' },
+          { text: 'Mentions légales, confidentialité et cookies' },
+          { text: 'Panneau pour modifier textes et images (selon la formule)' },
         ],
         faq: [
           { question: 'Combien de temps faut-il pour un site ?', answer: 'Une landing page simple est généralement prête en 1 à 2 semaines. Après le premier appel, nous vous donnons un délai précis selon le périmètre réel.' },
           { question: 'Pourrai-je modifier les contenus moi-même ?', answer: "Oui. Si besoin, nous incluons un panneau d'administration pour modifier textes et images sans toucher au code." },
+          { question: 'Utilisez-vous des modèles ?', answer: 'Non. Chaque site est conçu pour votre marque et vos clients. C’est pourquoi il se distingue de celui de vos concurrents.' },
         ],
-        seo: { title: 'Création de sites web et landing pages', description: 'Sites web et landing pages rapides, optimisés pour le SEO et pensés pour gagner des clients. À partir de 349 € + TVA, prêts en 1 à 2 semaines.' },
+        seo: { title: 'Création de sites web professionnels', description: 'Sites et landing pages sur mesure, rapides et prêts pour Google. À partir de 349 € + TVA, prêts en 1 à 2 semaines.' },
       },
     },
   },
   {
-    shared: { icon: 'shopping-cart', contactType: 'ecommerce', pricing: { mode: 'one-off', amount: 1490 }, tags: ['Shopify', 'WooCommerce', 'Stripe', 'Next.js'], order: 2 },
+    shared: { icon: 'refresh', contactType: 'redesign', line: 'web', pricing: { mode: 'custom' }, tags: ['SEO', 'Rendimiento', 'Accesibilidad', 'Migración'], order: 2 },
+    localized: {
+      es: {
+        title: 'Rediseño y mejora de webs',
+        slug: 'rediseno-web',
+        promise: 'Tu web actual, renovada y trayendo clientes.',
+        summary: 'Si tu web está anticuada, es lenta o no te trae contactos, la renovamos. Empezamos con una revisión gratuita y te proponemos lo que de verdad necesita: desde mejoras puntuales hasta un rediseño completo.',
+        typicalTime: 'Revisión en 48 h · renovación según el alcance',
+        note: 'Presupuesto cerrado tras la revisión gratuita, sin compromiso.',
+        features: [
+          { text: 'Diseño: una imagen actual que transmita la confianza que merece tu negocio' },
+          { text: 'Velocidad: webs que cargan en segundos, también con mala cobertura' },
+          { text: 'Móvil: que se vea y funcione perfecta en cualquier pantalla' },
+          { text: 'Google: estructura, contenidos y SEO técnico para que te encuentren' },
+          { text: 'Conversión: llamadas a la acción claras para que la visita te contacte' },
+          { text: 'Autonomía: un panel para cambiar textos y fotos tú mismo' },
+        ],
+        faq: [
+          { question: '¿Tengo que rehacer la web entera?', answer: 'No siempre. Muchas veces con mejoras concretas (velocidad, móvil, textos) basta. Te lo decimos con sinceridad tras revisarla.' },
+          { question: '¿Funciona con WordPress, Wix u otras plataformas?', answer: 'Sí. Revisamos cualquier web. Según el caso, la mejoramos en su plataforma o te proponemos migrarla a una más rápida y fácil de mantener.' },
+          { question: '¿Perderé mi posición en Google?', answer: 'No, si se hace bien. Mantenemos o redirigimos tus direcciones y comprobamos el posicionamiento después de publicar.' },
+          { question: '¿La web estará caída mientras trabajáis?', answer: 'No. Trabajamos en una copia y solo cambiamos la web cuando la nueva está aprobada.' },
+        ],
+        seo: { title: 'Rediseño web y mejora de páginas web', description: 'Renovamos tu web: diseño actual, carga rápida, adaptada al móvil y visible en Google. Revisión gratuita en 48 h y presupuesto cerrado.' },
+      },
+      en: {
+        title: 'Website redesign',
+        slug: 'website-redesign',
+        promise: 'Your current website, renewed and bringing in customers.',
+        summary: "If your website is outdated, slow or doesn't bring you enquiries, we renew it. We start with a free review and propose what it really needs: from targeted improvements to a full redesign.",
+        typicalTime: 'Review in 48 h · renewal depending on scope',
+        note: 'Fixed quote after the free review, no commitment.',
+        features: [
+          { text: 'Design: a modern look that conveys the trust your business deserves' },
+          { text: 'Speed: pages that load in seconds, even on a weak connection' },
+          { text: 'Mobile: looks and works perfectly on any screen' },
+          { text: 'Google: structure, content and technical SEO so people find you' },
+          { text: 'Conversion: clear calls to action so visitors get in touch' },
+          { text: 'Autonomy: a panel to change text and photos yourself' },
+        ],
+        faq: [
+          { question: 'Do I have to rebuild the whole website?', answer: "Not always. Often targeted improvements (speed, mobile, copy) are enough. We'll tell you honestly after reviewing it." },
+          { question: 'Does it work with WordPress, Wix or other platforms?', answer: 'Yes. We review any website. Depending on the case, we improve it on its platform or propose moving it to a faster one that is easier to maintain.' },
+          { question: 'Will I lose my Google ranking?', answer: 'Not if it is done right. We keep or redirect your addresses and check your ranking after launch.' },
+          { question: 'Will my website be down while you work?', answer: 'No. We work on a copy and only switch once the new version is approved.' },
+        ],
+        seo: { title: 'Website redesign and improvement', description: 'We renew your website: modern design, fast loading, mobile-ready and visible on Google. Free review in 48 h and a fixed quote.' },
+      },
+      fr: {
+        title: 'Refonte de sites web',
+        slug: 'refonte-site-web',
+        promise: 'Votre site actuel, rénové et qui vous apporte des clients.',
+        summary: "Si votre site est dépassé, lent ou ne vous apporte pas de contacts, nous le rénovons. Nous commençons par un audit gratuit et vous proposons ce dont il a vraiment besoin : d'améliorations ciblées à une refonte complète.",
+        typicalTime: 'Audit sous 48 h · refonte selon le périmètre',
+        note: "Devis fixe après l'audit gratuit, sans engagement.",
+        features: [
+          { text: 'Design : une image actuelle qui inspire la confiance que mérite votre entreprise' },
+          { text: 'Vitesse : des pages qui se chargent en quelques secondes, même avec une faible connexion' },
+          { text: "Mobile : un affichage parfait sur tous les écrans" },
+          { text: 'Google : structure, contenus et SEO technique pour être trouvé' },
+          { text: 'Conversion : des appels à l’action clairs pour que le visiteur vous contacte' },
+          { text: 'Autonomie : un panneau pour modifier textes et photos vous-même' },
+        ],
+        faq: [
+          { question: 'Faut-il refaire tout le site ?', answer: 'Pas toujours. Souvent, des améliorations ciblées (vitesse, mobile, textes) suffisent. Nous vous le disons honnêtement après l’audit.' },
+          { question: 'Cela fonctionne-t-il avec WordPress, Wix ou d’autres plateformes ?', answer: 'Oui. Nous auditons tout site. Selon le cas, nous l’améliorons sur sa plateforme ou proposons de le migrer vers une solution plus rapide et plus simple à maintenir.' },
+          { question: 'Vais-je perdre mon référencement Google ?', answer: 'Non, si c’est bien fait. Nous conservons ou redirigeons vos adresses et vérifions le référencement après la mise en ligne.' },
+          { question: 'Mon site sera-t-il hors ligne pendant les travaux ?', answer: 'Non. Nous travaillons sur une copie et ne basculons qu’une fois la nouvelle version validée.' },
+        ],
+        seo: { title: 'Refonte et amélioration de sites web', description: 'Nous rénovons votre site : design actuel, chargement rapide, adapté au mobile et visible sur Google. Audit gratuit sous 48 h et devis fixe.' },
+      },
+    },
+  },
+  {
+    shared: { icon: 'shopping-cart', contactType: 'ecommerce', line: 'web', pricing: { mode: 'one-off', amount: 1490 }, tags: ['Shopify', 'WooCommerce', 'Stripe', 'Next.js'], order: 3 },
     localized: {
       es: {
         title: 'Tiendas online',
@@ -149,7 +233,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
     },
   },
   {
-    shared: { icon: 'code', contactType: 'fivem-script', pricing: { mode: 'store', storeUrl: '' }, tags: ['Lua', 'QBCore', 'ESX', 'NUI'], order: 3 },
+    shared: { icon: 'code', contactType: 'fivem-script', line: 'other', pricing: { mode: 'store', storeUrl: '' }, tags: ['Lua', 'QBCore', 'ESX', 'NUI'], order: 7 },
     localized: {
       es: {
         title: 'Scripts FiveM',
@@ -202,7 +286,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
     },
   },
   {
-    shared: { icon: 'server', contactType: 'fivem-server', pricing: { mode: 'one-off', amount: 800 }, tags: ['QBCore', 'ESX', 'txAdmin', 'Hosting'], order: 4 },
+    shared: { icon: 'server', contactType: 'fivem-server', line: 'other', pricing: { mode: 'one-off', amount: 800 }, tags: ['QBCore', 'ESX', 'txAdmin', 'Hosting'], order: 8 },
     localized: {
       es: {
         title: 'Servidores FiveM llave en mano',
@@ -255,7 +339,7 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
     },
   },
   {
-    shared: { icon: 'bot', contactType: 'discord-bot', pricing: { mode: 'one-off', amount: 120 }, tags: ['discord.js', 'Slash commands', 'FiveM', '24/7'], order: 5 },
+    shared: { icon: 'bot', contactType: 'discord-bot', line: 'other', pricing: { mode: 'one-off', amount: 120 }, tags: ['discord.js', 'Slash commands', 'FiveM', '24/7'], order: 6 },
     localized: {
       es: {
         title: 'Bots de Discord',
@@ -308,10 +392,10 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
     },
   },
   {
-    shared: { icon: 'wrench', contactType: 'maintenance', pricing: { mode: 'monthly', amount: 25 }, tags: ['Backups', 'Updates', 'Monitoring'], order: 6 },
+    shared: { icon: 'wrench', contactType: 'maintenance', line: 'web', pricing: { mode: 'monthly', amount: 25 }, tags: ['Backups', 'Updates', 'Monitoring'], order: 4 },
     localized: {
       es: {
-        title: 'Mantenimiento web mensual',
+        title: 'Mantenimiento web',
         slug: 'mantenimiento-web',
         promise: 'Tu web siempre rápida, segura y actualizada, la hayamos hecho nosotros o no.',
         summary: '¿Ya tienes web y quieres que la cuidemos? Nos encargamos aunque no la hayamos hecho nosotros: actualizaciones, copias de seguridad, soporte y cambios menores por una cuota fija.',
@@ -324,10 +408,10 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { text: 'Cambios menores y soporte' },
         ],
         faq: [],
-        seo: { title: 'Mantenimiento web mensual', description: 'Mantenimiento web con actualizaciones, copias de seguridad, monitorización y soporte. Para cualquier web. Desde 25 €/mes + IVA.' },
+        seo: { title: 'Mantenimiento web', description: 'Mantenimiento web con actualizaciones, copias de seguridad, monitorización y soporte. Para cualquier web. Desde 25 €/mes + IVA.' },
       },
       en: {
-        title: 'Monthly website maintenance',
+        title: 'Website maintenance',
         slug: 'website-maintenance',
         promise: "Your website always fast, secure and up to date, whether we built it or not.",
         summary: "Already have a website and want us to look after it? We take care of it even if we didn't build it: updates, backups, support and minor changes for a fixed monthly fee.",
@@ -340,10 +424,10 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { text: 'Minor changes and support' },
         ],
         faq: [],
-        seo: { title: 'Monthly website maintenance', description: 'Website maintenance with updates, backups, monitoring and support. For any website. From €25/month + VAT.' },
+        seo: { title: 'Website maintenance', description: 'Website maintenance with updates, backups, monitoring and support. For any website. From €25/month + VAT.' },
       },
       fr: {
-        title: 'Maintenance web mensuelle',
+        title: 'Maintenance web',
         slug: 'maintenance-site-web',
         promise: "Votre site toujours rapide, sûr et à jour, que nous l'ayons créé ou non.",
         summary: "Vous avez déjà un site et souhaitez qu'on s'en occupe ? Nous le prenons en charge même si nous ne l'avons pas créé : mises à jour, sauvegardes, support et petites modifications pour un forfait mensuel fixe.",
@@ -356,12 +440,12 @@ export const services: SeedDoc<ServiceShared, ServiceLocalized>[] = [
           { text: 'Petites modifications et support' },
         ],
         faq: [],
-        seo: { title: 'Maintenance web mensuelle', description: 'Maintenance de site avec mises à jour, sauvegardes, surveillance et support. Pour tout site. À partir de 25 €/mois + TVA.' },
+        seo: { title: 'Maintenance web', description: 'Maintenance de site avec mises à jour, sauvegardes, surveillance et support. Pour tout site. À partir de 25 €/mois + TVA.' },
       },
     },
   },
   {
-    shared: { icon: 'sparkles', contactType: 'custom', pricing: { mode: 'custom' }, tags: ['Node.js', 'Python', 'API'], order: 7 },
+    shared: { icon: 'sparkles', contactType: 'custom', line: 'other', pricing: { mode: 'custom' }, tags: ['Node.js', 'Python', 'API'], order: 5 },
     localized: {
       es: {
         title: 'Desarrollo a medida',

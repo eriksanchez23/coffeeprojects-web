@@ -10,8 +10,8 @@ export async function WhyUs({ title, items }: { title: string; items: { id?: str
         {items.map((it, i) => (
           <li key={it.id ?? i} data-reveal>
             <GlassCard className="h-full">
-              <p className="font-mono text-xs text-amber">0{i + 1}</p>
-              <h3 className="mt-3 text-xl font-semibold">{it.title}</h3>
+              <p className="text-sm font-semibold text-amber">{String(i + 1).padStart(2, '0')}</p>
+              <h3 className="mt-3 text-lg font-semibold">{it.title}</h3>
               <p className="mt-2 text-ink-2">{it.text}</p>
             </GlassCard>
           </li>

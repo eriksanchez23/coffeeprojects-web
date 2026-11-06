@@ -8,6 +8,7 @@ import { partners } from './data/partners'
 import { pricing, pricingData } from './data/pricing'
 import { projects } from './data/projects'
 import { services } from './data/services'
+import { fillProjectCaseStudies, upgradeFaqs, upgradeHome, upgradePricingEyebrow, upgradeServiceOrder, upgradeWebService } from './restructure'
 import { settings } from './data/settings'
 import { team } from './data/team'
 import { needsReprice } from './reprice'
@@ -150,6 +151,14 @@ async function run() {
     }
     payload.logger.info(`re-priced service ${s.localized.es.slug}`)
   }
+
+  // 2026-11 restructure for databases seeded before it; no-ops on a fresh database.
+  await upgradeHome(payload)
+  await upgradeWebService(payload)
+  await upgradeServiceOrder(payload)
+  await upgradePricingEyebrow(payload)
+  await fillProjectCaseStudies(payload)
+  await upgradeFaqs(payload)
 
   payload.logger.info('Seed complete')
 }

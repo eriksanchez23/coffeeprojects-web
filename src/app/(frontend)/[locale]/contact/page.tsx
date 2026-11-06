@@ -34,6 +34,10 @@ export default async function ContactPage({
   // R21: the CTA band only ever sends ?type=; personal data never travels in URLs.
   const rawType = Array.isArray(sp.type) ? sp.type[0] : sp.type
   const type = projectTypes.find((p) => p === rawType)
+  // ?url= from the home "free review" form: a public website address, never personal data. Only kept when it
+  // looks like a plain http(s) URL; the form and the server validate it again.
+  const rawUrl = Array.isArray(sp.url) ? sp.url[0] : sp.url
+  const prefillUrl = typeof rawUrl === 'string' && rawUrl.length <= 300 && /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/\S*)?$/i.test(rawUrl.trim()) ? rawUrl.trim() : undefined
   const [t, tn, settings, pricing, services] = await Promise.all([
     getTranslations('contact'),
     getTranslations('nav'),
@@ -60,14 +64,14 @@ export default async function ContactPage({
           { name: tn('contact'), url: absoluteUrl(alternates[locale]) },
         ])}
       />
-      <section className="steam-glow pt-20 pb-24">
+      <section className="hero-wash pt-20 pb-24">
         <Container className="grid gap-12 lg:grid-cols-[1fr_1.4fr]">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-amber">{t('eyebrow')}</p>
-            <h1 className="mt-4 text-5xl font-semibold sm:text-6xl">{t('title')}</h1>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber">{t('eyebrow')}</p>
+            <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">{t('title')}</h1>
             <p className="mt-6 text-lg text-ink-2">{t('lead')}</p>
             <GlassCard className="mt-10 space-y-3 text-sm">
-              <a href={`mailto:${settings.contactEmail}`} className="block font-display text-xl text-ink-0 hover:text-amber" data-track="contact-email">
+              <a href={`mailto:${settings.contactEmail}`} className="block text-lg font-semibold text-ink-0 hover:text-brand" data-track="contact-email">
                 {settings.contactEmail}
               </a>
               <p className="text-ink-2">{t('replyBy')}</p>
@@ -77,7 +81,7 @@ export default async function ContactPage({
             <ContactForm
               locale={locale}
               sourcePath={alternates[locale]}
-              prefill={{ type, plan }}
+              prefill={{ type, plan, url: prefillUrl }}
               quotes={quotes}
               siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ''}
             />

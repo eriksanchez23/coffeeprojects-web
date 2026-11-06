@@ -10,7 +10,7 @@ export function NotesGrid({ notes, className }: { notes: Note[]; className?: str
     <div className={cn('grid gap-4 md:grid-cols-2 lg:grid-cols-3', className)}>
       {notes.map((n, i) => (
         <section key={n.id ?? i} data-reveal className="rounded-[var(--radius-md)] border border-line bg-bg-1/60 p-6">
-          <h3 className="font-mono text-xs uppercase tracking-widest text-amber">{n.title}</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-amber">{n.title}</h3>
           <p className="mt-3 text-sm text-ink-1">{n.text}</p>
         </section>
       ))}
@@ -35,7 +35,7 @@ export function PricingTable({ caption, columns, rows, hideCaption }: Table) {
     // Focusable + labelled: keyboard users can scroll it when it overflows (axe scrollable-region-focusable).
     <div role="region" aria-label={caption} tabIndex={0} data-reveal className="overflow-x-auto rounded-[var(--radius-lg)] border border-line bg-bg-1/60">
       <table className="w-full min-w-[34rem] border-collapse text-left text-sm">
-        <caption className={cn('px-6 pt-5 text-left font-mono text-xs uppercase tracking-widest text-ink-3', hideCaption && 'sr-only')}>
+        <caption className={cn('px-6 pt-5 text-left text-xs font-semibold uppercase tracking-wider text-ink-3', hideCaption && 'sr-only')}>
           {caption}
         </caption>
         <thead>
@@ -44,7 +44,7 @@ export function PricingTable({ caption, columns, rows, hideCaption }: Table) {
               <th
                 key={c}
                 scope="col"
-                className={cn('px-6 py-4 font-mono text-xs font-medium uppercase tracking-widest', i === 1 ? 'text-amber' : 'text-ink-3')}
+                className={cn('px-6 py-4 text-xs font-semibold uppercase tracking-wider', i === 1 ? 'text-amber' : 'text-ink-3')}
               >
                 {c}
               </th>

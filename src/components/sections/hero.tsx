@@ -1,33 +1,71 @@
 import { getTranslations } from 'next-intl/server'
-import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
-import { TerminalLine } from '@/components/ui/terminal-line'
+import { BrowserFrame, PhoneFrame, ShotImage, SiteSketch } from '@/components/showcase/device-frames'
+import { heroShowcase } from '@/lib/showcase'
 import type { Home } from '@/payload-types'
 
-export async function Hero({ hero, visual }: { hero: Home['hero']; visual?: ReactNode }) {
-  const [t, ts] = await Promise.all([getTranslations('common'), getTranslations('sections')])
+/** "Webs profesionales que *consiguen clientes*": the text between asterisks gets the serif italic accent. */
+function Accent({ text }: { text: string }) {
+  const parts = text.split(/\*([^*]+)\*/)
   return (
-    <section className="steam-glow relative isolate overflow-hidden pt-20 pb-28 sm:pt-28" aria-labelledby="hero-title">
-      <Container className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
+    <>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <em key={i} className="font-serif font-normal italic text-brand">
+            {part}
+          </em>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  )
+}
+
+export async function Hero({ hero }: { hero: Home['hero'] }) {
+  const t = await getTranslations('home')
+  const { desktop, mobile } = heroShowcase
+  return (
+    <section className="hero-wash relative isolate overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28" aria-labelledby="hero-title">
+      <Container className="grid items-center gap-14 lg:grid-cols-[1.05fr_1fr]">
         <div>
-          <TerminalLine command={ts("heroCommand")} />
-          <p className="mt-6 font-mono text-xs uppercase tracking-[0.2em] text-amber">{hero.eyebrow}</p>
-          <h1 id="hero-title" data-split className="mt-4 text-5xl font-semibold leading-[1.02] sm:text-6xl lg:text-7xl">
-            {hero.headline}
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber">{hero.eyebrow}</p>
+          <h1 id="hero-title" className="mt-5 text-4xl font-semibold leading-[1.05] sm:text-6xl lg:text-[4.25rem]">
+            <Accent text={hero.headline} />
           </h1>
           <p className="mt-6 max-w-xl text-lg text-ink-2">{hero.subheadline}</p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Button href="/contact" size="lg" data-magnetic>
-              {t('requestQuote')}
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Button href={{ pathname: '/contact', query: { type: 'web' } }} size="lg">
+              {t('ctaNew')}
             </Button>
-            <Button href="/services" size="lg" variant="outline">
-              {t('viewServices')}
+            <Button href={{ pathname: '/contact', query: { type: 'redesign' } }} size="lg" variant="outline">
+              {t('ctaImprove')}
             </Button>
           </div>
-          <p className="mt-8 font-mono text-xs text-ink-3">{hero.trustLine}</p>
+          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-2">
+            {hero.trustLine
+              .split('·')
+              .map((s) => s.trim())
+              .filter(Boolean)
+              .map((item) => (
+                <li key={item} className="flex items-center gap-2">
+                  <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4 text-mint" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                  {item}
+                </li>
+              ))}
+          </ul>
         </div>
-        <div className="relative aspect-square w-full max-w-[560px] justify-self-center">{visual}</div>
+        <div className="relative mx-auto w-full max-w-[600px] pb-10 lg:pb-0">
+          <BrowserFrame url={desktop?.url ?? 'tunegocio.es'}>
+            {desktop ? <ShotImage shot={desktop} priority sizes="(min-width: 1024px) 600px, 100vw" /> : <SiteSketch />}
+          </BrowserFrame>
+          <PhoneFrame className="absolute -bottom-2 -left-10 hidden w-[30%] sm:block lg:-bottom-10">
+            {mobile ? <ShotImage shot={mobile} sizes="180px" /> : <SiteSketch variant="mobile" />}
+          </PhoneFrame>
+        </div>
       </Container>
     </section>
   )

@@ -9,6 +9,8 @@ import { localizedPaths } from '@/i18n/paths'
 import { getHome, getServices } from '@/lib/cms/queries'
 import { JsonLd } from '@/components/seo/json-ld'
 import { breadcrumbLd } from '@/lib/seo/jsonld'
+import { Button } from '@/components/ui/button'
+import { webServices } from '@/lib/services'
 import { absoluteUrl, buildMetadata } from '@/lib/seo/metadata'
 
 export const revalidate = 3600
@@ -37,17 +39,24 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
         ])}
       />
       {/* The section title is the page title here, so it is the page's single <h1>. */}
-      <section className="steam-glow relative py-24 sm:py-32" aria-labelledby="services-title">
+      <section className="hero-wash relative py-24 sm:py-32" aria-labelledby="services-title">
         <Container>
           <header className="mb-14 max-w-3xl">
-            <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-amber">{ts('services')}</p>
-            <h1 id="services-title" className="text-5xl font-semibold sm:text-7xl">
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-amber">{ts('services')}</p>
+            <h1 id="services-title" className="text-4xl font-semibold sm:text-5xl">
               {home.sections.servicesTitle || tn('services')}
             </h1>
             {home.sections.servicesLead && <p className="mt-6 text-lg text-ink-2">{home.sections.servicesLead}</p>}
           </header>
           <h2 className="sr-only">{ts('servicesList')}</h2>
-          <ServicesGrid services={services} locale={locale} />
+          <ServicesGrid services={webServices(services)} locale={locale} />
+          <aside className="mt-10 flex flex-col items-start justify-between gap-4 rounded-[var(--radius-lg)] border border-line bg-bg-2 p-6 sm:flex-row sm:items-center sm:p-8">
+            <div>
+              <h2 className="text-lg font-semibold">{ts('otherTitle')}</h2>
+              <p className="mt-1 text-ink-2">{ts('otherLead')}</p>
+            </div>
+            <Button href="/other-development" variant="outline">{ts('otherCta')} →</Button>
+          </aside>
         </Container>
       </section>
       <CtaBand />

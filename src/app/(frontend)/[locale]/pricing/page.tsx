@@ -46,10 +46,10 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
           ]),
         ]}
       />
-      <section className="steam-glow relative pt-20 pb-24 sm:pt-28 sm:pb-32" aria-labelledby="pricing-title">
+      <section className="hero-wash relative pt-20 pb-24 sm:pt-28 sm:pb-32" aria-labelledby="pricing-title">
         <Container>
           <header className="mb-14 max-w-3xl sm:mb-20">
-            <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-amber">{pricing.eyebrow}</p>
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-amber">{pricing.eyebrow}</p>
             <h1 id="pricing-title" className="text-4xl font-semibold leading-tight sm:text-6xl">
               {pricing.title}
             </h1>

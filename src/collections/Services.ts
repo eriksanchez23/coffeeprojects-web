@@ -9,14 +9,16 @@ import { buildPath } from '@/i18n/build-path'
 import type { Locale } from '@/i18n/locales'
 import { previewUrl } from '@/lib/cms/preview-url'
 
-export const serviceIcons = ['globe', 'shopping-cart', 'code', 'server', 'bot', 'wrench', 'sparkles'] as const
+export const serviceIcons = ['globe', 'refresh', 'shopping-cart', 'code', 'server', 'bot', 'wrench', 'sparkles'] as const
+/** `web` = main website line (home, /services, menu); `other` = "Other development" page only. */
+export const serviceLines = ['web', 'other'] as const
 
 export const Services: CollectionConfig = {
   slug: 'services',
   labels: { singular: t('Servicio', 'Service'), plural: t('Servicios', 'Services') },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'typicalTime', 'order', '_status'],
+    defaultColumns: ['title', 'line', 'typicalTime', 'order', '_status'],
     group: adminGroups.content,
     preview: (doc, { locale }) => {
       const slug = typeof doc?.slug === 'string' ? doc.slug : ''
@@ -118,6 +120,18 @@ export const Services: CollectionConfig = {
         { name: 'question', type: 'text', label: t('Pregunta', 'Question'), required: true },
         { name: 'answer', type: 'textarea', label: t('Respuesta', 'Answer'), required: true },
       ],
+    },
+    {
+      name: 'line',
+      type: 'select',
+      label: t('Línea', 'Line'),
+      required: true,
+      defaultValue: 'web',
+      options: [
+        { label: t('Webs (principal: portada, menú y servicios)', 'Websites (main: home, menu and services)'), value: 'web' },
+        { label: t('Otros desarrollos (solo en su página)', 'Other development (its own page only)'), value: 'other' },
+      ],
+      admin: { position: 'sidebar' },
     },
     { name: 'order', type: 'number', label: t('Orden', 'Order'), defaultValue: 0, admin: { position: 'sidebar' } },
     seoField(),

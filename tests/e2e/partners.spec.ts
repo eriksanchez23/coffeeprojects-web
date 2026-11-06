@@ -10,7 +10,7 @@ test.beforeEach(async ({ context, baseURL }) => {
 
 const locales = [
   {
-    path: '/gana-dinero',
+    path: '/colaboradores',
     title: 'Gana dinero con nosotros',
     notice: 'Sin compra no hay comisión',
     noticeText: 'no contrata ningún paquete, no se genera ningún pago',
@@ -21,7 +21,7 @@ const locales = [
     pricingLink: 'Ver planes y precios',
   },
   {
-    path: '/en/earn-with-us',
+    path: '/en/partners',
     title: 'Earn with us',
     notice: 'No purchase, no commission',
     noticeText: 'does not hire any package, no payment is made',
@@ -32,7 +32,7 @@ const locales = [
     pricingLink: null,
   },
   {
-    path: '/fr/gagnez-avec-nous',
+    path: '/fr/partenaires',
     title: 'Gagnez avec nous',
     notice: "Pas d'achat, pas de commission",
     noticeText: "ne commande aucune offre, aucun paiement n'est dû",
@@ -72,23 +72,23 @@ for (const l of locales) {
     const href = (await register.getAttribute('href')) ?? ''
     expect(href).toMatch(/^mailto:[^?]+@[^?]+\?subject=.+&body=/)
 
-    if (l.pricingLink) await expect(page.getByRole('link', { name: l.pricingLink })).toHaveAttribute('href', '/presupuestos')
+    if (l.pricingLink) await expect(page.getByRole('link', { name: l.pricingLink })).toHaveAttribute('href', '/precios')
   })
 }
 
 test('the partner page is linked from the footer and listed in the sitemap', async ({ page, request }) => {
   await page.goto('/')
-  await page.locator('footer').getByRole('link', { name: 'Gana dinero con nosotros' }).click()
-  await expect(page).toHaveURL(/\/gana-dinero$/)
+  await page.locator('footer').getByRole('link', { name: 'Programa de colaboradores' }).click()
+  await expect(page).toHaveURL(/\/colaboradores$/)
   const sitemap = await (await request.get('/sitemap.xml')).text()
-  for (const path of ['/gana-dinero', '/en/earn-with-us', '/fr/gagnez-avec-nous']) expect(sitemap).toContain(`${path}<`)
+  for (const path of ['/colaboradores', '/en/partners', '/fr/partenaires']) expect(sitemap).toContain(`${path}<`)
 })
 
 test('the partner page declares its canonical and hreflang alternates', async ({ page }) => {
-  await page.goto('/en/earn-with-us')
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/en\/earn-with-us$/)
-  await expect(page.locator('link[rel="alternate"][hreflang="es"]')).toHaveAttribute('href', /\/gana-dinero$/)
-  await expect(page.locator('link[rel="alternate"][hreflang="fr"]')).toHaveAttribute('href', /\/fr\/gagnez-avec-nous$/)
+  await page.goto('/en/partners')
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/en\/partners$/)
+  await expect(page.locator('link[rel="alternate"][hreflang="es"]')).toHaveAttribute('href', /\/colaboradores$/)
+  await expect(page.locator('link[rel="alternate"][hreflang="fr"]')).toHaveAttribute('href', /\/fr\/partenaires$/)
   const title = await page.title()
   expect(title.length).toBeLessThanOrEqual(60)
 })

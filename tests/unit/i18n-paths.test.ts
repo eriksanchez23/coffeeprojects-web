@@ -31,6 +31,6 @@ describe('localizedPaths', () => {
 
 describe('partner programme page (S16)', () => {
   it('has a localized path in every locale', () => {
-    expect(localizedPaths('/partners')).toEqual({ es: '/gana-dinero', en: '/en/earn-with-us', fr: '/fr/gagnez-avec-nous' })
+    expect(localizedPaths('/partners')).toEqual({ es: '/colaboradores', en: '/en/partners', fr: '/fr/partenaires' })
   })
 })

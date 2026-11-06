@@ -33,6 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: [AppPathname, number][] = [
     ['/', 1],
     ['/services', 0.9],
+    ['/other-development', 0.5],
     ['/pricing', 0.8],
     ['/partners', 0.5],
     ['/team', 0.7],

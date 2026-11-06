@@ -7,6 +7,10 @@ describe('legacy redirects', () => {
     expect(legacyRedirects).toEqual([
       { source: '/legal', destination: '/aviso-legal', statusCode: 301 },
       { source: '/en/legal', destination: '/en/legal-notice', statusCode: 301 },
+      { source: '/presupuestos', destination: '/precios', statusCode: 301 },
+      { source: '/gana-dinero', destination: '/colaboradores', statusCode: 301 },
+      { source: '/en/earn-with-us', destination: '/en/partners', statusCode: 301 },
+      { source: '/fr/gagnez-avec-nous', destination: '/fr/partenaires', statusCode: 301 },
     ])
   })
   // next.config.ts cannot be imported in unit tests (Payload/SWC native bindings), so assert the wiring textually.

@@ -10,5 +10,5 @@ export function coverGradient(seed: string): string {
   for (const ch of seed) h = (h * 31 + ch.charCodeAt(0)) >>> 0
   const a = hues[h % hues.length]
   const b = hues[(h >>> 3) % hues.length]
-  return `radial-gradient(120% 120% at 0% 0%, hsl(${a} 85% 60% / .55), transparent 60%), radial-gradient(120% 120% at 100% 100%, hsl(${b} 80% 45% / .45), transparent 60%), #120c09`
+  return `radial-gradient(120% 120% at 0% 0%, hsl(${a} 60% 70% / .45), transparent 60%), radial-gradient(120% 120% at 100% 100%, hsl(${b} 45% 55% / .35), transparent 60%), #f3ede4`
 }

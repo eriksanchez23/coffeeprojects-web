@@ -2,18 +2,18 @@ import { clean, esc } from './escape'
 
 /** Palette and fonts of the approved designs (docs/design/emails). Constants only: never user input. */
 export const colors = {
-  page: '#0b0706',
-  panel: '#120c09',
-  card: '#1a1310',
-  border: '#2e1f16',
-  line: '#241812',
-  amber: '#f5a742',
-  amberSoft: '#ffc165',
-  title: '#fff7e8',
-  body: '#e8dcc8',
-  muted: '#a89584',
-  faint: '#907e6c',
-  ok: '#7ed492',
+  page: '#f3ede4',
+  panel: '#ffffff',
+  card: '#fbf8f3',
+  border: '#e7ded2',
+  line: '#eae1d5',
+  amber: '#6f4e37',
+  amberSoft: '#9a5b1e',
+  title: '#1a1411',
+  body: '#3d332c',
+  muted: '#5f5248',
+  faint: '#6b5d52',
+  ok: '#2f7a55',
 }
 const C = colors
 export const SANS = 'Segoe UI,Helvetica,Arial,sans-serif'

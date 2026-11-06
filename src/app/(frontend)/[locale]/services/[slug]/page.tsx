@@ -18,6 +18,7 @@ import { Link } from '@/i18n/navigation'
 import { localizedPaths } from '@/i18n/paths'
 import { getAllSlugs, getFaqs, getService, getServices } from '@/lib/cms/queries'
 import { contactHref, formatPriceParts } from '@/lib/format'
+import { isWebService } from '@/lib/services'
 import { JsonLd } from '@/components/seo/json-ld'
 import { breadcrumbLd, faqLd, serviceLd } from '@/lib/seo/jsonld'
 import { absoluteUrl, buildMetadata } from '@/lib/seo/metadata'
@@ -66,6 +67,11 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
   const storeUrl = s.pricing.mode === 'store' ? s.pricing.storeUrl : null
   const price = formatPriceParts(s.pricing, locale, labels)
   const pageUrl = absoluteUrl(localizedPaths('/services/[slug]', slugs)[locale])
+  const mainLine = isWebService(s)
+  const parent = mainLine
+    ? { name: tn('services'), href: '/services' as const }
+    : { name: tn('otherDevelopment'), href: '/other-development' as const }
+  const isRedesign = s.contactType === 'redesign'
 
   return (
     <PageShell locale={locale} alternates={localizedPaths('/services/[slug]', slugs)}>
@@ -74,25 +80,32 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
           serviceLd(s, pageUrl, locale),
           breadcrumbLd([
             { name: tn('home'), url: absoluteUrl(localizedPaths('/')[locale]) },
-            { name: tn('services'), url: absoluteUrl(localizedPaths('/services')[locale]) },
+            { name: parent.name, url: absoluteUrl(localizedPaths(parent.href)[locale]) },
             { name: s.title, url: pageUrl },
           ]),
           ...(faqItems.length > 0 ? [faqLd(faqItems)] : []),
         ]}
       />
       <TrackViewContent name={s.title} category={s.contactType} />
-      <section className="steam-glow pt-20 pb-16" aria-labelledby="service-title">
+      <section className="hero-wash pt-20 pb-16" aria-labelledby="service-title">
         <Container className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
           <div>
-            <ServiceIcon name={s.icon} className="h-10 w-10 text-amber" />
-            <p className="mt-6 font-mono text-xs uppercase tracking-[0.2em] text-amber">{s.title}</p>
-            <h1 id="service-title" data-split className="mt-3 text-5xl font-semibold leading-tight sm:text-6xl">
+            <nav aria-label={tn('breadcrumb')} className="mb-8 text-sm text-ink-3">
+              <Link href="/" className="hover:text-ink-0">{tn('home')}</Link>
+              <span aria-hidden className="mx-2">/</span>
+              <Link href={parent.href} className="hover:text-ink-0">{parent.name}</Link>
+            </nav>
+            <span className="grid h-12 w-12 place-items-center rounded-[var(--radius-md)] bg-bg-2 text-brand">
+              <ServiceIcon name={s.icon} className="h-6 w-6" />
+            </span>
+            <p className="mt-6 text-sm font-semibold uppercase tracking-[0.14em] text-amber">{s.title}</p>
+            <h1 id="service-title" data-split className="mt-3 text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
               {s.promise}
             </h1>
             <p className="mt-6 max-w-xl text-lg text-ink-2">{s.summary}</p>
             <div className="mt-10 flex flex-wrap gap-3">
-              <Button href={contactHref(s.contactType)} size="lg" data-magnetic>
-                {t('requestQuote')}
+              <Button href={isRedesign ? contactHref('audit') : contactHref(s.contactType)} size="lg">
+                {isRedesign ? t('requestReview') : t('requestQuote')}
               </Button>
               {storeUrl && (
                 <a href={storeUrl} className={buttonClasses({ size: 'lg', variant: 'outline' })} target="_blank" rel="noopener noreferrer">
@@ -105,14 +118,14 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
             {/* Only dt/dd groups may live inside <dl>; tags and the note follow it. */}
             <dl className="grid gap-6">
               <div>
-                <dt className={price.prefix ? 'text-xs uppercase tracking-widest text-ink-3' : 'sr-only'}>{price.prefix ?? t('price')}</dt>
-                <dd className="font-display text-4xl text-amber-hi">
-                  {price.figure}
+                <dt className={price.prefix && !isRedesign ? 'text-xs font-semibold uppercase tracking-wider text-ink-3' : 'sr-only'}>{isRedesign ? t('price') : (price.prefix ?? t('price'))}</dt>
+                <dd className="text-3xl font-semibold text-ink-0">
+                  {isRedesign ? t('freeReview') : price.figure}
                   {price.vat && <span className="ml-2 font-sans text-sm text-ink-2">{' '}{price.vat}</span>}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-widest text-ink-3">{t('typicalTime')}</dt>
+                <dt className="text-xs font-semibold uppercase tracking-wider text-ink-3">{t('typicalTime')}</dt>
                 <dd className="text-xl text-ink-0">{s.typicalTime}</dd>
               </div>
             </dl>
@@ -134,7 +147,7 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
         </Container>
       </section>
 
-      <Section eyebrow={ts('includes')} title={t('deliverables')}>
+      <Section title={t('deliverables')}>
         <ul className="grid gap-4 sm:grid-cols-2" data-reveal-group>
           {(s.features ?? []).map((f, i) => (
             <li key={f.id ?? i} data-reveal className="flex items-start gap-3 rounded-[var(--radius-md)] border border-line bg-bg-1 p-5">
@@ -149,9 +162,9 @@ export default async function ServicePage({ params }: { params: Promise<{ locale
       <FaqList title={t('faqTitle')} items={faqItems} />
 
       <Section eyebrow={ts('more')} title={t('otherServices')}>
-        <ServicesGrid services={all.filter((o) => o.id !== s.id).slice(0, 3)} locale={locale} />
+        <ServicesGrid services={all.filter((o) => o.id !== s.id && isWebService(o) === mainLine).slice(0, 3)} locale={locale} />
       </Section>
-      <CtaBand defaultType={s.contactType} />
+      <CtaBand defaultType={isRedesign ? 'audit' : s.contactType} />
     </PageShell>
   )
 }

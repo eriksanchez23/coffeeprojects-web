@@ -3,7 +3,7 @@ import type { ContactInput } from '../schema'
 import { clientCopy } from './copy'
 import { clean, esc } from './escape'
 import { parseQuote } from './quote'
-import { button, card, clientFooter, clientHeader, colors, shell, SITE_URL, terminal, type Row } from './shell'
+import { button, card, clientFooter, clientHeader, colors, shell, SITE_URL, type Row } from './shell'
 
 export type ClientEmailInput = ContactInput & { quotedSummary?: string }
 
@@ -36,8 +36,7 @@ export function renderClientEmail(i: ClientEmailInput) {
 
   const inner =
     clientHeader +
-    terminal('~ coffeeprojects $', c.terminalCommand, c.terminalOk) +
-    `<tr><td style="padding:24px 32px 8px;"><h1 style="margin:0;font-size:28px;line-height:1.2;color:${colors.title};">${esc(greeting)}<br><span style="color:${colors.amber};">${esc(c.accent)}</span></h1></td></tr>` +
+    `<tr><td style="padding:28px 32px 8px;"><h1 style="margin:0;font-size:28px;line-height:1.2;color:${colors.title};">${esc(greeting)}<br><span style="color:${colors.amber};">${esc(c.accent)}</span></h1></td></tr>` +
     `<tr><td style="padding:8px 32px 0;font-size:16px;line-height:1.6;color:${colors.body};">${esc(before)}<strong style="color:${colors.title};">${esc(strong)}</strong>${esc(after)}</td></tr>` +
     card(c.summaryTitle, rows, { note: quote.note }) +
     `<tr><td style="padding:28px 32px 0;"><div style="font-family:Consolas,Menlo,monospace;font-size:12px;letter-spacing:1px;color:${colors.faint};text-transform:uppercase;padding-bottom:12px;">${esc(c.stepsTitle)}</div>` +

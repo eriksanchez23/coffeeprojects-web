@@ -22,7 +22,7 @@ export function CommissionTable({ rows, locale, labels }: { rows: CommissionRow[
     const figure = cents ? formatCommission(amount, locale) : formatEuro(amount, locale)
     return fromPrice ? labels.from(figure) : figure
   }
-  const head = 'px-5 py-4 font-mono text-xs font-medium uppercase tracking-widest'
+  const head = 'px-5 py-4 text-xs font-semibold uppercase tracking-wider'
   return (
     <div
       role="region"

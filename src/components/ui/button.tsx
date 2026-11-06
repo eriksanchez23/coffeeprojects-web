@@ -6,12 +6,12 @@ type Variant = 'primary' | 'ghost' | 'outline'
 type Size = 'md' | 'lg'
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-[transform,background-color,box-shadow] duration-300 ease-[var(--ease-out-expo)] will-change-transform disabled:opacity-50 disabled:pointer-events-none'
+  'inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] font-medium transition-[transform,background-color,box-shadow] duration-300 ease-[var(--ease-out-expo)] will-change-transform disabled:opacity-50 disabled:pointer-events-none'
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-amber text-bg-0 hover:bg-amber-hi shadow-[var(--shadow-amber)]',
-  ghost: 'bg-transparent text-ink-0 hover:bg-bg-3',
-  outline: 'bg-transparent text-ink-0 border border-line-hi hover:border-line-amber hover:text-amber-hi',
+  primary: 'bg-brand text-white hover:bg-brand-hi shadow-[var(--shadow-amber)] [.on-dark_&]:text-espresso',
+  ghost: 'bg-transparent text-ink-0 hover:bg-bg-2',
+  outline: 'bg-bg-1 text-ink-0 border border-line-hi hover:border-line-amber hover:text-brand',
 }
 
 const sizes: Record<Size, string> = {

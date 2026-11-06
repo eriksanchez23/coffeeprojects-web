@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function ProjectsPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = (await params).locale as Locale
   setRequestLocale(locale)
-  const [home, tn] = await Promise.all([getHome(locale), getTranslations('nav')])
+  const [home, tn, tp] = await Promise.all([getHome(locale), getTranslations('nav'), getTranslations('projects')])
   return (
     <PageShell locale={locale} alternates={localizedPaths('/projects')}>
       <JsonLd
@@ -35,7 +35,15 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
           { name: tn('projects'), url: absoluteUrl(localizedPaths('/projects')[locale]) },
         ])}
       />
-      <ProjectsPreview locale={locale} title={home.sections.projectsTitle || tn('projects')} lead={home.sections.projectsLead} as="h1" featuredOnly={false} />
+      <ProjectsPreview
+        locale={locale}
+        title={home.sections.projectsTitle || tn('projects')}
+        lead={tp('indexLead')}
+        as="h1"
+        featuredOnly={false}
+        kinds={['new-website', 'redesign', 'store']}
+      />
+      <ProjectsPreview locale={locale} title={tp('appsTitle')} lead={tp('appsLead')} featuredOnly={false} kinds={['app', 'other']} hideMore />
       <CtaBand />
     </PageShell>
   )

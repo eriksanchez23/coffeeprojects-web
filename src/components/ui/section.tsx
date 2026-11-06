@@ -13,15 +13,15 @@ type Props = {
 
 export function Section({ id, eyebrow, title, lead, children, className }: Props) {
   return (
-    <section id={id} className={cn('relative py-24 sm:py-32', className)} aria-labelledby={id ? `${id}-title` : undefined}>
+    <section id={id} className={cn('relative py-20 sm:py-28', className)} aria-labelledby={id ? `${id}-title` : undefined}>
       <Container>
         {(eyebrow || title || lead) && (
           <header className="mb-14 max-w-3xl">
             {eyebrow && (
-              <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-amber">{eyebrow}</p>
+              <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-amber">{eyebrow}</p>
             )}
             {title && (
-              <h2 id={id ? `${id}-title` : undefined} className="text-4xl font-semibold sm:text-5xl lg:text-6xl">
+              <h2 id={id ? `${id}-title` : undefined} className="text-3xl font-semibold sm:text-4xl lg:text-5xl">
                 {title}
               </h2>
             )}

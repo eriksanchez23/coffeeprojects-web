@@ -12,8 +12,8 @@ test('shows localized validation errors', async ({ page }) => {
   await page.getByRole('button', { name: 'Send request' }).click()
   // The submit first waits for the Turnstile token (loaded on first interaction), then validates on the server.
   await expect(page.getByText('This field is required.').first()).toBeVisible({ timeout: 20_000 })
-  // Focus moves to the first invalid field.
-  await expect(page.getByLabel('Name *')).toBeFocused()
+  // Focus moves to the first invalid field (the project description, first field of the "new website" path).
+  await expect(page.locator('#message')).toBeFocused()
 })
 
 test('submits a valid request and lands on the thank-you page', async ({ page }) => {
@@ -43,9 +43,10 @@ test('shows the final price with VAT and the estimated time instead of budget/ti
   await expect(page.getByLabel(/Plazo deseado/)).toHaveCount(0)
   await expect(page.locator('select[name="budget"], select[name="timeline"]')).toHaveCount(0)
 
-  // Without a plan the summary follows the project type select.
+  // Without a plan the summary follows the chosen path and, for "another project", the project type select.
   await page.goto('/contacto')
   await expect(summary).toContainText(/Precio final\s*desde 422,29\s€/)
+  await page.getByText('Otro proyecto', { exact: true }).click()
   await page.getByLabel('Tipo de proyecto *').selectOption('ecommerce')
   await expect(summary).toContainText(/desde 1\.802,90\s€/)
   await expect(summary).toContainText(/4-8 semanas/)
@@ -59,4 +60,21 @@ test('the quote summary is localized', async ({ page }) => {
   await page.goto('/en/contact?type=ecommerce')
   await expect(page.getByTestId('quote-summary')).toContainText(/from €1,802\.90/)
   await expect(page.getByTestId('quote-summary')).toContainText('VAT (21%) included')
+})
+
+test('the free review link pre-fills the website and asks for its URL instead of a description', async ({ page }) => {
+  await page.goto('/contacto?type=audit&url=miweb.es')
+  await expect(page.locator('input[name="projectType"]')).toHaveValue('audit')
+  await expect(page.getByLabel('Dirección de tu web actual *')).toHaveValue('miweb.es')
+  await expect(page.getByLabel(/solo quiero la revisión gratuita/)).toBeChecked()
+  // The description is optional on this path and the price summary is replaced by the review fields.
+  await expect(page.getByLabel('Cuéntanos más (opcional)')).toBeVisible()
+  await expect(page.getByTestId('quote-summary')).toHaveCount(0)
+  await page.getByLabel(/solo quiero la revisión gratuita/).uncheck()
+  await expect(page.locator('input[name="projectType"]')).toHaveValue('redesign')
+})
+
+test('a URL that is not a website is not pre-filled', async ({ page }) => {
+  await page.goto('/contacto?type=audit&url=javascript:alert(1)')
+  await expect(page.getByLabel('Dirección de tu web actual *')).toHaveValue('')
 })

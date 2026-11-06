@@ -65,22 +65,22 @@ export function MobileMenu({ links, ctaLabel, navLabel, openLabel, closeLabel }:
         aria-controls="mobile-menu"
         aria-label={open ? closeLabel : openLabel}
         onClick={() => setOpenPath(open ? null : pathname)}
-        className="grid h-10 w-10 place-items-center rounded-full border border-line-hi text-ink-0"
+        className="grid h-10 w-10 place-items-center rounded-[var(--radius-md)] border border-line-hi bg-bg-1 text-ink-0"
       >
-        <span aria-hidden className="font-mono text-lg">
-          {open ? '×' : '≡'}
-        </span>
+        <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+          {open ? <path d="M18 6 6 18M6 6l12 12" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+        </svg>
       </button>
       {open &&
         createPortal(
           <div
             ref={panelRef}
             id="mobile-menu"
-            className="fixed inset-x-0 top-16 bottom-0 z-[60] flex flex-col gap-6 bg-bg-0 p-6 md:hidden"
+            className="fixed inset-x-0 top-16 bottom-0 z-[60] flex flex-col gap-6 overflow-y-auto bg-bg-0 p-6 md:hidden"
           >
-            <nav aria-label={navLabel} className="flex flex-col gap-4 font-display text-2xl">
+            <nav aria-label={navLabel} className="flex flex-col divide-y divide-line text-lg font-medium">
               {links.map((l) => (
-                <Link key={l.label} href={l.href} className="text-ink-0" onClick={() => setOpenPath(null)}>
+                <Link key={l.label} href={l.href} className="py-3 text-ink-0" onClick={() => setOpenPath(null)}>
                   {l.label}
                 </Link>
               ))}

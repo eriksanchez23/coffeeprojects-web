@@ -36,7 +36,8 @@ test('hreflang comes only from the page head, never from a Link header', async (
 test('unknown pages return a branded 404', async ({ page }) => {
   const res = await page.goto('/esto-no-existe')
   expect(res?.status()).toBe(404)
-  await expect(page.getByText('error 404: coffee not found')).toBeVisible()
+  await expect(page.getByText('Error 404')).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 })
 
 test('old-site legal URLs redirect permanently', async ({ request }) => {
@@ -65,12 +66,31 @@ test('public pages send a CSP without unsafe-eval and the right indexing policy'
   }
 })
 
-test('no stat or GitHub block renders 0 or an em dash placeholder', async ({ page }) => {
+test('the home page focuses on websites: no FiveM/Discord offer, no inflated stats', async ({ page }) => {
   await page.goto('/')
-  const statValues = await page.locator('[data-count-to]').allTextContents()
-  expect(statValues.length).toBeGreaterThan(0)
-  for (const v of statValues) expect(Number(v)).toBeGreaterThan(0)
-  await expect(page.locator('#team dd', { hasText: /^—$/ })).toHaveCount(0)
+  const main = (await page.locator('main').textContent()) ?? ''
+  expect(main).not.toMatch(/FiveM|Discord/)
+  await expect(page.locator('[data-count-to]')).toHaveCount(0)
+  // The secondary line stays reachable from the footer.
+  await expect(page.locator('footer').getByRole('link', { name: 'Scripts FiveM' })).toBeVisible()
+})
+
+test('other development lives on its own page, linked from the services index', async ({ page }) => {
+  await page.goto('/servicios')
+  const main = page.locator('main')
+  await expect(main.getByRole('link', { name: /Rediseño y mejora de webs/ })).toBeVisible()
+  await expect(main.getByRole('link', { name: /Scripts FiveM/ })).toHaveCount(0)
+  await main.getByRole('link', { name: /Ver otros desarrollos/ }).click()
+  await expect(page).toHaveURL(/\/otros-desarrollos$/)
+  await expect(page.locator('main').getByRole('link', { name: /Scripts FiveM/ })).toBeVisible()
+})
+
+test('renamed pages redirect permanently from their old URLs', async ({ request }) => {
+  for (const [from, to] of [['/presupuestos', '/precios'], ['/gana-dinero', '/colaboradores'], ['/en/earn-with-us', '/en/partners'], ['/fr/gagnez-avec-nous', '/fr/partenaires']] as const) {
+    const res = await request.get(from, { maxRedirects: 0 })
+    expect(res.status()).toBe(301)
+    expect(res.headers()['location']).toBe(to)
+  }
 })
 
 test('service CTA pre-selects the project type in the contact form', async ({ page }) => {
@@ -78,21 +98,20 @@ test('service CTA pre-selects the project type in the contact form', async ({ pa
   // Scoped to <main>: the header CTA has the same label but carries no type.
   await page.locator('main').getByRole('link', { name: 'Pide tu presupuesto' }).first().click()
   await expect(page).toHaveURL(/\/contacto\?type=ecommerce$/)
-  await expect(page.getByLabel(/Tipo de proyecto/)).toHaveValue('ecommerce')
+  await expect(page.locator('input[name="projectType"]')).toHaveValue('ecommerce')
 })
 
 test('CTA band sends only the project type to the contact page (no personal data in the URL)', async ({ page }) => {
   await page.goto('/')
   const band = page.locator('section[aria-labelledby="cta-title"]')
-  await band.getByRole('combobox').selectOption('discord-bot')
-  await band.getByRole('button', { name: 'Quiero mi propuesta' }).click()
-  await expect(page).toHaveURL(/\/contacto\?type=discord-bot$/)
-  await expect(page.getByLabel(/Tipo de proyecto/)).toHaveValue('discord-bot')
+  await band.getByRole('link', { name: 'Pide tu presupuesto' }).click()
+  await expect(page).toHaveURL(/\/contacto\?type=web$/)
+  await expect(page.locator('input[name="projectType"]')).toHaveValue('web')
 })
 
 test('an unknown ?type= falls back to the default project type', async ({ page }) => {
   await page.goto('/contacto?type=%3Cscript%3E')
-  await expect(page.getByLabel(/Tipo de proyecto/)).toHaveValue('web')
+  await expect(page.locator('input[name="projectType"]')).toHaveValue('web')
 })
 
 test.describe('mobile menu', () => {
@@ -124,7 +143,7 @@ test.describe('mobile menu', () => {
   test('menu links navigate and close the menu', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Abrir menú' }).click()
-    await page.locator('#mobile-menu').getByRole('link', { name: 'Equipo' }).click()
+    await page.locator('#mobile-menu').getByRole('link', { name: 'Cómo trabajamos' }).click()
     await expect(page).toHaveURL(/\/equipo$/)
     await expect(page.locator('#mobile-menu')).toHaveCount(0)
   })
@@ -135,5 +154,5 @@ test('approved legal pages carry no draft note and are listed in the sitemap', a
   await page.goto('/privacidad')
   await expect(page.getByText('[PENDIENTE')).toHaveCount(0)
   const sitemap = await (await request.get('/sitemap.xml')).text()
-  for (const path of ['/presupuestos', '/aviso-legal', '/privacidad', '/cookies']) expect(sitemap).toContain(path)
+  for (const path of ['/precios', '/aviso-legal', '/privacidad', '/cookies']) expect(sitemap).toContain(path)
 })

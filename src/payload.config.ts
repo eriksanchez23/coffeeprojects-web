@@ -39,7 +39,7 @@ export default buildConfig({
   cors: origins,
   admin: {
     user: Users.slug,
-    theme: 'dark',
+    theme: 'light',
     importMap: { baseDir: path.resolve(dirname) },
     meta: { titleSuffix: ' · CoffeeProjects admin', robots: 'noindex, nofollow' },
     components: {

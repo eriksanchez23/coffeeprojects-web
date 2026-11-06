@@ -7,22 +7,20 @@ import { localizedPaths } from '@/i18n/paths'
 
 export default async function NotFound() {
   const locale = (await getLocale()) as Locale
-  const [t, tn] = await Promise.all([getTranslations('notFound'), getTranslations('nav')])
+  const t = await getTranslations('notFound')
   return (
     // The URL is unknown, so the language switcher points each locale at its home page.
     <PageShell locale={locale} alternates={localizedPaths('/')} hideMobileCta>
       {/* not-found.tsx cannot export metadata; React hoists this <title> into <head>. */}
       <title>{t('title')}</title>
-      <section className="steam-glow grid min-h-[70dvh] place-items-center py-24">
+      <section className="hero-wash grid min-h-[70dvh] place-items-center py-24">
         <Container className="max-w-xl">
-          <div className="rounded-[var(--radius-lg)] border border-line bg-bg-1 p-8 font-mono text-sm">
-            <p className="text-mint">{t('command')}</p>
-            <p className="mt-2 text-berry">{t('error')}</p>
-          </div>
-          <h1 className="mt-10 text-4xl font-semibold">{t('body')}</h1>
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber">{t('error')}</p>
+          <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">{t('title')}</h1>
+          <p className="mt-6 text-lg text-ink-2">{t('body')}</p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Button href="/" size="lg">{t('cta')}</Button>
-            <Button href="/contact" size="lg" variant="outline">{tn('contact')}</Button>
+            <Button href="/services" size="lg" variant="outline">{t('ctaServices')}</Button>
           </div>
         </Container>
       </section>

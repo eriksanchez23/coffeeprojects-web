@@ -12,6 +12,8 @@ export function toContactRecord(
   const { privacy, nda, marketingConsent: _formValue, ...rest } = data
   return {
     ...rest,
+    // The "existing website" paths may omit the message (the URL is the key data); the column is required.
+    message: rest.message || '—',
     marketingConsent: marketing,
     privacyAccepted: privacy,
     ndaRequested: nda,

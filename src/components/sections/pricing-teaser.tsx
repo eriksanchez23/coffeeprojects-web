@@ -24,7 +24,7 @@ export async function PricingTeaser({ pricing, locale }: { pricing: Pricing; loc
             data-reveal
             className={cn('rounded-[var(--radius-md)] border p-6', p.featured ? 'border-line-amber bg-bg-2' : 'border-line bg-bg-1')}
           >
-            {p.featured && <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-amber">{t('recommended')}</p>}
+            {p.featured && <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-amber">{t('recommended')}</p>}
             <h3 className="font-display text-xl font-semibold">{p.name}</h3>
             <p className="mt-3 flex flex-wrap items-baseline gap-x-2">
               {p.fromPrice && <span className="text-sm text-ink-2">{tc('from')}</span>}{' '}
@@ -33,7 +33,7 @@ export async function PricingTeaser({ pricing, locale }: { pricing: Pricing; loc
               </span>{' '}
               <span className="text-sm text-ink-2">{vat}</span>
             </p>
-            <p className="mt-1 font-mono text-xs uppercase tracking-widest text-ink-3">{t('withMaintenance')}</p>
+            <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-ink-3">{t('withMaintenance')}</p>
           </li>
         ))}
       </ul>

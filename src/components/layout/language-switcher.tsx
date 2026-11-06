@@ -12,7 +12,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   const t = useTranslations('nav')
 
   return (
-    <nav aria-label={t('language')} className={clsx('flex items-center gap-1 font-mono text-xs', className)}>
+    <nav aria-label={t('language')} className={clsx('flex items-center gap-1 text-xs font-medium', className)}>
       {locales.map((locale) => (
         <a
           key={locale}
@@ -23,7 +23,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
           title={localeLabels[locale]}
           className={clsx(
             'inline-flex min-h-8 min-w-10 items-center justify-center rounded-full px-2.5 py-1 uppercase transition-colors',
-            locale === current ? 'bg-amber text-bg-0' : 'text-ink-2 hover:text-ink-0',
+            locale === current ? 'bg-ink-0 text-bg-0' : 'text-ink-2 hover:text-ink-0',
           )}
         >
           {locale}

@@ -11,13 +11,25 @@ export const adminGroups = {
 } as const
 
 export const projectTypeLabels: Record<string, Bilingual> = {
-  web: t('Web', 'Website'),
+  web: t('Web nueva', 'New website'),
+  redesign: t('Mejorar su web actual', 'Improve current website'),
+  audit: t('Revisión gratuita', 'Free website review'),
   ecommerce: t('Tienda online', 'E-commerce'),
   'fivem-script': t('Script de FiveM', 'FiveM script'),
   'fivem-server': t('Servidor de FiveM', 'FiveM server'),
   'discord-bot': t('Bot de Discord', 'Discord bot'),
   maintenance: t('Mantenimiento', 'Maintenance'),
   custom: t('A medida', 'Custom'),
+}
+
+export const websiteIssueLabels: Record<string, Bilingual> = {
+  slow: t('Es lenta', 'It is slow'),
+  mobile: t('Se ve mal en el móvil', 'Looks bad on mobile'),
+  google: t('No sale en Google', 'Not found on Google'),
+  outdated: t('Diseño anticuado', 'Outdated design'),
+  editing: t('No puede editarla', 'Cannot edit it'),
+  'no-leads': t('No le trae clientes', 'Brings no customers'),
+  other: t('Otro', 'Other'),
 }
 
 export const budgetLabels: Record<string, Bilingual> = {
@@ -52,6 +64,7 @@ export const localeLabels: Record<string, Bilingual> = {
 
 export const serviceIconLabels: Record<string, Bilingual> = {
   globe: t('Globo', 'Globe'),
+  refresh: t('Renovar', 'Refresh'),
   'shopping-cart': t('Carrito de la compra', 'Shopping cart'),
   code: t('Código', 'Code'),
   server: t('Servidor', 'Server'),

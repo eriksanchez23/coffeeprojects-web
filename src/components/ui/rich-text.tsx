@@ -7,7 +7,7 @@ export function RichText({ data, className }: { data: unknown; className?: strin
   return (
     <div
       className={cn(
-        'max-w-none space-y-5 text-ink-1 [&_a]:text-amber [&_a]:underline [&_h2]:mt-10 [&_h2]:text-2xl [&_h3]:text-xl [&_li]:ml-5 [&_ul]:list-disc',
+        'max-w-none space-y-5 text-ink-1 [&_a]:text-brand [&_a]:underline [&_h2]:mt-10 [&_h2]:text-2xl [&_h3]:text-xl [&_li]:ml-5 [&_ul]:list-disc',
         className,
       )}
     >

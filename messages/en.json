@@ -1,8 +1,8 @@
 {
   "meta": {
     "siteName": "CoffeeProjects",
-    "defaultTitle": "CoffeeProjects — Web development, online stores and custom software from Spain",
-    "defaultDescription": "Development studio in Spain: websites, online stores, Discord bots, FiveM servers and scripts, and website maintenance. A tailored proposal in under 24 hours."
+    "defaultTitle": "Professional web design and website redesign | CoffeeProjects",
+    "defaultDescription": "We build new websites and renew the ones that no longer work: fast, beautiful and designed to win customers. Fixed price and a reply within 24 h."
   },
   "nav": {
     "services": "Services",
@@ -19,7 +19,10 @@
     "home": "Home",
     "mainNav": "Main navigation",
     "mobileNav": "Mobile navigation",
-    "partners": "Earn with us"
+    "partners": "Partner programme",
+    "howWeWork": "How we work",
+    "otherDevelopment": "Other development",
+    "breadcrumb": "Breadcrumb"
   },
   "common": {
     "from": "From",
@@ -27,7 +30,7 @@
     "learnMore": "See details",
     "requestQuote": "Get a quote",
     "viewServices": "View services",
-    "viewProjects": "View projects",
+    "viewProjects": "See all projects",
     "viewProfile": "View profile",
     "backHome": "Back to home",
     "nda": "Under NDA",
@@ -50,18 +53,20 @@
     "perMonth": "/month",
     "plusVat": "+ VAT",
     "price": "Price",
-    "socials": "Links"
+    "socials": "Links",
+    "requestReview": "Get your free review",
+    "freeReview": "Free review"
   },
   "contact": {
-    "title": "Tell us about your project",
-    "lead": "Send us the details and we'll get back to you within 24 hours with an initial, no-obligation proposal.",
+    "title": "Tell us what you need",
+    "lead": "We reply within 24 hours with a first proposal. No commitment.",
     "eyebrow": "Contact",
     "name": "Name",
     "email": "Email",
     "phone": "Phone (optional)",
     "projectType": "Project type",
     "message": "Tell us about your project",
-    "messageHint": "The more specific you are, the more accurate our quote will be.",
+    "messageHint": "The more specific you are, the more accurate the proposal.",
     "howFound": "How did you hear about us? (optional)",
     "nda": "I want to sign an NDA before sharing details",
     "moreDetails": "More details (optional)",
@@ -71,19 +76,21 @@
     "sending": "Sending…",
     "verifying": "Verifying…",
     "required": "Required",
-    "guarantees": "Reply < 24h · No spam, no obligation · Data protected (GDPR)",
+    "guarantees": "Reply within 24 h · No commitment · Data protected (GDPR)",
     "replyBy": "Erik, your point of contact, will reply together with the specialist who best fits your project.",
-    "quickTitle": "Shall we talk about your project?",
-    "quickLead": "Tell us your idea and you'll have an initial proposal within 24 hours, no strings attached.",
-    "quickCta": "Get my proposal",
+    "quickTitle": "Shall we talk about your website?",
+    "quickLead": "Tell us what you need and we will reply within 24 h with a first proposal. No commitment.",
+    "quickCta": "Get a quote",
     "projectTypes": {
-      "web": "Website / landing page",
+      "web": "New website / landing page",
       "ecommerce": "Online store",
       "fivem-script": "FiveM script",
       "fivem-server": "FiveM server",
       "discord-bot": "Discord bot",
       "maintenance": "Website maintenance",
-      "custom": "Custom development"
+      "custom": "Custom development",
+      "redesign": "Improve my current website",
+      "audit": "Free review of my website"
     },
     "quote": {
       "title": "Final price and estimated time",
@@ -106,15 +113,46 @@
       "privacy": "You must accept the privacy policy.",
       "captcha": "We couldn't verify you're not a robot. Please try again.",
       "rateLimited": "You've sent several requests in a row. Please wait a moment or email us at contact@coffeeprojects.es.",
-      "generic": "Something went wrong. Please try again or email us at contact@coffeeprojects.es."
-    }
+      "generic": "Something went wrong. Please try again or email us at contact@coffeeprojects.es.",
+      "invalidUrl": "Enter a valid website address (e.g. yoursite.com)."
+    },
+    "quickEmail": "Send us an email",
+    "paths": {
+      "legend": "What do you need?",
+      "web": {
+        "title": "A new website",
+        "text": "Start from scratch with a professional website."
+      },
+      "existing": {
+        "title": "Improve my website",
+        "text": "Redesign, speed, mobile or Google."
+      },
+      "other": {
+        "title": "Another project",
+        "text": "Store, maintenance, custom, bots or FiveM."
+      }
+    },
+    "currentUrl": "Your current website address",
+    "issuesLegend": "What isn't working? (optional)",
+    "issues": {
+      "slow": "It's slow",
+      "mobile": "Looks bad on mobile",
+      "google": "I'm not on Google",
+      "outdated": "Outdated design",
+      "editing": "I can't edit it",
+      "no-leads": "It brings no customers",
+      "other": "Other"
+    },
+    "auditOnly": "For now I only want the free review",
+    "auditOnlyHint": "We'll send you a short report within 48 h with what's wrong and how to fix it.",
+    "messageOptional": "Tell us more (optional)"
   },
   "pricing": {
     "recommended": "Recommended",
     "new": "New",
     "includes": "What {name} includes",
     "notIncluded": "Not included:",
-    "viewAll": "See pricing",
+    "viewAll": "See all prices",
     "seePackages": "See plans and pricing",
     "withMaintenance": "With maintenance",
     "webOnly": "Website only",
@@ -144,9 +182,9 @@
     "perMonth": "{price}/month"
   },
   "thanks": {
-    "title": "Got it! We're already brewing the coffee.",
-    "body": "We've received your request. We'll write back within 24 hours with a first proposal.",
-    "cta": "Meanwhile, check out our projects"
+    "title": "Received! We'll reply within 24 h.",
+    "body": "We've sent a copy to your email. Meanwhile, have a look at some of our projects.",
+    "cta": "See projects"
   },
   "consent": {
     "title": "We use cookies",
@@ -162,38 +200,83 @@
     "policy": "Cookie policy"
   },
   "footer": {
-    "tagline": "No coffee, no code.",
+    "tagline": "No coffee, no code. No commitment, no project.",
     "rights": "All rights reserved.",
     "legal": "Legal notice",
     "privacy": "Privacy",
     "cookies": "Cookies",
     "manageCookies": "Cookie settings",
-    "remote": "We work remotely with clients all over the world.",
+    "remote": "Web design and development studio in Spain. We work remotely with clients worldwide.",
     "legalNav": "Legal information",
     "chat": "Chat",
     "legalDescription": "Owner details of coffeeprojects.es and the terms of use of this website.",
     "privacyDescription": "How CoffeeProjects handles your personal data, which rights you have and how to exercise them.",
-    "cookiesDescription": "Which cookies coffeeprojects.es uses, what they are for and how to manage your consent."
+    "cookiesDescription": "Which cookies coffeeprojects.es uses, what they are for and how to manage your consent.",
+    "responseTime": "Reply within 24 h",
+    "colServices": "Services",
+    "colOther": "Other development",
+    "colStudio": "Studio",
+    "colLegal": "Legal",
+    "seeAll": "See all"
   },
   "sections": {
-    "services": "// services",
-    "why": "// why us",
-    "process": "// process",
-    "stack": "// stack",
-    "faq": "// faq",
-    "includes": "// includes",
-    "more": "// more",
+    "services": "Services",
+    "why": "Why CoffeeProjects",
+    "process": "Process",
+    "stack": "Technologies",
+    "faq": "FAQ",
+    "includes": "What's included",
+    "more": "More services",
     "heroCommand": "brew --team",
     "statsLabel": "CoffeeProjects in numbers",
     "servicesList": "List of services",
-    "team": "// team",
-    "projects": "// projects"
+    "team": "Team",
+    "projects": "Projects",
+    "otherTitle": "Need another kind of development?",
+    "otherLead": "We also build custom software, automations and bots.",
+    "otherCta": "See other development"
   },
   "notFound": {
     "title": "Page not found · CoffeeProjects",
-    "command": "$ cd /this-page",
-    "error": "error 404: coffee not found",
-    "body": "This page ran out of coffee. Let's head back home.",
-    "cta": "Back to home"
+    "error": "Error 404",
+    "body": "The address may have changed or the link may be mistyped.",
+    "cta": "Back to home",
+    "ctaServices": "See services"
+  },
+  "home": {
+    "ctaNew": "I want a new website",
+    "ctaImprove": "I want to improve my website",
+    "seeNew": "See web design",
+    "seeRedesign": "See website redesign",
+    "servicesEyebrow": "Services",
+    "pathsTitle": "Start from scratch or improve what you have?",
+    "auditUrlLabel": "Your website address",
+    "auditCta": "Get my free review",
+    "auditNote": "Next we ask for your email to send you the report. No commitment."
+  },
+  "projects": {
+    "kinds": {
+      "new-website": "New website",
+      "redesign": "Redesign",
+      "store": "Online store",
+      "app": "Web app",
+      "other": "Other"
+    },
+    "concept": "Design proposal",
+    "conceptNote": "Design proposal prepared by CoffeeProjects; not a website published by the business.",
+    "ndaNote": "For confidentiality we don't show the client's name or links.",
+    "challenge": "The challenge",
+    "solution": "What we did",
+    "results": "Results",
+    "indexLead": "Websites we have built or renewed. Some are under a confidentiality agreement, so we don't show the client's name.",
+    "appsTitle": "Web apps",
+    "appsLead": "Tools and applications we also build."
+  },
+  "otherDevelopment": {
+    "title": "Other development",
+    "lead": "Besides websites, we build custom software and projects for online communities. Same team, same commitment to work done well.",
+    "listLabel": "Other development list",
+    "seoTitle": "Custom development, Discord bots and FiveM",
+    "seoDescription": "Custom software, automations, Discord bots and FiveM development. Same team and fixed prices."
   }
 }

@@ -84,10 +84,10 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
           ]),
         ]}
       />
-      <section className="steam-glow relative pt-20 pb-16 sm:pt-28" aria-labelledby="partners-title">
+      <section className="hero-wash relative pt-20 pb-16 sm:pt-28" aria-labelledby="partners-title">
         <Container>
           <header className="max-w-3xl">
-            <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-amber">{partners.eyebrow}</p>
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-amber">{partners.eyebrow}</p>
             <h1 id="partners-title" className="text-4xl font-semibold leading-tight sm:text-6xl">
               {partners.title}
             </h1>
@@ -116,16 +116,16 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
           <ul aria-label={t('rates')} className="mt-12 grid gap-5 md:grid-cols-2">
             <li className="relative rounded-[var(--radius-lg)] border border-line-amber bg-bg-2 bg-[linear-gradient(180deg,rgb(245_167_66/0.12),transparent_55%)] p-7 sm:p-8">
               {partners.withMaintenanceBadge && (
-                <p className="absolute -top-3 left-7 rounded-full bg-amber px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-widest text-bg-0">
+                <p className="absolute -top-3 left-7 rounded-full bg-amber px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-bg-0">
                   {partners.withMaintenanceBadge}
                 </p>
               )}
-              <p className="font-mono text-xs uppercase tracking-widest text-ink-2">{partners.withMaintenanceTitle}</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-2">{partners.withMaintenanceTitle}</p>
               <p className="mt-3 font-display text-6xl font-semibold text-amber-hi">{high}</p>
               {partners.rateNote && <p className="mt-2 text-ink-1">{partners.rateNote}</p>}
             </li>
             <li className="rounded-[var(--radius-lg)] border border-line bg-bg-1/60 p-7 sm:p-8">
-              <p className="font-mono text-xs uppercase tracking-widest text-ink-2">{partners.webOnlyTitle}</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-2">{partners.webOnlyTitle}</p>
               <p className="mt-3 font-display text-6xl font-semibold text-ink-0">{low}</p>
               {partners.rateNote && <p className="mt-2 text-ink-1">{partners.rateNote}</p>}
             </li>
@@ -167,7 +167,7 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
             <div className="grid gap-5 lg:grid-cols-2">
               {webPlans.length > 0 && (
                 <section aria-labelledby="partners-web-title" className="rounded-[var(--radius-lg)] border border-line bg-bg-1/60 p-7 sm:p-8">
-                  <h3 id="partners-web-title" className="font-mono text-xs uppercase tracking-widest text-amber">
+                  <h3 id="partners-web-title" className="text-xs font-semibold uppercase tracking-wider text-amber">
                     {partners.webPlansTitle}
                   </h3>
                   <ul className="mt-5 grid gap-3 text-sm">
@@ -181,7 +181,7 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
                 </section>
               )}
               <section aria-labelledby="partners-maintenance-title" className="rounded-[var(--radius-lg)] border border-line bg-bg-1/60 p-7 sm:p-8">
-                <h3 id="partners-maintenance-title" className="font-mono text-xs uppercase tracking-widest text-amber">
+                <h3 id="partners-maintenance-title" className="text-xs font-semibold uppercase tracking-wider text-amber">
                   {partners.maintenanceTitle}
                 </h3>
                 {maintenancePlans.length > 0 && (
@@ -255,7 +255,7 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
                 aria-labelledby="partners-dont-title"
                 className="mt-8 rounded-[var(--radius-lg)] border border-dashed border-berry/60 bg-bg-1/60 p-6 sm:p-8"
               >
-                <h3 id="partners-dont-title" className="font-mono text-xs uppercase tracking-widest text-berry">
+                <h3 id="partners-dont-title" className="text-xs font-semibold uppercase tracking-wider text-berry">
                   {dontPromise.title}
                 </h3>
                 {dontPromise.text && <p className="mt-3 text-ink-1">{fill(dontPromise.text)}</p>}
@@ -269,7 +269,7 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
       {cta?.registerLabel && (
         <section className="py-16 sm:py-24" aria-labelledby="partners-cta-title">
           <Container>
-            <div className="steam-glow rounded-[var(--radius-lg)] border border-line-amber bg-bg-1 p-8 sm:p-14">
+            <div className="hero-wash rounded-[var(--radius-lg)] border border-line-amber bg-bg-1 p-8 sm:p-14">
               <h2 id="partners-cta-title" className="text-4xl font-semibold sm:text-5xl">
                 {cta.title || cta.registerLabel}
               </h2>

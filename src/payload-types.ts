@@ -151,7 +151,16 @@ export interface Contact {
   name: string;
   email: string;
   phone?: string | null;
-  projectType: 'web' | 'ecommerce' | 'fivem-script' | 'fivem-server' | 'discord-bot' | 'maintenance' | 'custom';
+  projectType:
+    | 'web'
+    | 'redesign'
+    | 'audit'
+    | 'ecommerce'
+    | 'maintenance'
+    | 'custom'
+    | 'discord-bot'
+    | 'fivem-script'
+    | 'fivem-server';
   /**
    * Web plan chosen on the pricing page (validated against the Pricing global)
    */
@@ -162,6 +171,8 @@ export interface Contact {
   quotedSummary?: string | null;
   budget?: ('lt500' | '500-1500' | '1500-3000' | '3000-6000' | 'gt6000' | 'tbd') | null;
   timeline?: ('flexible' | 'lt1m' | '1-2m' | '2-4m' | 'gt4m') | null;
+  currentUrl?: string | null;
+  websiteIssues?: ('slow' | 'mobile' | 'google' | 'outdated' | 'editing' | 'no-leads' | 'other')[] | null;
   message: string;
   howFound?: string | null;
   ndaRequested?: boolean | null;
@@ -190,7 +201,7 @@ export interface Contact {
       }[]
     | null;
   /**
-   * Each time the thank-you PDF was emailed to the client from "Thank-you note (PDF)"
+   * Each time the thank-you PDF was emailed to the client: the automatic one when the request arrives (no author) and those sent from "Thank-you note (PDF)"
    */
   thankYouSent?:
     | {
@@ -266,11 +277,20 @@ export interface Service {
     };
     [k: string]: unknown;
   } | null;
-  icon: 'globe' | 'shopping-cart' | 'code' | 'server' | 'bot' | 'wrench' | 'sparkles';
+  icon: 'globe' | 'refresh' | 'shopping-cart' | 'code' | 'server' | 'bot' | 'wrench' | 'sparkles';
   /**
    * Pre-selects this project type in the contact form
    */
-  contactType: 'web' | 'ecommerce' | 'fivem-script' | 'fivem-server' | 'discord-bot' | 'maintenance' | 'custom';
+  contactType:
+    | 'web'
+    | 'redesign'
+    | 'audit'
+    | 'ecommerce'
+    | 'maintenance'
+    | 'custom'
+    | 'discord-bot'
+    | 'fivem-script'
+    | 'fivem-server';
   pricing: {
     mode: 'one-off' | 'monthly' | 'custom' | 'store';
     amount?: number | null;
@@ -292,6 +312,7 @@ export interface Service {
         id?: string | null;
       }[]
     | null;
+  line: 'web' | 'other';
   order?: number | null;
   /**
    * Search engine and social preview. Leave empty to use defaults.
@@ -357,6 +378,24 @@ export interface Project {
   slug: string;
   category: string;
   summary: string;
+  /**
+   * Projects page filter
+   */
+  kind: 'new-website' | 'redesign' | 'store' | 'app' | 'other';
+  sector?: string | null;
+  challenge?: string | null;
+  solution?: string | null;
+  results?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Shows a "Design proposal" label instead of presenting it as a client
+   */
+  concept?: boolean | null;
   body?: {
     root: {
       type: string;
@@ -563,6 +602,8 @@ export interface ContactsSelect<T extends boolean = true> {
   quotedSummary?: T;
   budget?: T;
   timeline?: T;
+  currentUrl?: T;
+  websiteIssues?: T;
   message?: T;
   howFound?: T;
   ndaRequested?: T;
@@ -633,6 +674,7 @@ export interface ServicesSelect<T extends boolean = true> {
         answer?: T;
         id?: T;
       };
+  line?: T;
   order?: T;
   seo?:
     | T
@@ -654,6 +696,18 @@ export interface ProjectsSelect<T extends boolean = true> {
   slug?: T;
   category?: T;
   summary?: T;
+  kind?: T;
+  sector?: T;
+  challenge?: T;
+  solution?: T;
+  results?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  concept?: T;
   body?: T;
   cover?: T;
   gallery?: T;
@@ -853,6 +907,48 @@ export interface Home {
     subheadline: string;
     trustLine: string;
   };
+  paths?: {
+    title?: string | null;
+    newTitle?: string | null;
+    newText?: string | null;
+    newPoints?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    newPrice?: string | null;
+    redesignTitle?: string | null;
+    redesignText?: string | null;
+    redesignPoints?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    redesignPrice?: string | null;
+  };
+  audit?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lead?: string | null;
+    symptoms?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    offerTitle?: string | null;
+    offerText?: string | null;
+  };
+  guarantees?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  sectorsLine?: string | null;
   stats?:
     | {
         value: number;
@@ -888,7 +984,7 @@ export interface Home {
     stackTitle: string;
   };
   /**
-   * Technologies shown in the marquee
+   * No longer shown on the home page; kept in case it comes back
    */
   stack?: string[] | null;
   _status?: ('draft' | 'published') | null;
@@ -1264,6 +1360,52 @@ export interface HomeSelect<T extends boolean = true> {
         subheadline?: T;
         trustLine?: T;
       };
+  paths?:
+    | T
+    | {
+        title?: T;
+        newTitle?: T;
+        newText?: T;
+        newPoints?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        newPrice?: T;
+        redesignTitle?: T;
+        redesignText?: T;
+        redesignPoints?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        redesignPrice?: T;
+      };
+  audit?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lead?: T;
+        symptoms?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        offerTitle?: T;
+        offerText?: T;
+      };
+  guarantees?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  sectorsLine?: T;
   stats?:
     | T
     | {

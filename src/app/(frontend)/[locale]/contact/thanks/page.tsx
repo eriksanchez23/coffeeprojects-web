@@ -28,9 +28,13 @@ export default async function ThanksPage({
   return (
     <PageShell locale={locale} alternates={localizedPaths('/contact/thanks')} hideMobileCta>
       <TrackLead eventId={typeof e === 'string' ? e : undefined} />
-      <section className="steam-glow grid min-h-[70vh] place-items-center py-24 text-center">
+      <section className="hero-wash grid min-h-[70vh] place-items-center py-24 text-center">
         <Container className="max-w-2xl">
-          <p aria-hidden className="text-6xl">☕</p>
+          <span aria-hidden className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-brand text-white">
+            <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          </span>
           <h1 className="mt-6 text-4xl font-semibold sm:text-5xl">{t('title')}</h1>
           <p className="mt-6 text-lg text-ink-2">{t('body')}</p>
           <Button href="/projects" size="lg" className="mt-10">{t('cta')}</Button>

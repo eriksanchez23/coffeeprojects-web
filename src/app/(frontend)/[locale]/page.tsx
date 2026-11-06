@@ -1,22 +1,21 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { PageShell } from '@/components/layout/page-shell'
-import { HeroVisual } from '@/components/motion/hero-visual'
+import { AuditOffer } from '@/components/sections/audit-offer'
 import { CtaBand } from '@/components/sections/cta-band'
 import { FaqList } from '@/components/sections/faq-list'
 import { Hero } from '@/components/sections/hero'
 import { PricingTeaser } from '@/components/sections/pricing-teaser'
 import { ProcessSteps } from '@/components/sections/process-steps'
 import { ProjectsPreview } from '@/components/sections/projects-preview'
-import { ServicesGrid } from '@/components/sections/services-grid'
-import { StackMarquee } from '@/components/sections/stack-marquee'
-import { StatsBento } from '@/components/sections/stats-bento'
-import { TeamPreview } from '@/components/sections/team-preview'
+import { TrustStrip } from '@/components/sections/trust-strip'
+import { TwoPaths } from '@/components/sections/two-paths'
 import { WhyUs } from '@/components/sections/why-us'
-import { Section } from '@/components/ui/section'
 import type { Locale } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import { getFaqs, getHome, getPricing, getServices, getSettings } from '@/lib/cms/queries'
+import { formatPrice } from '@/lib/format'
+import { serviceForType } from '@/features/contact/quote'
 import { JsonLd } from '@/components/seo/json-ld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { faqLd } from '@/lib/seo/jsonld'
@@ -38,35 +37,41 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale: raw } = await params
   const locale = raw as Locale
   setRequestLocale(locale)
-  const [home, services, pricing, faqs, t, ts, tn, tm] = await Promise.all([
+  const [home, services, pricing, faqs, tc, tn, tm] = await Promise.all([
     getHome(locale),
     getServices(locale),
     getPricing(locale),
     getFaqs(locale),
     getTranslations('common'),
-    getTranslations('sections'),
     getTranslations('nav'),
     getTranslations('meta'),
   ])
   // Unseeded/unpublished home global: translated fallbacks, and lists that have no items are skipped.
   const hero = { ...home.hero, headline: home.hero.headline || tm('defaultTitle'), subheadline: home.hero.subheadline || tm('defaultDescription') }
   const { sections } = home
+  const priceLabels = { from: tc('from'), perMonth: tc('perMonth'), custom: tc('custom'), seeStore: tc('seeStore'), vat: tc('plusVat') }
+  const extras = (['ecommerce', 'maintenance'] as const)
+    .map((type) => serviceForType(type, services))
+    .filter((s) => s !== undefined)
+    .map((service) => ({ service, price: formatPrice(service.pricing, locale, priceLabels) }))
 
   return (
     <PageShell locale={locale} alternates={localizedPaths('/')}>
       {faqs.length > 0 && <JsonLd data={faqLd(faqs)} />}
-      <Hero hero={hero} visual={<HeroVisual />} />
-      {(home.stats ?? []).length > 0 && <StatsBento stats={home.stats ?? []} />}
-      <Section id="services" eyebrow={ts('services')} title={sections.servicesTitle || tn('services')} lead={sections.servicesLead}>
-        <ServicesGrid services={services} locale={locale} />
-      </Section>
+      <Hero hero={hero} />
+      <TrustStrip items={home.guarantees ?? []} sectorsLine={home.sectorsLine} />
+      <TwoPaths
+        paths={home.paths ?? {}}
+        newService={serviceForType('web', services)}
+        redesignService={serviceForType('redesign', services)}
+        extras={extras}
+      />
+      {home.audit && <AuditOffer audit={home.audit} />}
+      <ProjectsPreview locale={locale} title={sections.projectsTitle || tn('projects')} lead={sections.projectsLead} kinds={['new-website', 'redesign', 'store']} limit={3} />
+      {(home.process ?? []).length > 0 && <ProcessSteps title={sections.processTitle} steps={home.process ?? []} className="bg-bg-2" />}
       <PricingTeaser pricing={pricing} locale={locale} />
       {(home.whyUs ?? []).length > 0 && <WhyUs title={sections.whyTitle} items={home.whyUs ?? []} />}
-      {(home.process ?? []).length > 0 && <ProcessSteps title={sections.processTitle} steps={home.process ?? []} />}
-      <TeamPreview locale={locale} title={sections.teamTitle || tn('team')} lead={sections.teamLead} />
-      <ProjectsPreview locale={locale} title={sections.projectsTitle || tn('projects')} lead={sections.projectsLead} />
-      {(home.stack ?? []).length > 0 && <StackMarquee title={sections.stackTitle} items={home.stack ?? []} />}
-      <FaqList title={t('faqTitle')} items={faqs} />
+      {faqs.length > 0 && <FaqList title={tc('faqTitle')} items={faqs} />}
       <CtaBand />
     </PageShell>
   )

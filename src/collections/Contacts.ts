@@ -3,7 +3,7 @@ import { canManageContacts, isAdmin, isAdminField, nobody } from '@/access'
 import { changedFieldNames, logIntegrationAction } from '@/lib/security/integration-audit'
 import { contactReplyEndpoint } from '@/endpoints/contact-reply'
 import { contactThankYouPdfEndpoint, contactThankYouSendEndpoint } from '@/endpoints/contact-thank-you'
-import { budgets, contactStatuses, projectTypes, timelines } from '@/features/contact/options'
+import { budgets, contactStatuses, projectTypes, timelines, websiteIssues } from '@/features/contact/options'
 import {
   adminGroups,
   bilingualOptions,
@@ -11,6 +11,7 @@ import {
   contactStatusLabels,
   localeLabels,
   projectTypeLabels,
+  websiteIssueLabels,
   t,
   timelineLabels,
 } from '@/fields/labels'
@@ -23,7 +24,7 @@ export const Contacts: CollectionConfig = {
   labels: { singular: t('Solicitud de contacto', 'Contact request'), plural: t('Solicitudes de contacto', 'Contact requests') },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email', 'projectType', 'plan', 'status', 'createdAt'],
+    defaultColumns: ['name', 'email', 'projectType', 'currentUrl', 'status', 'createdAt'],
     listSearchableFields: ['name', 'email', 'message'],
     group: adminGroups.inbox,
     components: { beforeListTable: ['/components/admin/default-new-filter#DefaultNewFilter'] },
@@ -136,6 +137,22 @@ export const Contacts: CollectionConfig = {
       label: t('Plazo', 'Timeline'),
       options: bilingualOptions(timelines, timelineLabels),
       admin: { ...readOnly, condition: (data) => Boolean(data?.timeline) },
+      access: locked,
+    },
+    {
+      name: 'currentUrl',
+      type: 'text',
+      label: t('Web actual', 'Current website'),
+      admin: { ...readOnly, condition: (data) => Boolean(data?.currentUrl) },
+      access: locked,
+    },
+    {
+      name: 'websiteIssues',
+      type: 'select',
+      hasMany: true,
+      label: t('Qué le falla a su web', 'What fails on their website'),
+      options: bilingualOptions(websiteIssues, websiteIssueLabels),
+      admin: { ...readOnly, condition: (data) => Array.isArray(data?.websiteIssues) && data.websiteIssues.length > 0 },
       access: locked,
     },
     { name: 'message', type: 'textarea', label: t('Mensaje', 'Message'), required: true, admin: readOnly, access: locked },

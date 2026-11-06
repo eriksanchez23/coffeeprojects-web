@@ -4,7 +4,7 @@ import { type FormEvent, useActionState, useEffect, useRef, useState } from 'rea
 import { buttonClasses } from '@/components/ui/button'
 import { submitContact } from '@/features/contact/action'
 import type { ContactResult } from '@/features/contact/handle-contact'
-import { type ProjectType, projectTypes } from '@/features/contact/options'
+import { type ProjectType, isExistingSiteType, projectTypes, websiteIssues } from '@/features/contact/options'
 import type { QuoteLine } from '@/features/contact/quote'
 import { readConsentFromDocument } from '@/features/tracking/consent'
 import { Link } from '@/i18n/navigation'
@@ -12,7 +12,11 @@ import { clsx } from 'clsx'
 import { TurnstileWidget } from './turnstile-widget'
 
 // `plan` is a pricing package slug the page already validated against the pricing global.
-type Prefill = { type?: string; plan?: string }
+type Prefill = { type?: string; plan?: string; url?: string }
+
+type Path = 'web' | 'existing' | 'other'
+const otherTypes = projectTypes.filter((p) => p !== 'web' && !isExistingSiteType(p))
+const pathOf = (type: ProjectType): Path => (type === 'web' ? 'web' : isExistingSiteType(type) ? 'existing' : 'other')
 
 // React resets uncontrolled fields after every action, so the submitted values travel in the
 // state and feed `defaultValue`s: a failed submit never wipes what the visitor typed.
@@ -20,8 +24,8 @@ type FormState = { result: ContactResult | null; values: Record<string, string>;
 const initialState: FormState = { result: null, values: {}, attempt: 0 }
 
 const field =
-  'w-full rounded-[var(--radius-md)] border border-line-hi bg-bg-1 px-4 py-3 text-ink-0 placeholder:text-ink-3 focus:border-amber aria-[invalid=true]:border-berry'
-const label = 'mb-2 block text-sm text-ink-1'
+  'w-full rounded-[var(--radius-md)] border border-line-hi bg-bg-1 px-4 py-3 text-ink-0 placeholder:text-ink-3 focus:border-brand aria-[invalid=true]:border-berry'
+const label = 'mb-2 block text-sm font-medium text-ink-1'
 
 export function ContactForm({
   locale,
@@ -79,6 +83,7 @@ export function ContactForm({
     fd.forEach((v, k) => {
       if (typeof v === 'string' && k !== 'cf-turnstile-response' && !k.startsWith('$ACTION')) values[k] = v
     })
+    values.websiteIssues = fd.getAll('websiteIssues').filter((v) => typeof v === 'string').join(',')
     const result = await submitContact(prev.result, fd)
     return { result, values, attempt: prev.attempt + 1 }
   }, initialState)
@@ -106,7 +111,17 @@ export function ContactForm({
   const initialType = values.projectType ?? prefill.type
   const defaultType = projectTypes.find((p) => p === initialType) ?? 'web'
   const [selectedType, setSelectedType] = useState<ProjectType>(defaultType)
+  const path = pathOf(selectedType)
+  const [lastOther, setLastOther] = useState<ProjectType>(path === 'other' ? defaultType : 'ecommerce')
+  const choosePath = (next: Path) =>
+    setSelectedType(next === 'web' ? 'web' : next === 'existing' ? 'redesign' : lastOther)
   const quote = quotes[selectedType] ?? []
+  const checkedIssues = new Set((values.websiteIssues ?? '').split(','))
+  const pathCards: { value: Path; title: string; text: string }[] = [
+    { value: 'web', title: t('paths.web.title'), text: t('paths.web.text') },
+    { value: 'existing', title: t('paths.existing.title'), text: t('paths.existing.text') },
+    { value: 'other', title: t('paths.other.title'), text: t('paths.other.text') },
+  ]
 
   return (
     <form
@@ -128,6 +143,128 @@ export function ContactForm({
         <input id="cp_hp" name="cp_hp" tabIndex={-1} autoComplete="off" />
       </div>
 
+      <fieldset>
+        <legend className="mb-3 text-sm font-semibold text-ink-0">{t('paths.legend')} *</legend>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {pathCards.map((c) => (
+            <label
+              key={c.value}
+              className="relative flex cursor-pointer flex-col rounded-[var(--radius-md)] border border-line-hi bg-bg-1 p-4 transition-colors has-[:checked]:border-brand has-[:checked]:bg-bg-2 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand"
+            >
+              <input type="radio" name="path" value={c.value} checked={path === c.value} onChange={() => choosePath(c.value)} className="sr-only" />
+              <span className="font-semibold text-ink-0">{c.title}</span>
+              <span className="mt-1 text-xs text-ink-2">{c.text}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <input type="hidden" name="projectType" value={selectedType} />
+
+      {path === 'other' && (
+        <div>
+          <label htmlFor="projectType-other" className={label}>{t('projectType')} *</label>
+          <select
+            id="projectType-other"
+            value={selectedType}
+            onChange={(e) => {
+              const next = otherTypes.find((p) => p === e.target.value) ?? 'ecommerce'
+              setSelectedType(next)
+              setLastOther(next)
+            }}
+            className={field}
+            aria-invalid={Boolean(errors.projectType)}
+            aria-describedby={errors.projectType ? 'projectType-error' : undefined}
+          >
+            {otherTypes.map((p) => (
+              <option key={p} value={p}>{t(`projectTypes.${p}`)}</option>
+            ))}
+          </select>
+          {err('projectType')}
+        </div>
+      )}
+
+      {path === 'existing' ? (
+        <div className="grid gap-5">
+          <div>
+            <label htmlFor="currentUrl" className={label}>{t('currentUrl')} *</label>
+            <input
+              id="currentUrl"
+              name="currentUrl"
+              type="text"
+              inputMode="url"
+              autoComplete="url"
+              placeholder="https://tuweb.com"
+              defaultValue={values.currentUrl ?? prefill.url}
+              className={field}
+              {...aria('currentUrl')}
+            />
+            {err('currentUrl')}
+          </div>
+          <fieldset>
+            <legend className={label}>{t('issuesLegend')}</legend>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {websiteIssues.map((issue) => (
+                <label key={issue} className="flex items-center gap-3 rounded-[var(--radius-sm)] border border-line px-3 py-2 text-sm has-[:checked]:border-brand">
+                  <input type="checkbox" name="websiteIssues" value={issue} defaultChecked={checkedIssues.has(issue)} className="accent-[var(--color-brand)]" />
+                  {t(`issues.${issue}`)}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <label className="flex items-start gap-3 rounded-[var(--radius-md)] border border-line-amber bg-bg-2 p-4 text-sm">
+            <input
+              type="checkbox"
+              checked={selectedType === 'audit'}
+              onChange={(e) => setSelectedType(e.target.checked ? 'audit' : 'redesign')}
+              className="mt-0.5 accent-[var(--color-brand)]"
+            />
+            <span>
+              <strong className="text-ink-0">{t('auditOnly')}</strong>
+              <span className="mt-0.5 block text-ink-2">{t('auditOnlyHint')}</span>
+            </span>
+          </label>
+        </div>
+      ) : (
+        /* Read-only: what this project type costs (VAT included) and how long it usually takes. */
+        <section
+          aria-labelledby="quote-title"
+          className="rounded-[var(--radius-md)] border border-line-amber bg-bg-2 p-4"
+          data-testid="quote-summary"
+        >
+          <h2 id="quote-title" className="text-xs font-semibold uppercase tracking-wider text-amber">{t('quote.title')}</h2>
+          <dl id="quote-summary" aria-live="polite" aria-atomic="true" className="mt-3 grid gap-1.5 text-sm">
+            {quote.map((line, i) => (
+              <div
+                key={line.label}
+                className="flex flex-wrap items-baseline justify-between gap-x-3"
+                data-testid={prefill.plan && i === 0 ? 'selected-plan' : undefined}
+              >
+                <dt className="text-ink-2">{line.label}</dt>
+                <dd className="text-base font-semibold text-ink-0">{line.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-3 text-xs text-ink-3">{t('quote.vat')}. {t('quote.hint')}</p>
+        </section>
+      )}
+
+      <div>
+        <label htmlFor="message" className={label}>{path === 'existing' ? t('messageOptional') : `${t('message')} *`}</label>
+        <textarea
+          id="message"
+          name="message"
+          required={path !== 'existing'}
+          rows={5}
+          maxLength={2000}
+          defaultValue={values.message}
+          className={field}
+          aria-invalid={Boolean(errors.message)}
+          aria-describedby={errors.message ? 'message-hint message-error' : 'message-hint'}
+        />
+        <p id="message-hint" className="mt-1 text-xs text-ink-3">{t('messageHint')}</p>
+        {err('message')}
+      </div>
+
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className={label}>{t('name')} *</label>
@@ -139,64 +276,6 @@ export function ContactForm({
           <input id="email" name="email" type="email" required autoComplete="email" defaultValue={values.email} className={field} {...aria('email')} />
           {err('email')}
         </div>
-      </div>
-
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div>
-          <label htmlFor="projectType" className={label}>{t('projectType')} *</label>
-          <select
-            id="projectType"
-            name="projectType"
-            defaultValue={defaultType}
-            onChange={(e) => setSelectedType(projectTypes.find((p) => p === e.target.value) ?? 'web')}
-            className={field}
-            aria-invalid={Boolean(errors.projectType)}
-            aria-describedby={errors.projectType ? 'projectType-error quote-summary' : 'quote-summary'}
-          >
-            {projectTypes.map((p) => (
-              <option key={p} value={p}>{t(`projectTypes.${p}`)}</option>
-            ))}
-          </select>
-          {err('projectType')}
-        </div>
-        {/* Read-only: what this project type costs (VAT included) and how long it usually takes. */}
-        <section
-          aria-labelledby="quote-title"
-          className="rounded-[var(--radius-md)] border border-line-amber bg-bg-2 p-4"
-          data-testid="quote-summary"
-        >
-          <h2 id="quote-title" className="font-mono text-xs uppercase tracking-widest text-amber">{t('quote.title')}</h2>
-          <dl id="quote-summary" aria-live="polite" aria-atomic="true" className="mt-3 grid gap-1.5 text-sm">
-            {quote.map((line, i) => (
-              <div
-                key={line.label}
-                className="flex flex-wrap items-baseline justify-between gap-x-3"
-                data-testid={prefill.plan && i === 0 ? 'selected-plan' : undefined}
-              >
-                <dt className="text-ink-2">{line.label}</dt>
-                <dd className="font-display text-base text-ink-0">{line.value}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-3 text-xs text-ink-3">{t('quote.vat')}. {t('quote.hint')}</p>
-        </section>
-      </div>
-
-      <div>
-        <label htmlFor="message" className={label}>{t('message')} *</label>
-        <textarea
-          id="message"
-          name="message"
-          required
-          rows={6}
-          maxLength={2000}
-          defaultValue={values.message}
-          className={field}
-          aria-invalid={Boolean(errors.message)}
-          aria-describedby={errors.message ? 'message-hint message-error' : 'message-hint'}
-        />
-        <p id="message-hint" className="mt-1 text-xs text-ink-3">{t('messageHint')}</p>
-        {err('message')}
       </div>
 
       <details className="rounded-[var(--radius-md)] border border-line p-4" open={Boolean(values.phone || values.howFound || values.nda)}>
@@ -213,16 +292,16 @@ export function ContactForm({
             {err('howFound')}
           </div>
           <label className="flex items-center gap-3 text-sm sm:col-span-2">
-            <input type="checkbox" name="nda" defaultChecked={Boolean(values.nda)} className="accent-amber" /> {t('nda')}
+            <input type="checkbox" name="nda" defaultChecked={Boolean(values.nda)} className="accent-[var(--color-brand)]" /> {t('nda')}
           </label>
         </div>
       </details>
 
       <div>
         <label className="flex items-start gap-3 text-sm">
-          <input type="checkbox" name="privacy" required defaultChecked={Boolean(values.privacy)} className="mt-1 accent-amber" {...aria('privacy')} />
+          <input type="checkbox" name="privacy" required defaultChecked={Boolean(values.privacy)} className="mt-1 accent-[var(--color-brand)]" {...aria('privacy')} />
           <span>
-            {t.rich('privacy', { link: (chunks) => <Link href="/privacy" className="text-amber underline">{chunks}</Link> })} *
+            {t.rich('privacy', { link: (chunks) => <Link href="/privacy" className="text-brand underline">{chunks}</Link> })} *
           </span>
         </label>
         {err('privacy')}
@@ -247,7 +326,7 @@ export function ContactForm({
       >
         {pending ? t('sending') : awaitingToken ? t('verifying') : t('submit')}
       </button>
-      <p className="font-mono text-xs text-ink-3">{t('guarantees')}</p>
+      <p className="text-xs text-ink-3">{t('guarantees')}</p>
     </form>
   )
 }

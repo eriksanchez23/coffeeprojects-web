@@ -13,7 +13,7 @@ test.beforeEach(async ({ context, baseURL }) => {
 })
 
 test('step 1 lists the six v4 web plans with both prices, VAT notes and minimum plans (es)', async ({ page }) => {
-  await page.goto('/presupuestos')
+  await page.goto('/precios')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tarifas web')
   await expect(page.getByRole('heading', { level: 2, name: '1. Elige tu web' })).toBeVisible()
 
@@ -51,7 +51,7 @@ test('step 1 lists the six v4 web plans with both prices, VAT notes and minimum 
 })
 
 test('step 2 lists the maintenance plans, tailored support, comparison, change rules and extras (es)', async ({ page }) => {
-  await page.goto('/presupuestos')
+  await page.goto('/precios')
   const maintenance = page.locator('section[aria-labelledby="pricing-maintenance-title"]')
   await expect(maintenance.getByRole('heading', { level: 2 })).toHaveText('2. Elige tu mantenimiento (opcional)')
 
@@ -105,17 +105,17 @@ test('en and fr pricing routes render translated plans', async ({ request }) => 
 })
 
 test('a web plan CTA carries type and plan to the contact page, which shows the plan', async ({ page }) => {
-  await page.goto('/presupuestos')
+  await page.goto('/precios')
   const cta = page.getByRole('link', { name: 'Solicitar este plan' }).nth(3)
   await expect(cta).toHaveAttribute('href', '/contacto?type=web&plan=web-corporativa')
   await expect(page.getByRole('link', { name: 'Solicitar este plan' }).nth(4)).toHaveAttribute('href', '/contacto?type=ecommerce&plan=tienda-online')
   await page.goto((await cta.getAttribute('href'))!)
 
   await expect(page.getByTestId('selected-plan')).toContainText('Web Corporativa')
-  await expect(page.getByLabel('Tipo de proyecto *')).toHaveValue('web')
+  await expect(page.locator('input[name="projectType"]')).toHaveValue('web')
   await expect(page.locator('input[type="hidden"][name="plan"]')).toHaveValue('web-corporativa')
 
-  await page.goto('/presupuestos')
+  await page.goto('/precios')
   await expect(page.getByRole('link', { name: 'Quiero este plan' }).first()).toHaveAttribute('href', '/contacto?type=maintenance')
 })
 
@@ -168,10 +168,10 @@ test('home teaser and navigation link to the pricing page', async ({ page, isMob
     /Web Profesional/,
   ])
   expect(norm(await teaser.textContent())).toContain('Mantenimiento opcional desde 25 €/mes + IVA')
-  await expect(teaser.getByRole('link', { name: 'Ver presupuestos' })).toHaveAttribute('href', '/presupuestos')
-  await expect(page.locator('footer').getByRole('link', { name: 'Presupuestos' })).toHaveAttribute('href', '/presupuestos')
+  await expect(teaser.getByRole('link', { name: 'Ver todos los precios' })).toHaveAttribute('href', '/precios')
+  await expect(page.locator('footer').getByRole('link', { name: 'Precios' })).toHaveAttribute('href', '/precios')
   if (!isMobile) {
-    await expect(page.getByRole('navigation', { name: 'Navegación principal' }).getByRole('link', { name: 'Presupuestos' })).toHaveAttribute('href', '/presupuestos')
+    await expect(page.getByRole('navigation', { name: 'Navegación principal' }).getByRole('link', { name: 'Precios' })).toHaveAttribute('href', '/precios')
   }
 })
 
@@ -182,7 +182,7 @@ test('web and maintenance services show the v4 prices and link to the plans', as
   ]) {
     await page.goto(path)
     expect(norm(await page.locator('main').textContent()), path).toContain(price)
-    await expect(page.getByRole('link', { name: 'Ver planes y precios' })).toHaveAttribute('href', '/presupuestos')
+    await expect(page.getByRole('link', { name: 'Ver planes y precios' })).toHaveAttribute('href', '/precios')
   }
 })
 

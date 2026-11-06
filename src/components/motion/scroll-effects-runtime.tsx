@@ -103,18 +103,14 @@ export default function ScrollEffectsRuntime() {
         }
       })
 
-      // 4. Process: step-by-step progress on desktop; pinned only when the whole section fits the viewport
+      // 4. Process: steps light up one by one while scrolling (no pinning: the page keeps its natural rhythm)
       mm.add(`${MOTION_OK} and (min-width: 1024px)`, () => {
         const list = document.querySelector<HTMLElement>('[data-process]')
         if (!list || !belowFold(list)) return
-        const section = list.closest('section') ?? list
-        const fits = section.getBoundingClientRect().height <= window.innerHeight * 0.9
         const steps = gsap.utils.toArray<HTMLElement>('[data-process-step]', list)
         gsap.set(steps, { opacity: 0.25 })
         const tl = gsap.timeline({
-          scrollTrigger: fits
-            ? { trigger: list, start: 'top 30%', end: `+=${steps.length * 220}`, pin: section, scrub: 0.6 }
-            : { trigger: list, start: 'top 80%', end: 'bottom 50%', scrub: 0.6 },
+          scrollTrigger: { trigger: list, start: 'top 85%', end: 'bottom 60%', scrub: 0.6 },
         })
         steps.forEach((s) => tl.to(s, { opacity: 1, y: -8, duration: 1 }))
       })

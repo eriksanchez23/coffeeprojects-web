@@ -8,7 +8,6 @@ import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { JsonLd } from '@/components/seo/json-ld'
 import { ConsentBanner } from '@/components/layout/consent-banner'
-import { CursorGlow } from '@/components/motion/cursor-glow'
 import { MotionProvider } from '@/components/motion/motion-provider'
 import { AttributionCapture } from '@/components/tracking/attribution-capture'
 import { MetaPixel } from '@/components/tracking/meta-pixel'
@@ -59,8 +58,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={fontVariables} suppressHydrationWarning>
-      {/* The page background lives on <html> (globals.css) so the cursor glow (z-index -10) paints behind content. */}
-      <body className="grain text-ink-1">
+      <body className="bg-bg-0 text-ink-1">
         <JsonLd data={[organizationLd(settings.contactEmail), websiteLd(locale as Locale)]} />
         <NextIntlClientProvider>
           <MotionProvider>
@@ -69,7 +67,6 @@ export default async function LocaleLayout({
             <MetaPixel pixelId={pixelId} />
             <AttributionCapture />
           </MotionProvider>
-          <CursorGlow />
         </NextIntlClientProvider>
         {/* Their scripts are served by Vercel (/_vercel/*); elsewhere (next start, CI, Lighthouse) they would only 404. */}
         {onVercel && (

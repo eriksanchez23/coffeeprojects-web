@@ -1,7 +1,7 @@
 import { buildPath } from '@/i18n/build-path'
 import { clientCopy, clientLocale } from './copy'
 import { clean, esc } from './escape'
-import { button, clientFooter, clientHeader, colors, shell, SITE_URL, terminal } from './shell'
+import { button, clientFooter, clientHeader, colors, shell, SITE_URL } from './shell'
 
 type Paragraphs = { greeting: string; lines: string[] }
 
@@ -13,8 +13,7 @@ function render(locale: string | null | undefined, subject: string, { greeting, 
   const projects = `${SITE_URL}${buildPath(cta.path, l)}`
   const inner =
     clientHeader +
-    terminal('~ coffeeprojects $', c.terminalCommand, c.terminalOk) +
-    `<tr><td style="padding:24px 32px 8px;"><h1 style="margin:0;font-size:26px;line-height:1.25;color:${colors.title};">${esc(greeting)}</h1></td></tr>` +
+    `<tr><td style="padding:28px 32px 8px;"><h1 style="margin:0;font-size:26px;line-height:1.25;color:${colors.title};">${esc(greeting)}</h1></td></tr>` +
     lines
       .map((p) => `<tr><td style="padding:8px 32px 0;font-size:16px;line-height:1.6;color:${colors.body};">${esc(p)}</td></tr>`)
       .join('') +

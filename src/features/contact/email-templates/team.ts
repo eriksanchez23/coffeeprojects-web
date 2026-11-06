@@ -1,4 +1,4 @@
-import { budgetLabels, localeLabels, projectTypeLabels, timelineLabels } from '@/fields/labels'
+import { budgetLabels, localeLabels, projectTypeLabels, timelineLabels, websiteIssueLabels } from '@/fields/labels'
 import type { Contact } from '@/payload-types'
 import { clean, esc, escMultiline, safeHttpUrl, safeMailto, safeTel } from './escape'
 import { parseQuote } from './quote'
@@ -15,6 +15,8 @@ const madridDate = (iso: string) => `${madrid(iso, { dateStyle: 'full' })} · ${
 const headline = (type: string, kind: string) => {
   if (kind === 'maintenance') return { before: 'quiere ', accent: 'Mantenimiento', after: '' }
   if (kind === 'custom') return { before: 'quiere un ', accent: 'proyecto a medida', after: '' }
+  if (kind === 'redesign') return { before: 'quiere ', accent: 'mejorar su web', after: '' }
+  if (kind === 'audit') return { before: 'pide una ', accent: 'revisión gratuita (48 h)', after: '' }
   return { before: kind === 'web' || kind === 'ecommerce' ? 'quiere una ' : 'quiere un ', accent: type, after: '' }
 }
 
@@ -31,6 +33,8 @@ export function renderTeamEmail(c: TeamEmailContact, { adminUrl }: { adminUrl: s
 
   const projectRows: Row[] = [
     { label: 'Tipo', value: type },
+    { label: 'Web actual', value: c.currentUrl },
+    { label: 'Qué le falla', value: (c.websiteIssues ?? []).map((i) => websiteIssueLabels[i]?.es ?? i).join(', ') || null },
     { label: 'Plan', value: c.plan },
     ...quote.rows.map((r) => ({ label: r.label, value: r.value, accent: r.value.includes('€') })),
     // Retired fields (S17): only requests sent before carry them.

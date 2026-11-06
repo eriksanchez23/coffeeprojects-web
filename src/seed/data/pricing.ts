@@ -87,7 +87,7 @@ export const pricing: SeedDoc<PricingShared, PricingLocalized> = {
   },
   localized: {
     es: {
-      eyebrow: '// presupuestos',
+      eyebrow: 'Precios',
       title: 'Tarifas web',
       subtitle: 'Precios cerrados y límites claros, en dos pasos',
       intro: 'Elige primero tu web y, si quieres, después un plan de mantenimiento: con cualquier plan la web sale más barata.',
@@ -296,7 +296,7 @@ export const pricing: SeedDoc<PricingShared, PricingLocalized> = {
       },
     },
     en: {
-      eyebrow: '// pricing',
+      eyebrow: 'Pricing',
       title: 'Website pricing',
       subtitle: 'Fixed prices and clear limits, in two steps',
       intro: 'Choose your website first and then, if you like, a maintenance plan: with any plan, the website costs less.',
@@ -499,7 +499,7 @@ export const pricing: SeedDoc<PricingShared, PricingLocalized> = {
       },
     },
     fr: {
-      eyebrow: '// tarifs',
+      eyebrow: 'Tarifs',
       title: 'Nos tarifs web',
       subtitle: 'Des prix fixes et des limites claires, en deux étapes',
       intro: 'Choisissez d’abord votre site, puis, si vous le souhaitez, une formule de maintenance : avec n’importe quelle formule, le site coûte moins cher.',
