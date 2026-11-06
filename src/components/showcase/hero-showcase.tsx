@@ -64,6 +64,10 @@ export function HeroShowcase({ slides, dotLabels }: { slides: ShowcaseSlide[]; d
       <PhoneFrame className="hero-float-slow absolute -bottom-6 -left-8 hidden w-[24%] sm:block lg:-bottom-14 lg:-left-12">
         {hasPhone ? (
           <div className="relative aspect-[390/844] bg-bg-2">
+            {/* A project without a phone capture shows the neutral sketch instead of an empty screen. */}
+            <div className={cn('absolute inset-0 transition-opacity duration-1000', current?.mobile ? 'opacity-0' : 'opacity-100')}>
+              <SiteSketch variant="mobile" />
+            </div>
             {slides.map((s, i) =>
               s.mobile ? (
                 <Image
