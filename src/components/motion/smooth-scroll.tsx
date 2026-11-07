@@ -3,11 +3,9 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { useEffect } from 'react'
+import { SMOOTH_INPUT } from './use-smooth-input'
 
 gsap.registerPlugin(ScrollTrigger)
-
-/** Smoothing applies to mouse wheels and trackpads only: touch screens keep their own native scrolling. */
-const SMOOTH_INPUT = '(hover: hover) and (pointer: fine)'
 
 /** Lenis smooth scroll driven by the GSAP ticker so ScrollTrigger stays in sync. Renders nothing. */
 export default function SmoothScroll() {
