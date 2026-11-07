@@ -29,7 +29,11 @@ describe('Projects NDA url', () => {
   it('shows url of NDA projects to the team and of public projects to everyone', () => {
     expect(read({ nda: true }, true)).toBe(true)
     expect(read({ nda: false })).toBe(true)
-    expect(read(undefined)).toBe(true)
+  })
+
+  it('lets only the team filter on url (Payload asks without a document while validating `where`)', () => {
+    expect(read(undefined)).toBe(false)
+    expect(read(undefined, true)).toBe(true)
   })
 
   it('is wired into the collection config', () => {

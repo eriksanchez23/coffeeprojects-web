@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clientEmail, replyEmail, replySubject, teamEmail, teamRecipients, thankYouEmail } from '@/features/contact/emails'
+import { clientEmail, confirmationEmail, replyEmail, replySubject, teamEmail, teamRecipients, thankYouEmail } from '@/features/contact/emails'
 
 const input = {
   name: '<script>alert(1)</script>',
@@ -115,6 +115,14 @@ describe('teamEmail (S18, S14)', () => {
     expect(html).toContain('Sin datos de campaña')
     expect(html).not.toContain('Origen UTM')
     expect(text).toContain('Sin datos de campaña')
+  })
+
+  it('shows what "Other" means next to the other reasons, escaped', () => {
+    const { html } = teamEmail(
+      { ...record, projectType: 'redesign' as const, currentUrl: 'https://miweb.es/', websiteIssues: ['slow', 'other'], websiteIssuesOther: 'No envía <b>emails</b>' },
+      { adminUrl },
+    )
+    expect(html).toContain('Es lenta, Otro: No envía &lt;b&gt;emails&lt;/b&gt;')
   })
 
   it('splits the stored quote into rows', () => {
@@ -267,6 +275,36 @@ describe('escaping of untrusted values (S14)', () => {
   })
 })
 
+describe('client email footer (i18n)', () => {
+  const footers = {
+    es: { tagline: 'Sin café no hay código. Sin compromiso no hay proyecto.', home: 'https://coffeeprojects.es/' },
+    en: { tagline: 'No coffee, no code. No commitment, no project.', home: 'https://coffeeprojects.es/en' },
+    fr: { tagline: 'Pas de café, pas de code. Pas d&#39;engagement, pas de projet.', home: 'https://coffeeprojects.es/fr' },
+  } as const
+
+  it.each(['es', 'en', 'fr'] as const)('every client email carries the %s tagline and links that home page', (locale) => {
+    const { tagline, home } = footers[locale]
+    const mails = [
+      confirmationEmail(locale),
+      thankYouEmail('Ana', locale, 'x'),
+      replyEmail('Hola', locale),
+      clientEmail({ ...input, locale }),
+    ]
+    for (const { html } of mails) {
+      expect(html).toContain(tagline)
+      expect(html).toContain(`href="${home}"`)
+    }
+    expect(confirmationEmail(locale).text).toContain(home)
+    // The other languages' taglines never leak in.
+    for (const other of Object.values(footers).filter((f) => f !== footers[locale])) expect(confirmationEmail(locale).html).not.toContain(other.tagline)
+  })
+
+  it('names the "existing website" project types instead of printing their codes', () => {
+    expect(clientEmail({ ...input, locale: 'en', projectType: 'redesign' }).html).toContain('Improve my current website')
+    expect(clientEmail({ ...input, locale: 'fr', projectType: 'audit', currentUrl: 'https://x.es/' }).html).toContain('Audit gratuit de mon site')
+  })
+})
+
 describe('thankYouEmail (S22)', () => {
   it('greets the client in their language and escapes the name in the HTML', () => {
     const mail = thankYouEmail('Ana <b>  Ruiz', 'en', 'Thank you for trusting CoffeeProjects')
@@ -275,5 +313,23 @@ describe('thankYouEmail (S22)', () => {
     expect(mail.html).toContain('Hi Ana &lt;b&gt; Ruiz,')
     expect(mail.html).not.toContain('<b>')
     expect(thankYouEmail('Ana', 'de', 'x').text.startsWith('Hola, Ana:')).toBe(true)
+  })
+})
+
+describe('automatic confirmation limits (security)', () => {
+  it('never mails visitors while the captcha is the always-pass test key, and caps one address per day', async () => {
+    const { autoConfirmationBlocked, MAX_AUTO_CONFIRMATIONS_PER_DAY } = await import('@/features/contact/thank-you-send')
+    expect(autoConfirmationBlocked({ testCaptcha: true, recentToSameAddress: 1 })).toBe('test-captcha')
+    expect(autoConfirmationBlocked({ testCaptcha: false, recentToSameAddress: 1 })).toBeNull()
+    expect(autoConfirmationBlocked({ testCaptcha: false, recentToSameAddress: MAX_AUTO_CONFIRMATIONS_PER_DAY })).toBeNull()
+    expect(autoConfirmationBlocked({ testCaptcha: false, recentToSameAddress: MAX_AUTO_CONFIRMATIONS_PER_DAY + 1 })).toBe('too-many')
+  })
+
+  it('removes links and domains from the name printed for the client', async () => {
+    const { withoutLinks } = await import('@/features/contact/thank-you-send')
+    expect(withoutLinks('Ana García')).toBe('Ana García')
+    expect(withoutLinks('Gana dinero en https://estafa.example/x ya')).toBe('Gana dinero en ya')
+    expect(withoutLinks('Premio www.estafa.com')).toBe('Premio')
+    expect(withoutLinks('Visita estafa.co/premio hoy')).toBe('Visita hoy')
   })
 })

@@ -34,7 +34,13 @@ export function renderTeamEmail(c: TeamEmailContact, { adminUrl }: { adminUrl: s
   const projectRows: Row[] = [
     { label: 'Tipo', value: type },
     { label: 'Web actual', value: c.currentUrl },
-    { label: 'Qué le falla', value: (c.websiteIssues ?? []).map((i) => websiteIssueLabels[i]?.es ?? i).join(', ') || null },
+    {
+      label: 'Qué le falla',
+      value:
+        (c.websiteIssues ?? [])
+          .map((i) => (i === 'other' && clean(c.websiteIssuesOther) ? `Otro: ${clean(c.websiteIssuesOther)}` : (websiteIssueLabels[i]?.es ?? i)))
+          .join(', ') || null,
+    },
     { label: 'Plan', value: c.plan },
     ...quote.rows.map((r) => ({ label: r.label, value: r.value, accent: r.value.includes('€') })),
     // Retired fields (S17): only requests sent before carry them.

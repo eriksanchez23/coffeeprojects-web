@@ -53,6 +53,19 @@ describe('redesign / free review paths', () => {
     expect(contactSchema.safeParse({ ...base, projectType: 'redesign', currentUrl: 'miweb.es', websiteIssues: ['hacked'] }).success).toBe(false)
   })
 
+  it('"Other" asks what it is: required while ticked, stored with the lead, dropped when not ticked', () => {
+    const redesign = { ...base, projectType: 'redesign', currentUrl: 'miweb.es' }
+    expect(issuesOf(contactSchema.safeParse({ ...redesign, websiteIssues: ['slow', 'other'] }))).toEqual({ websiteIssuesOther: 'required' })
+    expect(issuesOf(contactSchema.safeParse({ ...redesign, websiteIssues: ['other'], websiteIssuesOther: '   ' }))).toEqual({ websiteIssuesOther: 'required' })
+    expect(issuesOf(contactSchema.safeParse({ ...redesign, websiteIssues: ['other'], websiteIssuesOther: 'x'.repeat(201) }))).toEqual({ websiteIssuesOther: 'tooLong' })
+    const ok = contactSchema.parse({ ...redesign, websiteIssues: ['other'], websiteIssuesOther: '  El formulario no envía\u0007 ' })
+    expect(ok.websiteIssuesOther).toBe('El formulario no envía')
+    expect(toContactRecord({ ...ok, ipHash: 'x' }, { marketing: false, attribution: null }).websiteIssuesOther).toBe('El formulario no envía')
+    // Not ticked, or another path: a leftover value is never stored.
+    expect(contactSchema.parse({ ...redesign, websiteIssues: ['slow'], websiteIssuesOther: 'resto' }).websiteIssuesOther).toBeUndefined()
+    expect(contactSchema.parse({ ...base, projectType: 'web', message: 'Una web nueva para mi negocio local.', websiteIssues: ['other'], websiteIssuesOther: 'resto' }).websiteIssuesOther).toBeUndefined()
+  })
+
   it('stores a placeholder message when the visitor left it empty (the column is required)', () => {
     const data = contactSchema.parse({ ...base, projectType: 'audit', message: '', currentUrl: 'miweb.es' })
     const record = toContactRecord({ ...data, ipHash: 'x' }, { marketing: false, attribution: null })

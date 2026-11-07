@@ -17,13 +17,16 @@ describe('responseHeaders', () => {
 })
 
 describe('security headers', () => {
-  it('sends security headers on public routes but not on the admin', () => {
+  it('sends the full security headers on public routes and only a minimal CSP on the admin', () => {
     const rules = responseHeaders('production')
     const site = rules.find((r) => r.source === '/((?!admin).*)')
     const keys = site?.headers.map((h) => h.key)
     expect(keys).toEqual(expect.arrayContaining(['Content-Security-Policy', 'Strict-Transport-Security', 'X-Content-Type-Options', 'Referrer-Policy', 'Permissions-Policy']))
+    expect(keys).toContain('Cross-Origin-Opener-Policy')
     const admin = rules.find((r) => r.source === '/admin/:path*')
-    expect(admin?.headers.map((h) => h.key)).not.toContain('Content-Security-Policy')
+    // Payload needs eval and inline styles: the admin CSP never restricts scripts or styles.
+    const adminCsp = admin?.headers.find((h) => h.key === 'Content-Security-Policy')?.value ?? ''
+    expect(adminCsp).toBe("frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'")
   })
   it('only allows eval when running the dev server, so staging and production share the strict CSP', () => {
     const csp = (nodeEnv: string, env: 'development' | 'staging' | 'production') => {
@@ -37,7 +40,7 @@ describe('security headers', () => {
     expect(prod).not.toContain("'unsafe-eval'")
     vi.unstubAllEnvs()
   })
-  it('hardens the admin too, keeping its noindex and SAMEORIGIN framing and no CSP', () => {
+  it('hardens the admin too, keeping its noindex and SAMEORIGIN framing', () => {
     const admin = responseHeaders('production').find((r) => r.source === '/admin/:path*')
     expect(admin?.headers).toEqual(
       expect.arrayContaining([
@@ -50,7 +53,7 @@ describe('security headers', () => {
       ]),
     )
     expect(admin?.headers.filter((h) => h.key === 'X-Frame-Options')).toHaveLength(1)
-    expect(admin?.headers.map((h) => h.key)).not.toContain('Content-Security-Policy')
+    expect(admin?.headers.filter((h) => h.key === 'Content-Security-Policy')).toHaveLength(1)
   })
   it('disables the X-Powered-By header (Next.js and Payload honour poweredByHeader: false)', () => {
     expect(nextSecurityConfig.poweredByHeader).toBe(false)

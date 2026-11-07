@@ -1,6 +1,6 @@
 'use client'
 import { useTranslations } from 'next-intl'
-import { type FormEvent, useActionState, useEffect, useRef, useState } from 'react'
+import { type ChangeEvent, type FormEvent, useActionState, useEffect, useRef, useState } from 'react'
 import { buttonClasses } from '@/components/ui/button'
 import { submitContact } from '@/features/contact/action'
 import type { ContactResult } from '@/features/contact/handle-contact'
@@ -162,6 +162,9 @@ export function ContactForm({
   const paymentLines = quote.filter((l) => l.section === 'payment')
   const withFees = path === 'web' && Boolean(option) && maintenanceChoice !== 'none'
   const checkedIssues = new Set((values.websiteIssues ?? '').split(','))
+  // "Other" reason: ticking it unfolds a field to say what it is (required while ticked).
+  const [otherIssue, setOtherIssue] = useState(checkedIssues.has('other'))
+  const otherIssueRef = useRef<HTMLInputElement>(null)
   const pathCards: { value: Path; title: string; text: string }[] = [
     { value: 'web', title: t('paths.web.title'), text: t('paths.web.text') },
     { value: 'existing', title: t('paths.existing.title'), text: t('paths.existing.text') },
@@ -283,7 +286,7 @@ export function ContactForm({
               type="text"
               inputMode="url"
               autoComplete="url"
-              placeholder="https://tuweb.com"
+              placeholder={t('urlPlaceholder')}
               defaultValue={values.currentUrl ?? prefill.url}
               className={field}
               {...aria('currentUrl')}
@@ -295,11 +298,46 @@ export function ContactForm({
             <div className="grid gap-2 sm:grid-cols-2">
               {websiteIssues.map((issue) => (
                 <label key={issue} className="flex items-center gap-3 rounded-[var(--radius-sm)] border border-line px-3 py-2 text-sm has-[:checked]:border-brand">
-                  <input type="checkbox" name="websiteIssues" value={issue} defaultChecked={checkedIssues.has(issue)} className="accent-[var(--color-brand)]" />
+                  <input
+                    type="checkbox"
+                    name="websiteIssues"
+                    value={issue}
+                    defaultChecked={checkedIssues.has(issue)}
+                    className="accent-[var(--color-brand)]"
+                    {...(issue === 'other' && {
+                      'aria-controls': 'websiteIssuesOther-field',
+                      'aria-expanded': otherIssue,
+                      onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                        const on = e.target.checked
+                        setOtherIssue(on)
+                        // Straight to the new field, so the visitor can type what it is.
+                        if (on) window.requestAnimationFrame(() => otherIssueRef.current?.focus())
+                      },
+                    })}
+                  />
                   {t(`issues.${issue}`)}
                 </label>
               ))}
             </div>
+            {otherIssue && (
+              <div id="websiteIssuesOther-field" className="mt-3">
+                <label htmlFor="websiteIssuesOther" className={label}>
+                  {t('issuesOther')} *
+                </label>
+                <input
+                  ref={otherIssueRef}
+                  id="websiteIssuesOther"
+                  name="websiteIssuesOther"
+                  type="text"
+                  maxLength={200}
+                  placeholder={t('issuesOtherPlaceholder')}
+                  defaultValue={values.websiteIssuesOther}
+                  className={field}
+                  {...aria('websiteIssuesOther')}
+                />
+                {err('websiteIssuesOther')}
+              </div>
+            )}
           </fieldset>
           <label className="flex items-start gap-3 rounded-[var(--radius-md)] border border-line-amber bg-bg-2 p-4 text-sm">
             <input

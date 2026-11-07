@@ -14,14 +14,24 @@ const withNextIntl = createNextIntlPlugin({
   experimental: { messages: { path: './messages', format: 'json', locales: 'infer', precompile: true } },
 })
 
+/**
+ * Our own Vercel Blob store only (same derivation as @payloadcms/storage-vercel-blob). A wildcard over
+ * *.public.blob.vercel-storage.com would let anyone make the image optimizer fetch and process files from a store
+ * they control; without a Blob token (Proxmox), media is served locally from /api/media/file.
+ */
+const blobStoreId = process.env.BLOB_READ_WRITE_TOKEN?.match(/^vercel_blob_rw_([a-z\d]+)_[a-z\d]+$/i)?.[1]?.toLowerCase()
+const blobHost = process.env.STORAGE_VERCEL_BLOB_BASE_URL
+  ? new URL(process.env.STORAGE_VERCEL_BLOB_BASE_URL).hostname
+  : blobStoreId && `${blobStoreId}.public.blob.vercel-storage.com`
+
 const nextConfig: NextConfig = {
   ...nextSecurityConfig,
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
-      // Media stored in Vercel Blob (preview/Vercel deployments), served from its CDN.
-      { protocol: 'https', hostname: '*.public.blob.vercel-storage.com', pathname: '/**' },
+      // Media stored in our Vercel Blob store (preview/Vercel deployments), served from its CDN.
+      ...(blobHost ? [{ protocol: 'https' as const, hostname: blobHost, pathname: '/**' }] : []),
     ],
     // Optimized images are kept for a week (Blob files already say one year): a project screenshot never
     // changes under the same name, since Payload renames re-uploads.

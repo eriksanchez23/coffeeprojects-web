@@ -30,6 +30,28 @@ export class ThankYouStepError extends Error {
 }
 
 const SEND_TIMEOUT_MS = 15_000
+/** Automatic confirmations one address may receive in 24 h (the request just saved included). */
+export const MAX_AUTO_CONFIRMATIONS_PER_DAY = 2
+
+/**
+ * Why the automatic confirmation must not go out, or null when it may. The form accepts any address, so the
+ * email it triggers is limited: never while the captcha is Cloudflare's always-pass test key (a public preview
+ * would otherwise mail anyone, from our domain), and at most a couple of times a day to the same address.
+ */
+export function autoConfirmationBlocked({ testCaptcha, recentToSameAddress }: { testCaptcha: boolean; recentToSameAddress: number }) {
+  if (testCaptcha) return 'test-captcha' as const
+  if (recentToSameAddress > MAX_AUTO_CONFIRMATIONS_PER_DAY) return 'too-many' as const
+  return null
+}
+
+/** Links and domains removed from a name printed for the client: the form must not carry someone's URL to a third party. */
+export function withoutLinks(name: string): string {
+  return name
+    .replace(/\b(?:https?:\/\/|www\.)\S*/giu, ' ')
+    .replace(/\b[\p{L}\d-]+(?:\.[\p{L}\d-]+)*\.[a-z]{2,}(?:\/\S*)?/giu, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+}
 const messages = { es, en, fr } as const
 const authorId = (a: AuthorRef) => (a && typeof a === 'object' ? a.id : a)
 
@@ -57,7 +79,7 @@ export async function renderThankYouPdf(payload: Payload, contact: ThankYouConta
   const types = messages[locale].contact.projectTypes as Record<string, string>
   const bytes = await buildThankYouPdf(
     {
-      name: contact.name,
+      name: withoutLinks(contact.name),
       projectType: types[contact.projectType] ?? projectTypeLabels[contact.projectType]?.es ?? contact.projectType,
       plan: await planName(payload, contact.plan, locale),
       quotedSummary: contact.quotedSummary,
@@ -127,7 +149,9 @@ export async function sendThankYouPdf(
  * thank-you PDF attached, in the language they used on the site. Recorded in `thankYouSent` with no author.
  */
 export function sendClientConfirmation(payload: Payload, contact: ThankYouContact, apiKey: string) {
-  return sendThankYouPdf(payload, contact, {
+  // The automatic PDF never echoes the visitor's free text (it could be anyone's address in the form); the team
+  // can still send the full version, with the message excerpt, from the panel.
+  return sendThankYouPdf(payload, { ...contact, message: '' }, {
     apiKey,
     author: null,
     email: confirmationEmail(contact.locale),

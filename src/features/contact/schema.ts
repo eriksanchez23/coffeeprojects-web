@@ -40,6 +40,8 @@ export const contactSchema = z.object({
   message: z.preprocess((v) => (typeof v === 'string' ? v : ''), z.string().trim().max(2000, 'tooLong')),
   currentUrl: z.preprocess(normalizeSiteUrl, z.string().max(300, 'tooLong').refine((v) => v !== 'invalid', 'invalidUrl').optional()),
   websiteIssues: issuesList,
+  // What "Other" means, written by the visitor: required when "Other" is ticked, dropped otherwise.
+  websiteIssuesOther: optionalText(200),
   howFound: optionalText(200),
   // Pricing package from /pricing CTAs; checked against the pricing global in handleContact.
   plan: z.preprocess(parsePlan, z.string().optional()),
@@ -53,12 +55,19 @@ export const contactSchema = z.object({
 }).superRefine((d, ctx) => {
   if (isExistingSiteType(d.projectType)) {
     if (!d.currentUrl) ctx.addIssue({ code: 'custom', path: ['currentUrl'], message: 'required' })
+    if (d.websiteIssues?.includes('other') && !d.websiteIssuesOther) {
+      ctx.addIssue({ code: 'custom', path: ['websiteIssuesOther'], message: 'required' })
+    }
   } else if (d.message.length === 0) {
     ctx.addIssue({ code: 'custom', path: ['message'], message: 'required' })
   } else if (d.message.length < 20) {
     ctx.addIssue({ code: 'custom', path: ['message'], message: 'tooShort' })
   }
-})
+}).transform(({ websiteIssuesOther, ...d }) => ({
+  ...d,
+  // Only an existing website with "Other" ticked keeps the explanation (a stale value from another path is dropped).
+  ...(isExistingSiteType(d.projectType) && d.websiteIssues?.includes('other') && websiteIssuesOther && { websiteIssuesOther }),
+}))
 
 export type ContactInput = z.infer<typeof contactSchema>
 

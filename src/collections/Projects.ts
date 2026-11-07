@@ -17,8 +17,12 @@ export const clearNdaUrl: CollectionBeforeChangeHook = ({ data, originalDoc }) =
   return data
 }
 
-/** Field-level read access: a legacy NDA row's `url` is only returned to logged-in team users. */
-export const ndaUrlReadAccess: FieldAccess = ({ req, doc }) => isTeam({ req }) === true || doc?.nda !== true
+/**
+ * Field-level read access: a legacy NDA row's `url` is only returned to logged-in team users. Payload also asks
+ * this without a document when validating `where` filters: then only the team may filter on it, or an anonymous
+ * `?where[nda][equals]=true&where[url][like]=…` could guess an NDA address one character at a time.
+ */
+export const ndaUrlReadAccess: FieldAccess = ({ req, doc }) => isTeam({ req }) === true || (doc !== undefined && doc.nda !== true)
 
 export const Projects: CollectionConfig = {
   slug: 'projects',

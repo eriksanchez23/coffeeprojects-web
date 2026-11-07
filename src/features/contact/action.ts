@@ -18,14 +18,15 @@ import type { Contact } from '@/payload-types'
 import { teamEmail, teamRecipients } from './emails'
 import { type ContactResult, handleContact } from './handle-contact'
 import { inboundConfig, teamReplyTo } from './inbound'
-import { clientIp, hashIp } from './ip'
+import { clientIp, hashIp, rateLimitKey } from './ip'
 import { resolveMaintenance } from './plan'
 import { leadQuoteSummary, quoteLabelsFrom } from './quote'
 import { isRateLimited } from './rate-limit'
-import { sendClientConfirmation, type ThankYouContact } from './thank-you-send'
+import { autoConfirmationBlocked, sendClientConfirmation, type ThankYouContact } from './thank-you-send'
 import { toContactRecord } from './record'
 import { formDataToObject } from './schema'
 import { verifyTurnstile } from './turnstile'
+import { isTestSecret } from './turnstile-check'
 
 export async function submitContact(_prev: ContactResult | null, fd: FormData): Promise<ContactResult> {
   const h = await headers()
@@ -34,7 +35,7 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
   const ip = clientIp(h)
   const payload = await payloadClient()
   // Falls back to the Payload secret so the hash is never unsalted when IP_HASH_SALT is unset.
-  const ipHash = hashIp(ip ?? `unknown:${randomUUID()}`, process.env.IP_HASH_SALT || process.env.PAYLOAD_SECRET || '')
+  const ipHash = hashIp(ip ? rateLimitKey(ip) : `unknown:${randomUUID()}`, process.env.IP_HASH_SALT || process.env.PAYLOAD_SECRET || '')
   const raw = formDataToObject(fd)
   // Consent is read from the cookie, not the form field, so a forged field cannot trigger server-side tracking.
   const jar = await cookies()
@@ -99,10 +100,18 @@ export async function submitContact(_prev: ContactResult | null, fd: FormData): 
       // S21: with Resend inbound configured, replying to this email reaches the client through the relay and is
       // synced into the panel; otherwise Reply goes straight to the client (S18).
       const replyTo = teamReplyTo(saved.id, input.email, inboundConfig(process.env))
+      const recent = await payload.count({
+        collection: 'contacts',
+        overrideAccess: true,
+        where: { and: [{ email: { equals: saved.email } }, { createdAt: { greater_than: new Date(Date.now() - 86_400_000).toISOString() } }] },
+      })
+      const blocked = autoConfirmationBlocked({ testCaptcha: isTestSecret(process.env.TURNSTILE_SECRET_KEY ?? ''), recentToSameAddress: recent.totalDocs })
+      if (blocked) payload.logger.info({ reason: blocked }, 'client confirmation email skipped')
+      const apiKey = process.env.RESEND_API_KEY
       const results = await Promise.allSettled([
         ...teamRecipients(users.docs, process.env.CONTACT_NOTIFY_EMAIL).map((to) => payload.sendEmail({ to, replyTo, ...team })),
         // S22: the client's confirmation carries the thank-you PDF, from contact@, in the site language.
-        sendClientConfirmation(payload, saved as ThankYouContact, process.env.RESEND_API_KEY),
+        ...(blocked ? [] : [sendClientConfirmation(payload, saved as ThankYouContact, apiKey)]),
       ])
       results.forEach((r) => r.status === 'rejected' && log(r.reason))
     },

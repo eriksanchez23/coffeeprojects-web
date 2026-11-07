@@ -20,7 +20,7 @@ export function renderClientEmail(i: ClientEmailInput) {
     // The stored quote already names the plan; the raw plan slug is only a fallback.
     ...(quote.rows.length ? quote.rows.map((r) => ({ label: r.label, value: r.value, accent: r.value.includes('€') })) : [{ label: c.planLabel, value: i.plan }]),
   ]
-  const home = SITE_URL
+  const home = `${SITE_URL}${buildPath('/', i.locale)}`
   const projects = `${SITE_URL}${buildPath('/projects', i.locale)}`
   const privacy = `${SITE_URL}${buildPath('/privacy', i.locale)}`
   const greeting = name ? `${c.hi}, ${name}.` : `${c.hi}.`
@@ -43,7 +43,7 @@ export function renderClientEmail(i: ClientEmailInput) {
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${steps}</table></td></tr>` +
     `<tr><td align="center" style="padding:32px 32px 8px;">${button(esc(projects), c.cta)}</td></tr>` +
     `<tr><td align="center" style="padding:8px 32px 28px;font-size:13px;color:${colors.faint};">${esc(c.hint)}</td></tr>` +
-    clientFooter({ signature: c.sign, home, privacy, privacyLabel: c.privacyLabel })
+    clientFooter({ signature: c.sign, home, privacy, privacyLabel: c.privacyLabel, tagline: c.tagline })
 
   const text = [
     greeting,
@@ -62,7 +62,7 @@ export function renderClientEmail(i: ClientEmailInput) {
     c.replyHintText,
     '',
     `— ${c.sign}`,
-    `coffeeprojects.es · contact@coffeeprojects.es · ${privacy}`,
+    `${home} · contact@coffeeprojects.es · ${privacy}`,
   ].join('\n')
 
   return { subject: c.subject, html: shell({ lang: i.locale, title: c.subject, inner }), text }

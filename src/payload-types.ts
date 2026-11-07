@@ -173,6 +173,7 @@ export interface Contact {
   timeline?: ('flexible' | 'lt1m' | '1-2m' | '2-4m' | 'gt4m') | null;
   currentUrl?: string | null;
   websiteIssues?: ('slow' | 'mobile' | 'google' | 'outdated' | 'editing' | 'no-leads' | 'other')[] | null;
+  websiteIssuesOther?: string | null;
   message: string;
   howFound?: string | null;
   ndaRequested?: boolean | null;
@@ -604,6 +605,7 @@ export interface ContactsSelect<T extends boolean = true> {
   timeline?: T;
   currentUrl?: T;
   websiteIssues?: T;
+  websiteIssuesOther?: T;
   message?: T;
   howFound?: T;
   ndaRequested?: T;

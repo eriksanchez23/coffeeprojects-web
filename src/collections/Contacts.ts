@@ -155,6 +155,13 @@ export const Contacts: CollectionConfig = {
       admin: { ...readOnly, condition: (data) => Array.isArray(data?.websiteIssues) && data.websiteIssues.length > 0 },
       access: locked,
     },
+    {
+      name: 'websiteIssuesOther',
+      type: 'text',
+      label: t('Otro motivo (lo que escribió)', 'Other reason (as written)'),
+      admin: { ...readOnly, condition: (data) => Boolean(data?.websiteIssuesOther) },
+      access: locked,
+    },
     { name: 'message', type: 'textarea', label: t('Mensaje', 'Message'), required: true, admin: readOnly, access: locked },
     { name: 'howFound', type: 'text', label: t('Cómo nos ha conocido', 'How they found us'), admin: readOnly, access: locked },
     { name: 'ndaRequested', type: 'checkbox', label: t('NDA solicitado', 'NDA requested'), admin: readOnly, access: locked },

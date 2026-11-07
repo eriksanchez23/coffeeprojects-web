@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { canManageContacts, hasTeamRole, isAdmin, isAdminField, isAdminOrSelf, isTeam, isTeamField } from '@/access'
 import { adminGroups, t } from '@/fields/labels'
 import { firstUserIsAdmin } from '@/hooks/first-user-admin'
+import { enforcePasswordPolicy } from '@/hooks/password-policy'
 import { authCookies } from '@/lib/security/origins'
 
 export const Users: CollectionConfig = {
@@ -27,7 +28,7 @@ export const Users: CollectionConfig = {
     // The admin panel is for people: integration users authenticate with an API key against REST only.
     admin: ({ req }) => hasTeamRole(req.user),
   },
-  hooks: { beforeChange: [firstUserIsAdmin] },
+  hooks: { beforeOperation: [enforcePasswordPolicy], beforeChange: [firstUserIsAdmin] },
   fields: [
     { name: 'name', type: 'text', label: t('Nombre', 'Name'), required: true },
     {

@@ -5,5 +5,10 @@ allowBuilds:
   "@parcel/watcher": true
   "@swc/core": false
 overrides:
-  # Security: payload/drizzle pull undici 7.x < 7.29.1 (advisories); stay on the 7.x major.
-  "undici@>=7.0.0 <7.29.1": 7.30.0
+  # Security: payload/drizzle pull undici 7.x < 7.30.1 and @vercel/blob undici 6.x < 6.29.1 (TLS validation
+  # bypass, cache poisoning, DoS advisories); each stays on its major.
+  "undici@>=7.0.0 <7.30.2": 7.30.2
+  "undici@>=6.0.0 <6.29.1": 6.29.1
+  # Security: DOMPurify (admin code editor) and fast-uri (ajv) advisories.
+  "dompurify@>=3.0.0 <3.4.17": 3.4.17
+  "fast-uri@>=3.0.0 <3.1.9": 3.1.9

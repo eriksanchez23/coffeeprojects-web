@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { handleContact } from '@/features/contact/handle-contact'
-import { clientIp, hashIp } from '@/features/contact/ip'
+import { clientIp, hashIp, rateLimitKey } from '@/features/contact/ip'
 import { sendCapiEvent } from '@/features/tracking/capi'
 import { afterSaveLead } from '@/features/tracking/lead'
 
@@ -204,5 +204,18 @@ describe('handleContact quoted summary (S17)', () => {
     expect(r).toMatchObject({ status: 'ok', saved: true })
     expect(vi.mocked(d.createContact).mock.calls[0]![0].quotedSummary).toBeUndefined()
     expect(d.log).toHaveBeenCalled()
+  })
+})
+
+describe('rateLimitKey (security)', () => {
+  it('counts a whole IPv6 /64 as one visitor and keeps IPv4 whole', () => {
+    expect(rateLimitKey('2001:db8:abcd:12:1:2:3:4')).toBe('2001:db8:abcd:12::/64')
+    expect(rateLimitKey('2001:db8:abcd:12::ffff')).toBe('2001:db8:abcd:12::/64')
+    expect(rateLimitKey('2001:0db8:ABCD:0012:aaaa::1')).toBe('2001:db8:abcd:12::/64')
+    expect(rateLimitKey('2001:db8::1')).toBe('2001:db8:0:0::/64')
+    expect(rateLimitKey('fe80::1%eth0')).toBe('fe80:0:0:0::/64')
+    expect(rateLimitKey('::ffff:1.2.3.4')).toBe('1.2.3.4')
+    expect(rateLimitKey('1.2.3.4')).toBe('1.2.3.4')
+    expect(rateLimitKey('no-es-una-ip')).toBe('no-es-una-ip')
   })
 })

@@ -44,7 +44,7 @@ export async function ProjectsPreview({ locale, title, lead, as = 'h2', featured
     </li>
   ))
   const list = carousel ? (
-    <ProjectCarousel labels={{ region: tp('carouselLabel'), prev: tp('scrollPrev'), next: tp('scrollNext') }}>{items}</ProjectCarousel>
+    <ProjectCarousel labels={{ region: tp('carouselLabel'), role: tp('carouselRole'), prev: tp('scrollPrev'), next: tp('scrollNext') }}>{items}</ProjectCarousel>
   ) : (
     <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" data-reveal-group>
       {items}

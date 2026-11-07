@@ -144,6 +144,7 @@
       }
     },
     "currentUrl": "Dirección de tu web actual",
+    "urlPlaceholder": "https://tuweb.com",
     "issuesLegend": "¿Qué te falla? (opcional)",
     "issues": {
       "slow": "Es lenta",
@@ -154,6 +155,8 @@
       "no-leads": "No me trae clientes",
       "other": "Otro"
     },
+    "issuesOther": "¿Qué otro motivo? Cuéntanos qué es",
+    "issuesOtherPlaceholder": "Ej.: el formulario no envía, la tienda no cobra…",
     "auditOnly": "De momento solo quiero la revisión gratuita",
     "auditOnlyHint": "Te enviamos un informe breve en un máximo de 48 h con lo que falla y cómo arreglarlo.",
     "messageOptional": "Cuéntanos más (opcional)",
@@ -283,6 +286,7 @@
   },
   "notFound": {
     "title": "Página no encontrada · CoffeeProjects",
+    "heading": "Página no encontrada",
     "error": "Error 404",
     "body": "Puede que la dirección haya cambiado o que el enlace esté mal escrito.",
     "cta": "Volver al inicio",
@@ -303,7 +307,7 @@
     "showProject": "Ver {title}",
     "openProject": "Abrir el proyecto {title}",
     "prevProject": "Proyecto anterior",
-    "nextProject": "Proyecto siguiente",
+    "nextProject": "Siguiente proyecto",
     "viewProject": "Ver proyecto"
   },
   "projects": {
@@ -336,6 +340,7 @@
     "prevProject": "Proyecto anterior",
     "nextProject": "Siguiente proyecto",
     "carouselLabel": "Proyectos (desliza para ver más)",
+    "carouselRole": "carrusel",
     "scrollPrev": "Ver proyectos anteriores",
     "scrollNext": "Ver más proyectos",
     "private": "Privada (bajo NDA)",

@@ -2,7 +2,8 @@
 import { type ReactNode, type PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/cn'
 
-type Labels = { region: string; prev: string; next: string }
+/** `role`: what screen readers announce instead of the English word "carousel". */
+type Labels = { region: string; role: string; prev: string; next: string }
 
 /**
  * Horizontal, swipeable list of project cards (server-rendered `<li>`s passed as children).
@@ -70,7 +71,7 @@ export function ProjectCarousel({ children, labels }: { children: ReactNode; lab
   }
 
   return (
-    <div className="relative" role="region" aria-roledescription="carousel" aria-label={labels.region}>
+    <div className="relative" role="region" aria-roledescription={labels.role} aria-label={labels.region}>
       <ul
         ref={track}
         data-lenis-prevent-horizontal

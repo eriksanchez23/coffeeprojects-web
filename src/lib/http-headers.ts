@@ -19,16 +19,23 @@ export function responseHeaders(siteEnv: 'development' | 'staging' | 'production
     { key: 'X-Content-Type-Options', value: 'nosniff' },
     { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
     { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()' },
+    // Other windows (e.g. a page that opened ours) get no handle on it; Turnstile and the Meta Pixel do not need one.
+    { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
   ]
   const security: Header[] = [
     { key: 'Content-Security-Policy', value: buildCsp({ dev: process.env.NODE_ENV === 'development' }) },
     ...baseline,
     { key: 'X-Frame-Options', value: 'DENY' },
   ]
-  // The admin keeps Payload's own needs (eval/inline styles), so no CSP there; it is auth-protected and noindex.
+  // The admin keeps Payload's own needs (eval/inline styles), so its CSP only locks what Payload never uses:
+  // framing by other sites, plugins, <base> hijacking and forms posting elsewhere. It is auth-protected and noindex.
+  const adminCsp = "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
   const rules: Rule[] = [
     { source: '/((?!admin).*)', headers: security },
-    { source: '/admin/:path*', headers: [NOINDEX, { key: 'X-Frame-Options', value: 'SAMEORIGIN' }, ...baseline] },
+    {
+      source: '/admin/:path*',
+      headers: [NOINDEX, { key: 'Content-Security-Policy', value: adminCsp }, { key: 'X-Frame-Options', value: 'SAMEORIGIN' }, ...baseline],
+    },
   ]
   if (siteEnv !== 'production') rules.push({ source: '/:path*', headers: [NOINDEX] })
   return rules

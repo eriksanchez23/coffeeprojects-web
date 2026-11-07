@@ -21,7 +21,6 @@ export const MONO = 'Consolas,Menlo,monospace'
 
 export const SITE_URL = 'https://coffeeprojects.es'
 export const CONTACT_EMAIL = 'contact@coffeeprojects.es'
-export const TAGLINE = 'Sin café no hay código. Sin compromiso no hay proyecto.'
 
 export type Row = { label: string; value: string | null | undefined; accent?: boolean }
 
@@ -88,12 +87,27 @@ export function shell({ lang, title, inner }: { lang: string; title: string; inn
 
 export const clientHeader = `<tr><td style="padding:24px 32px;border-bottom:1px solid ${C.border};">${logo(20)}</td></tr>`
 
-/** Client-facing footer (confirmation and replies); `home` and `privacy` are built from constants and the routing config. */
-export function clientFooter({ signature, home, privacy, privacyLabel }: { signature: string; home: string; privacy: string; privacyLabel: string }): string {
+/**
+ * Client-facing footer (confirmation and replies), in the client's language: `home` and `privacy` are that locale's
+ * pages (built from constants and the routing config) and `tagline` comes from `clientCopy`.
+ */
+export function clientFooter({
+  signature,
+  home,
+  privacy,
+  privacyLabel,
+  tagline,
+}: {
+  signature: string
+  home: string
+  privacy: string
+  privacyLabel: string
+  tagline: string
+}): string {
   return (
     `<tr><td style="padding:20px 32px;border-top:1px solid ${C.border};background:${C.page};">` +
     (signature ? `<div style="font-size:13px;color:${C.muted};"><strong style="color:${C.title};">${esc(signature)}</strong></div>` : '') +
-    `<div style="font-family:${MONO};font-size:12px;color:${C.faint};padding-top:6px;">${esc(TAGLINE)}</div>` +
+    `<div style="font-family:${MONO};font-size:12px;color:${C.faint};padding-top:6px;">${esc(tagline)}</div>` +
     `<div style="font-size:12px;color:${C.faint};padding-top:12px;">` +
     `<a href="${esc(home)}" style="color:${C.amber};text-decoration:none;">coffeeprojects.es</a> &nbsp;&middot;&nbsp; ` +
     `<a href="mailto:${CONTACT_EMAIL}" style="color:${C.muted};text-decoration:none;">${CONTACT_EMAIL}</a> &nbsp;&middot;&nbsp; ` +

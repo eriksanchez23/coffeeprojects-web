@@ -20,6 +20,8 @@ export type ClientCopy = {
   sign: string
   /** Plain-text only. */
   replyHintText: string
+  /** Same as the site footer (`footer.tagline` in messages/*.json). */
+  tagline: string
   projectTypes: Record<string, string>
 }
 
@@ -46,6 +48,7 @@ export const clientCopy: Record<Locale, ClientCopy> = {
     privacyLabel: 'Privacidad',
     sign: 'El equipo de CoffeeProjects',
     replyHintText: 'Responde a este correo y le llega directamente al equipo.',
+    tagline: 'Sin café no hay código. Sin compromiso no hay proyecto.',
     projectTypes: {
       web: 'Web / landing page',
       ecommerce: 'Tienda online',
@@ -54,6 +57,8 @@ export const clientCopy: Record<Locale, ClientCopy> = {
       'discord-bot': 'Bot de Discord',
       maintenance: 'Mantenimiento web',
       custom: 'Desarrollo a medida',
+      redesign: 'Mejorar mi web actual',
+      audit: 'Revisión gratuita de mi web',
     },
   },
   en: {
@@ -78,6 +83,7 @@ export const clientCopy: Record<Locale, ClientCopy> = {
     privacyLabel: 'Privacy',
     sign: 'The CoffeeProjects team',
     replyHintText: 'Reply to this email and it goes straight to the team.',
+    tagline: 'No coffee, no code. No commitment, no project.',
     projectTypes: {
       web: 'Website / landing page',
       ecommerce: 'Online store',
@@ -86,6 +92,8 @@ export const clientCopy: Record<Locale, ClientCopy> = {
       'discord-bot': 'Discord bot',
       maintenance: 'Website maintenance',
       custom: 'Custom development',
+      redesign: 'Improve my current website',
+      audit: 'Free review of my website',
     },
   },
   fr: {
@@ -110,6 +118,7 @@ export const clientCopy: Record<Locale, ClientCopy> = {
     privacyLabel: 'Confidentialité',
     sign: 'L’équipe CoffeeProjects',
     replyHintText: 'Répondez à cet email, il arrive directement à l’équipe.',
+    tagline: "Pas de café, pas de code. Pas d'engagement, pas de projet.",
     projectTypes: {
       web: 'Site web / landing page',
       ecommerce: 'Boutique en ligne',
@@ -118,6 +127,8 @@ export const clientCopy: Record<Locale, ClientCopy> = {
       'discord-bot': 'Bot Discord',
       maintenance: 'Maintenance de site',
       custom: 'Développement sur mesure',
+      redesign: 'Améliorer mon site actuel',
+      audit: 'Audit gratuit de mon site',
     },
   },
 }

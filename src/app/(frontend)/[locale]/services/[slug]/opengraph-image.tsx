@@ -1,6 +1,8 @@
-import { ImageResponse } from 'next/og'
+import { hasLocale } from 'next-intl'
 import { getTranslations } from 'next-intl/server'
-import type { Locale } from '@/i18n/locales'
+import { notFound } from 'next/navigation'
+import { ImageResponse } from 'next/og'
+import { routing } from '@/i18n/routing'
 import { getService } from '@/lib/cms/queries'
 import { OgCard } from '@/lib/seo/og-card'
 
@@ -10,7 +12,9 @@ export const contentType = 'image/png'
 
 export default async function ServiceOgImage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params
-  const found = await getService(locale as Locale, slug)
+  // OG image paths bypass the proxy: an unknown locale 404s instead of reaching the CMS.
+  if (!hasLocale(routing.locales, locale)) notFound()
+  const found = await getService(locale, slug)
   if (!found) {
     const t = await getTranslations({ locale, namespace: 'footer' })
     return new ImageResponse(<OgCard eyebrow="~ coffeeprojects $ brew" headline={t('tagline')} />, size)

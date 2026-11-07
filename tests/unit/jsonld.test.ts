@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { JsonLd } from '@/components/seo/json-ld'
-import { breadcrumbLd, faqLd, organizationLd, pricingLd, serviceLd } from '@/lib/seo/jsonld'
+import { breadcrumbLd, faqLd, organizationLd, pricingLd, serviceLd, websiteLd } from '@/lib/seo/jsonld'
 
 describe('json-ld', () => {
   it('organization is a ProfessionalService with contact point', () => {
@@ -13,6 +13,11 @@ describe('json-ld', () => {
     expect(s.offers).toMatchObject({ '@type': 'Offer', price: 600, priceCurrency: 'EUR' })
     const c = serviceLd({ title: 'A medida', summary: 's', pricing: { mode: 'custom' } } as never, 'https://x/c', 'es')
     expect(c.offers).toBeUndefined()
+  })
+  it('the WebSite url is the home page of its language', () => {
+    expect(websiteLd('es').url).toMatch(/^https?:\/\/[^/]+$/)
+    expect(websiteLd('en').url).toBe(`${websiteLd('es').url}/en`)
+    expect(websiteLd('fr')).toMatchObject({ url: `${websiteLd('es').url}/fr`, inLanguage: 'fr' })
   })
   it('faq maps questions', () => {
     expect(faqLd([{ question: 'Q', answer: 'A' }]).mainEntity[0]).toEqual({

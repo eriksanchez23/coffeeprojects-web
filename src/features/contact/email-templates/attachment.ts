@@ -10,6 +10,7 @@ function render(locale: string | null | undefined, subject: string, { greeting, 
   const l = clientLocale(locale)
   const c = clientCopy[l]
   const privacy = `${SITE_URL}${buildPath('/privacy', l)}`
+  const home = `${SITE_URL}${buildPath('/', l)}`
   const projects = `${SITE_URL}${buildPath(cta.path, l)}`
   const inner =
     clientHeader +
@@ -18,8 +19,8 @@ function render(locale: string | null | undefined, subject: string, { greeting, 
       .map((p) => `<tr><td style="padding:8px 32px 0;font-size:16px;line-height:1.6;color:${colors.body};">${esc(p)}</td></tr>`)
       .join('') +
     `<tr><td align="center" style="padding:28px 32px 28px;">${button(esc(projects), cta.label)}</td></tr>` +
-    clientFooter({ signature: c.sign, home: SITE_URL, privacy, privacyLabel: c.privacyLabel })
-  const text = [greeting, '', ...lines.flatMap((p) => [p, '']), `— ${c.sign}`, 'https://coffeeprojects.es'].join('\n')
+    clientFooter({ signature: c.sign, home, privacy, privacyLabel: c.privacyLabel, tagline: c.tagline })
+  const text = [greeting, '', ...lines.flatMap((p) => [p, '']), `— ${c.sign}`, home].join('\n')
   return { subject, html: shell({ lang: l, title: subject, inner }), text }
 }
 

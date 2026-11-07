@@ -10,7 +10,7 @@ import type { Home } from '@/payload-types'
  * (public data) to the contact form, which collects the email with consent and anti-spam; works without JS.
  */
 export async function AuditOffer({ audit }: { audit: NonNullable<Home['audit']> }) {
-  const [t, locale] = await Promise.all([getTranslations('home'), getLocale()])
+  const [t, tc, locale] = await Promise.all([getTranslations('home'), getTranslations('contact'), getLocale()])
   if (!audit.title) return null
   return (
     <Section id="review" eyebrow={audit.eyebrow ?? undefined} title={audit.title} lead={audit.lead} className="bg-bg-2">
@@ -38,7 +38,7 @@ export async function AuditOffer({ audit }: { audit: NonNullable<Home['audit']> 
               type="text"
               inputMode="url"
               autoComplete="url"
-              placeholder="https://tuweb.com"
+              placeholder={tc('urlPlaceholder')}
               className="h-14 w-full rounded-[var(--radius-md)] border border-line-hi bg-bg-1 px-4 text-ink-0 placeholder:text-ink-3 focus:border-amber"
             />
             <button type="submit" className={buttonClasses({ size: 'lg' })}>{t('auditCta')}</button>

@@ -16,7 +16,7 @@ export default async function NotFound() {
       <section className="hero-wash grid min-h-[70dvh] place-items-center py-24">
         <Container className="max-w-xl">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber">{t('error')}</p>
-          <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">{t('title')}</h1>
+          <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">{t('heading')}</h1>
           <p className="mt-6 text-lg text-ink-2">{t('body')}</p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Button href="/" size="lg">{t('cta')}</Button>

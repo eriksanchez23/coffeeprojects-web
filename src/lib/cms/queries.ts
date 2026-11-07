@@ -131,6 +131,17 @@ function getGlobal<T>(slug: 'home' | 'pricing' | 'partners' | 'site-settings' | 
 export const getHome = async (locale: Locale) => withHomeDefaults(await getGlobal<Home>('home', locale))
 export const getSettings = async (locale: Locale) => withSettingsDefaults(await getGlobal<SiteSetting>('site-settings', locale))
 export const getLegal = async (locale: Locale) => withLegalDefaults(await getGlobal<Legal>('legal', locale))
+/**
+ * The legal texts actually written in `locale`, without Payload's fallback to Spanish: an untranslated page must
+ * never count as ready to index (sitemap). Pages keep rendering with the fallback through `getLegal`.
+ */
+export const getLegalOwnLocale = async (locale: Locale) =>
+  withLegalDefaults(
+    await read(['global:legal', locale, 'no-fallback'], ['global:legal'], async (draft) => {
+      const payload = await payloadClient()
+      return (await payload.findGlobal({ slug: 'legal', locale, fallbackLocale: false, draft, depth: 1, overrideAccess: draft })) as Legal
+    }),
+  )
 export const getPricing = async (locale: Locale) => withPricingDefaults(await getGlobal<Pricing>('pricing', locale))
 export const getPartners = async (locale: Locale) => withPartnersDefaults(await getGlobal<Partner>('partners', locale))
 

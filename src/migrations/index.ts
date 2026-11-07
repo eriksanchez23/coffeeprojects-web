@@ -9,6 +9,8 @@ import * as migration_20261009_000317_contact_reply_channel from './20261009_000
 import * as migration_20261009_101518_thank_you_sent from './20261009_101518_thank_you_sent';
 import * as migration_20261009_201436_integration_api_keys from './20261009_201436_integration_api_keys';
 import * as migration_20261106_181018_webs_focus from './20261106_181018_webs_focus';
+import * as migration_20261107_165759_contact_other_reason from './20261107_165759_contact_other_reason';
+import * as migration_20261107_190000_clear_nda_urls from './20261107_190000_clear_nda_urls';
 
 export const migrations = [
   {
@@ -64,6 +66,16 @@ export const migrations = [
   {
     up: migration_20261106_181018_webs_focus.up,
     down: migration_20261106_181018_webs_focus.down,
-    name: '20261106_181018_webs_focus'
+    name: '20261106_181018_webs_focus',
+  },
+  {
+    up: migration_20261107_165759_contact_other_reason.up,
+    down: migration_20261107_165759_contact_other_reason.down,
+    name: '20261107_165759_contact_other_reason',
+  },
+  {
+    up: migration_20261107_190000_clear_nda_urls.up,
+    down: migration_20261107_190000_clear_nda_urls.down,
+    name: '20261107_190000_clear_nda_urls',
   },
 ];

@@ -99,7 +99,6 @@ test('a new website: pick the type of website, then maintenance or none, and the
 test('the chosen website and maintenance show what they include, with links to their pricing cards', async ({ page, context }) => {
   await page.goto('/contacto')
   const plans = page.getByRole('group', { name: 'Tipo de web', exact: true })
-  const maintenance = page.getByRole('group', { name: 'Mantenimiento', exact: true })
   // Nothing chosen yet: a link to compare every plan.
   await expect(page.getByTestId('plan-details')).toHaveCount(0)
   await expect(page.getByRole('link', { name: /Ver y comparar todos los planes/ })).toHaveAttribute('href', '/precios')
@@ -166,6 +165,38 @@ test('the free review link pre-fills the website and asks for its URL instead of
   await expect(page.getByTestId('quote-summary')).toHaveCount(0)
   await page.getByLabel(/solo quiero la revisión gratuita/).uncheck()
   await expect(page.locator('input[name="projectType"]')).toHaveValue('redesign')
+})
+
+test('improving a website: ticking "Other" unfolds a field to say what it is', async ({ page }) => {
+  await page.goto('/contacto?type=redesign&url=miweb.es')
+  const other = page.getByRole('checkbox', { name: 'Otro', exact: true })
+  const detail = page.getByLabel('¿Qué otro motivo? Cuéntanos qué es *')
+  await expect(detail).toHaveCount(0)
+  await expect(other).toHaveAttribute('aria-expanded', 'false')
+  // Retried until the page has hydrated (the server HTML has no handlers yet).
+  await expect(async () => {
+    if (!(await other.isChecked())) await other.check()
+    await expect(detail).toBeVisible({ timeout: 1000 })
+  }).toPass({ timeout: 15_000 })
+  await expect(other).toHaveAttribute('aria-expanded', 'true')
+  await expect(detail).toBeFocused()
+  await expect(detail).toHaveAttribute('maxlength', '200')
+  await detail.fill('El formulario no envía')
+  await other.uncheck()
+  await expect(detail).toHaveCount(0)
+})
+
+test('the "Other" field is translated', async ({ page }) => {
+  await page.goto('/en/contact?type=redesign')
+  await expect(async () => {
+    await page.getByRole('checkbox', { name: 'Other', exact: true }).check()
+    await expect(page.getByLabel('What else? Tell us what it is *')).toBeVisible({ timeout: 1000 })
+  }).toPass({ timeout: 15_000 })
+  await page.goto('/fr/contact?type=redesign')
+  await expect(async () => {
+    await page.getByRole('checkbox', { name: 'Autre', exact: true }).check()
+    await expect(page.getByLabel('Quel autre problème ? Dites-nous lequel *')).toBeVisible({ timeout: 1000 })
+  }).toPass({ timeout: 15_000 })
 })
 
 test('a URL that is not a website is not pre-filled', async ({ page }) => {

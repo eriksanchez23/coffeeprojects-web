@@ -1,7 +1,7 @@
 {
   "meta": {
     "siteName": "CoffeeProjects",
-    "defaultTitle": "Création de sites web professionnels et refonte | CoffeeProjects",
+    "defaultTitle": "Création et refonte de sites web | CoffeeProjects",
     "defaultDescription": "Nous créons des sites neufs et rénovons ceux qui ne fonctionnent plus : rapides, beaux et pensés pour gagner des clients. Prix fixe et réponse sous 24 h."
   },
   "nav": {
@@ -61,7 +61,7 @@
   },
   "contact": {
     "title": "Dites-nous ce dont vous avez besoin",
-    "lead": "Nous répondons sous 24 heures avec une première proposition. Sans engagement.",
+    "lead": "Nous vous répondons sous 24 heures avec une première proposition. Sans engagement.",
     "eyebrow": "Contact",
     "name": "Nom",
     "email": "E-mail",
@@ -81,7 +81,7 @@
     "guarantees": "Réponse sous 24 h · Sans engagement · Données protégées (RGPD)",
     "replyBy": "Erik, votre interlocuteur, vous répondra avec le spécialiste le plus adapté à votre projet.",
     "quickTitle": "On parle de votre site ?",
-    "quickLead": "Dites-nous ce dont vous avez besoin et nous répondons sous 24 h avec une première proposition. Sans engagement.",
+    "quickLead": "Dites-nous ce dont vous avez besoin et nous vous répondons sous 24 h avec une première proposition. Sans engagement.",
     "quickCta": "Demander un devis",
     "projectTypes": {
       "web": "Nouveau site / landing page",
@@ -144,6 +144,7 @@
       }
     },
     "currentUrl": "Adresse de votre site actuel",
+    "urlPlaceholder": "https://votresite.com",
     "issuesLegend": "Qu'est-ce qui ne va pas ? (facultatif)",
     "issues": {
       "slow": "Il est lent",
@@ -154,9 +155,11 @@
       "no-leads": "Il ne m'apporte pas de clients",
       "other": "Autre"
     },
+    "issuesOther": "Quel autre problème ? Dites-nous lequel",
+    "issuesOtherPlaceholder": "Ex. : le formulaire n’envoie rien, la boutique n’encaisse pas…",
     "auditOnly": "Pour l'instant, je veux seulement l'audit gratuit",
     "auditOnlyHint": "Nous vous envoyons un court rapport sous 48 h avec ce qui ne va pas et comment le corriger.",
-    "messageOptional": "Dites-nous en plus (facultatif)",
+    "messageOptional": "Dites-nous-en plus (facultatif)",
     "webPlan": {
       "label": "Type de site",
       "placeholder": "Je ne sais pas encore, aidez-moi à choisir",
@@ -227,8 +230,8 @@
     "perMonth": "{price}/mois"
   },
   "thanks": {
-    "title": "Bien reçu ! Nous répondons sous 24 h.",
-    "body": "Nous vous avons envoyé une copie par email. En attendant, découvrez quelques-uns de nos projets.",
+    "title": "Bien reçu ! Nous vous répondons sous 24 h.",
+    "body": "Nous vous avons envoyé une copie par e-mail. En attendant, découvrez quelques-uns de nos projets.",
     "cta": "Voir les projets"
   },
   "consent": {
@@ -252,7 +255,7 @@
     "cookies": "Cookies",
     "manageCookies": "Gérer les cookies",
     "remote": "Studio de design et développement web en Espagne. Nous travaillons à distance avec des clients du monde entier.",
-    "legalNav": "Mentions légales",
+    "legalNav": "Informations légales",
     "chat": "Chat",
     "legalDescription": "Informations légales sur l'éditeur de coffeeprojects.es et conditions d'utilisation du site.",
     "privacyDescription": "Comment CoffeeProjects traite vos données personnelles, vos droits et la manière de les exercer.",
@@ -261,7 +264,7 @@
     "colServices": "Services",
     "colOther": "Autres développements",
     "colStudio": "Studio",
-    "colLegal": "Mentions",
+    "colLegal": "Informations légales",
     "seeAll": "Tout voir"
   },
   "sections": {
@@ -283,6 +286,7 @@
   },
   "notFound": {
     "title": "Page introuvable · CoffeeProjects",
+    "heading": "Page introuvable",
     "error": "Erreur 404",
     "body": "L'adresse a peut-être changé ou le lien est mal saisi.",
     "cta": "Retour à l'accueil",
@@ -297,7 +301,7 @@
     "pathsTitle": "Repartir de zéro ou améliorer votre site ?",
     "auditUrlLabel": "Adresse de votre site",
     "auditCta": "Je veux mon audit gratuit",
-    "auditNote": "À l'étape suivante, nous vous demandons votre email pour envoyer le rapport. Sans engagement.",
+    "auditNote": "À l'étape suivante, nous vous demandons votre e-mail pour vous envoyer le rapport. Sans engagement.",
     "plansLead": "Choisissez parmi toutes nos formules :",
     "seeAllPlans": "Comparer toutes les formules",
     "showProject": "Voir {title}",
@@ -336,6 +340,7 @@
     "prevProject": "Projet précédent",
     "nextProject": "Projet suivant",
     "carouselLabel": "Projets (faites glisser pour en voir plus)",
+    "carouselRole": "carrousel",
     "scrollPrev": "Voir les projets précédents",
     "scrollNext": "Voir plus de projets",
     "private": "Privé (sous NDA)",

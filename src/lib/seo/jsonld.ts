@@ -1,4 +1,5 @@
 import type { Locale } from '@/i18n/locales'
+import { buildPath } from '@/i18n/build-path'
 import { env } from '@/lib/env'
 import { completeMaintenancePlans, completeWebPlans } from '@/lib/pricing'
 import type { Project, Service, TeamMember } from '@/payload-types'
@@ -25,7 +26,8 @@ export function websiteLd(locale: Locale) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    url: env.SITE_URL,
+    // The home page of this language, matching `inLanguage`.
+    url: locale === 'es' ? env.SITE_URL : `${env.SITE_URL}${buildPath('/', locale)}`,
     name: 'CoffeeProjects',
     inLanguage: locale,
     publisher: { '@id': ORG_ID() },

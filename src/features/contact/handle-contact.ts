@@ -24,7 +24,7 @@ export type ContactDeps = {
 }
 
 // Fields the form shows an error for; failures elsewhere need a form-level message.
-const RENDERED_FIELDS: ReadonlySet<string> = new Set(['name', 'email', 'phone', 'projectType', 'message', 'currentUrl', 'websiteIssues', 'howFound', 'nda', 'privacy'])
+const RENDERED_FIELDS: ReadonlySet<string> = new Set(['name', 'email', 'phone', 'projectType', 'message', 'currentUrl', 'websiteIssues', 'websiteIssuesOther', 'howFound', 'nda', 'privacy'])
 
 export async function handleContact(raw: Record<string, unknown>, deps: ContactDeps): Promise<ContactResult> {
   const eventId = deps.newEventId()

@@ -3,7 +3,7 @@ import { defaultLocale } from '@/i18n/locales'
 import { type Locale, locales } from '@/i18n/locales'
 import { localizedPaths } from '@/i18n/paths'
 import type { AppPathname } from '@/i18n/routing'
-import { getAllSlugs, getLegal } from '@/lib/cms/queries'
+import { getAllSlugs, getLegalOwnLocale } from '@/lib/cms/queries'
 import { legalPagesToIndex } from '@/lib/legal'
 import { absoluteUrl } from '@/lib/seo/metadata'
 
@@ -44,8 +44,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     safeSlugs('services'),
     safeSlugs('team-members'),
     safeSlugs('projects'),
-    // Legal pages are listed only once their text is final in every locale (they are noindex until then).
-    Promise.all(locales.map((l) => getLegal(l)))
+    // Legal pages are listed only once their text is final in every locale (they are noindex until then); a locale
+    // still showing the Spanish fallback does not count.
+    Promise.all(locales.map((l) => getLegalOwnLocale(l)))
       .then(legalPagesToIndex)
       .catch(() => []),
   ])
