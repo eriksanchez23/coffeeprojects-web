@@ -19,7 +19,7 @@ type Summary = { filled: ImportPath[]; skipped: ImportPath[]; missing: ImportPat
 const copy = {
   es: {
     title: 'Importar desde la web',
-    hint: 'Rellena los campos vacíos con los datos de la web del proyecto (título, resumen, tecnologías, año, SEO) y una captura de la portada. Revisa los valores y pulsa Guardar: no se guarda nada hasta entonces.',
+    hint: 'Rellena los campos vacíos con los datos de la web del proyecto (título, resumen, tecnologías, año, SEO) y capturas de la portada y de la web en el móvil (si la galería está vacía). Revisa los valores y pulsa Guardar: no se guarda nada hasta entonces.',
     replaceCover: 'Reemplazar portada',
     run: 'Importar desde la web',
     running: 'Importando…',
@@ -36,6 +36,7 @@ const copy = {
       stack: 'Tecnologías',
       year: 'Año',
       cover: 'Portada',
+      gallery: 'Galería: vista en el móvil',
       'seo.title': 'SEO: título',
       'seo.description': 'SEO: descripción',
       'seo.image': 'SEO: imagen',
@@ -54,7 +55,7 @@ const copy = {
   },
   en: {
     title: 'Import from website',
-    hint: "Fills the empty fields with data from the project's website (title, summary, stack, year, SEO) and a screenshot as the cover. Review the values and click Save: nothing is saved until then.",
+    hint: "Fills the empty fields with data from the project's website (title, summary, stack, year, SEO) and screenshots for the cover and the phone view (when the gallery is empty). Review the values and click Save: nothing is saved until then.",
     replaceCover: 'Replace cover',
     run: 'Import from website',
     running: 'Importing…',
@@ -71,6 +72,7 @@ const copy = {
       stack: 'Stack',
       year: 'Year',
       cover: 'Cover',
+      gallery: 'Gallery: phone view',
       'seo.title': 'SEO: title',
       'seo.description': 'SEO: description',
       'seo.image': 'SEO: image',

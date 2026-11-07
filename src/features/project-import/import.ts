@@ -1,7 +1,7 @@
 import { detectStack } from './detect-stack'
 import { type SafeFetchErrorCode, type SafeFetchOptions, type SafeResponse, safeFetch } from './fetch-safe'
 import { parsePageMeta } from './parse'
-import { type CurrentValues, type FillPlan, planFill, wantsImage } from './plan'
+import { type CurrentValues, type FillPlan, isEmptyValue, planFill, wantsImage } from './plan'
 
 /**
  * S23: "Import from website" for a project. Fetches the public page (SSRF-safe), reads its metadata and stack,
@@ -119,10 +119,10 @@ export async function importFromWebsite(
   const stack = detectStack({ html, headers: page.headers, generator: meta.generator })
 
   const warnings: ImportResult['warnings'] = []
+  const site = meta.title ?? page.url.hostname
   let imageId: number | string | undefined
   let coverSource: ImportResult['coverSource']
   if (wantsImage(input.current, input.replaceCover)) {
-    const site = meta.title ?? page.url.hostname
     const sources: { kind: NonNullable<ImportResult['coverSource']>; locate: () => Promise<string> }[] = [
       { kind: 'screenshot', locate: () => screenshotUrl(fetch, page.url.href, deps.microlinkKey) },
     ]
@@ -144,6 +144,26 @@ export async function importFromWebsite(
     if (imageId === undefined) warnings.push('coverFailed')
   }
 
-  const plan = planFill(input.current, { title: meta.title, description: meta.description, stack, year: new Date().getFullYear(), imageId }, input)
+  // An empty gallery also gets the website seen on a phone (portrait capture), which the home hero shows in its phone
+  // frame. Optional: when it cannot be captured the gallery is simply reported as not found.
+  let phoneId: number | string | undefined
+  if (isEmptyValue(input.current.gallery)) {
+    try {
+      const image = await downloadImage(fetch, await screenshotUrl(fetch, page.url.href, deps.microlinkKey, 'mobile'))
+      const slug = page.url.hostname.replace(/^www\./, '').replace(/[^a-z0-9]+/gi, '-').toLowerCase()
+      phoneId = await deps.createMedia(
+        { data: image.data, mimetype: image.mimetype, name: `mobile-${slug}.${image.ext}` },
+        { es: `Web de ${site} en el móvil`, en: `${site} website on a phone`, fr: `Site ${site} sur mobile` },
+      )
+    } catch {
+      // Reported as missing by the fill plan.
+    }
+  }
+
+  const plan = planFill(
+    input.current,
+    { title: meta.title, description: meta.description, stack, year: new Date().getFullYear(), imageId, phoneId },
+    input,
+  )
   return { ...plan, coverSource, warnings }
 }

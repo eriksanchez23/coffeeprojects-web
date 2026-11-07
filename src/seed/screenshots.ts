@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Payload } from 'payload'
+import type { Media } from '@/payload-types'
 import { captureScreenshot, type ImageFile, type ShotView } from '@/features/project-import/import'
 import { projects } from './data/projects'
 
@@ -76,5 +77,40 @@ export async function captureProjectScreenshots(payload: Payload) {
     if (Object.keys(data).length === 0) continue
     await payload.update({ collection: 'projects', id: doc.id, locale: 'es', data: { ...data, _status: 'published' } as never })
     payload.logger.info(`screenshots: ${slug} (${Object.keys(data).join(', ')})`)
+  }
+  if (network) await addMissingPhoneViews(payload, microlinkKey)
+}
+
+/** A gallery whose first image is a portrait phone capture (what the home hero shows in its phone frame). */
+export function hasPhoneView(gallery: unknown): boolean {
+  const first = Array.isArray(gallery) ? gallery[0] : undefined
+  return Boolean(first && typeof first === 'object' && (first as Media).width && (first as Media).height && (first as Media).height! > (first as Media).width!)
+}
+
+/**
+ * Every published project with a public website but no phone view, including the ones added from the panel (e.g.
+ * before the import captured it): a portrait screenshot is put first in its gallery, keeping the images already there.
+ */
+async function addMissingPhoneViews(payload: Payload, microlinkKey: string | undefined) {
+  const { docs } = await payload.find({ collection: 'projects', where: { _status: { equals: 'published' } }, locale: 'es', depth: 1, limit: 200, pagination: false })
+  for (const doc of docs) {
+    if (doc.nda || doc.kind === 'app' || !doc.url || !doc.cover || hasPhoneView(doc.gallery)) continue
+    let file: ImageFile
+    try {
+      file = (await localAsset(doc.slug, 'mobile')) ?? (await captureScreenshot(doc.url, 'mobile', { microlinkKey }))
+    } catch {
+      payload.logger.warn(`screenshots: could not capture mobile view of ${doc.slug}`)
+      continue
+    }
+    // Alt text in every language, from the project's own title in each one.
+    const titles = { es: doc.title, en: doc.title, fr: doc.title }
+    for (const locale of ['en', 'fr'] as const) {
+      const localized = await payload.findByID({ collection: 'projects', id: doc.id, locale, depth: 0 })
+      titles[locale] = localized.title || doc.title
+    }
+    const phone = await createMedia(payload, file, ALT.mobile(titles))
+    const kept = (doc.gallery ?? []).map((m) => (typeof m === 'object' && m ? m.id : m))
+    await payload.update({ collection: 'projects', id: doc.id, locale: 'es', data: { gallery: [phone, ...kept], _status: 'published' } as never })
+    payload.logger.info(`screenshots: ${doc.slug} (phone view)`)
   }
 }

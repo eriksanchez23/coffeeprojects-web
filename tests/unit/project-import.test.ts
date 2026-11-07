@@ -39,7 +39,7 @@ describe('planFill (S23 fill rule)', () => {
 
   it('lists what the website did not provide and keeps SEO values within their max length', () => {
     const plan = planFill({}, { stack: [], year: YEAR, description: 'word '.repeat(60).trim() }, { replaceCover: false })
-    expect(plan.missing).toEqual(['title', 'stack', 'cover', 'seo.title', 'seo.image'])
+    expect(plan.missing).toEqual(['title', 'stack', 'cover', 'gallery', 'seo.title', 'seo.image'])
     expect((plan.fill['seo.description'] as string).length).toBeLessThanOrEqual(160)
     expect(plan.fill['seo.description']).toMatch(/…$/)
   })
@@ -116,13 +116,33 @@ describe('importFromWebsite', () => {
     expect(result.fill.cover).toBeUndefined()
   })
 
-  it('does not fetch any image when the cover and SEO image are set and not replaced', async () => {
+  it('does not fetch any image when the cover, gallery and SEO image are set and not replaced', async () => {
     const fetch = fakeFetch({ [site]: page })
     const createMedia = vi.fn()
-    const result = await importFromWebsite({ url: site, current: { cover: 1, 'seo.image': 1 }, replaceCover: false }, { fetch, createMedia })
+    const result = await importFromWebsite({ url: site, current: { cover: 1, gallery: [2], 'seo.image': 1 }, replaceCover: false }, { fetch, createMedia })
     expect(fetch).toHaveBeenCalledTimes(1)
     expect(createMedia).not.toHaveBeenCalled()
-    expect(result.skipped).toEqual(['cover', 'seo.image'])
+    expect(result.skipped).toEqual(['cover', 'gallery', 'seo.image'])
+  })
+
+  it('fills an empty gallery with the website seen on a phone (the home hero shows it in its phone frame)', async () => {
+    const phoneShot = 'https://iad.microlink.io/phone.jpg'
+    const fetch = fakeFetch({
+      [site]: page,
+      [microlinkUrl(site, false, 'mobile')]: { body: JSON.stringify({ status: 'success', data: { screenshot: { url: phoneShot } } }), headers: { 'content-type': 'application/json' } },
+      [phoneShot]: { body: JPEG, headers: { 'content-type': 'image/jpeg' } },
+    })
+    const createMedia = vi.fn().mockResolvedValue(77)
+    const result = await importFromWebsite({ url: site, current: { cover: 1, 'seo.image': 1 }, replaceCover: false }, { fetch, createMedia })
+    expect(createMedia).toHaveBeenCalledWith(
+      expect.objectContaining({ mimetype: 'image/jpeg', name: 'mobile-noore-example.jpg' }),
+      { es: 'Web de Noore Club en el móvil', en: 'Noore Club website on a phone', fr: 'Site Noore Club sur mobile' },
+    )
+    expect(result.fill.gallery).toEqual([77])
+    // A phone capture that fails leaves the gallery empty and is only reported as missing.
+    const failing = await importFromWebsite({ url: site, current: { cover: 1, 'seo.image': 1 }, replaceCover: false }, { fetch: fakeFetch({ [site]: page }), createMedia: vi.fn() })
+    expect(failing.missing).toContain('gallery')
+    expect(failing.warnings).toEqual([])
   })
 
   it('rejects a page that is not HTML', async () => {
@@ -168,5 +188,16 @@ describe('POST /api/projects/import-from-url', () => {
     expect(res.status).toBe(422)
     expect(await res.json()).toEqual({ error: 'blockedUrl' })
     expect(payload.create).not.toHaveBeenCalled()
+  })
+})
+
+describe('hasPhoneView (seed: which projects still need a phone capture)', () => {
+  it('only counts a portrait first gallery image', async () => {
+    const { hasPhoneView } = await import('@/seed/screenshots')
+    expect(hasPhoneView([{ id: 1, width: 390, height: 844 }])).toBe(true)
+    expect(hasPhoneView([{ id: 1, width: 1440, height: 900 }, { id: 2, width: 390, height: 844 }])).toBe(false)
+    expect(hasPhoneView([])).toBe(false)
+    expect(hasPhoneView(null)).toBe(false)
+    expect(hasPhoneView([3])).toBe(false)
   })
 })

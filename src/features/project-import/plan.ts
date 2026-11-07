@@ -3,7 +3,7 @@
  * only when the user ticked "Replace cover". Paths are the admin form paths (the SEO group uses dot paths).
  */
 
-export const IMPORT_PATHS = ['title', 'summary', 'stack', 'year', 'cover', 'seo.title', 'seo.description', 'seo.image'] as const
+export const IMPORT_PATHS = ['title', 'summary', 'stack', 'year', 'cover', 'gallery', 'seo.title', 'seo.description', 'seo.image'] as const
 export type ImportPath = (typeof IMPORT_PATHS)[number]
 export type CurrentValues = Partial<Record<ImportPath, unknown>>
 
@@ -14,6 +14,8 @@ export interface Found {
   year: number
   /** The Media doc created for the cover, when an image was imported. */
   imageId?: number | string
+  /** The Media doc created for the phone view (portrait screenshot), when the gallery was empty. */
+  phoneId?: number | string
 }
 
 export interface FillPlan {
@@ -54,6 +56,8 @@ export function planFill(current: CurrentValues, found: Found, { replaceCover }:
     stack: found.stack.length ? found.stack : undefined,
     year: found.year,
     cover: found.imageId,
+    // The phone view opens the gallery: the home hero shows it in its phone frame.
+    gallery: found.phoneId === undefined ? undefined : [found.phoneId],
     'seo.title': found.title && truncate(found.title, SEO_TITLE_MAX),
     'seo.description': found.description && truncate(found.description, SEO_DESCRIPTION_MAX),
     'seo.image': found.imageId,
