@@ -37,10 +37,16 @@ function ConsentDialog({ focusOnOpen }: { focusOnOpen: boolean }) {
       aria-labelledby={titleId}
       aria-describedby={bodyId}
       tabIndex={-1}
+      // Lenis must leave the dialog's own scrolling alone (small phones with the settings open).
+      data-lenis-prevent
+      data-testid="consent-dialog"
       onKeyDown={(e) => {
         if (e.key === 'Escape') dismiss()
       }}
-      className="fixed inset-x-3 bottom-3 z-[70] mx-auto max-w-xl rounded-[var(--radius-lg)] border border-line-hi bg-bg-1/95 p-5 shadow-[var(--shadow-soft)] outline-none backdrop-blur-xl sm:bottom-6"
+      // Opaque on purpose: a backdrop blur over the hero's moving lights made phones re-blur the page every frame
+      // (stutters and, on some iPhones, a crashed tab). It never grows past the screen: it scrolls inside instead,
+      // and it stays clear of the iPhone home indicator.
+      className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[70] mx-auto max-h-[calc(100dvh-1.5rem-env(safe-area-inset-bottom))] max-w-xl overflow-y-auto overscroll-contain rounded-[var(--radius-lg)] border border-line-hi bg-bg-1 p-4 shadow-[var(--shadow-soft)] outline-none sm:bottom-6 sm:p-5"
     >
       <h2 id={titleId} className="text-lg font-semibold">
         {t('title')}
@@ -74,18 +80,20 @@ function ConsentDialog({ focusOnOpen }: { focusOnOpen: boolean }) {
         </fieldset>
       )}
 
-      {/* Reject and Accept have equal visual weight (AEPD guidance). */}
-      <div className="mt-5 flex flex-wrap gap-2">
+      {/* Reject and Accept have equal visual weight (AEPD guidance). Phones: both side by side, full width,
+          and the settings button on its own row below them. */}
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap">
         <Button variant="outline" onClick={() => setMarketing(false)}>
           {t('reject')}
         </Button>
         {configuring ? (
-          <Button variant="outline" onClick={() => setMarketing(marketing)}>
+          <Button variant="outline" className="order-last col-span-2 sm:order-none" onClick={() => setMarketing(marketing)}>
             {t('save')}
           </Button>
         ) : (
           <Button
             variant="outline"
+            className="order-last col-span-2 sm:order-none"
             onClick={() => {
               setMarketingDraft(consent?.marketing ?? false)
               setConfiguring(true)

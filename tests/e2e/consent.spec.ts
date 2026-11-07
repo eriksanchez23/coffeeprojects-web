@@ -52,6 +52,30 @@ test('the banner gives Reject the same prominence as Accept', async ({ page }) =
   expect(await reject.getAttribute('class')).toBe(await accept.getAttribute('class'))
 })
 
+test.describe('on a small phone', () => {
+  // Landscape phone with the browser bars showing: the shortest screen the banner has to work on.
+  test.use({ viewport: { width: 640, height: 300 }, isMobile: true, hasTouch: true })
+
+  test('the banner stays on screen, scrolls inside, blurs nothing and its buttons respond to a tap', async ({ page }) => {
+    await page.goto('/')
+    const dialog = page.getByTestId('consent-dialog')
+    await expect(dialog).toBeVisible()
+    // No backdrop blur over the animated hero (phones re-blurred it every frame).
+    await expect(dialog).toHaveCSS('backdrop-filter', 'none')
+    await dialog.getByRole('button', { name: 'Configurar', exact: true }).tap()
+    const box = (await dialog.boundingBox())!
+    expect(box.y).toBeGreaterThanOrEqual(0)
+    expect(box.y + box.height).toBeLessThanOrEqual(300)
+    // The settings are taller than the screen: the dialog scrolls inside to reach "Save".
+    const save = dialog.getByRole('button', { name: 'Guardar preferencias' })
+    await save.scrollIntoViewIfNeeded()
+    await save.tap()
+    await expect(dialog).toHaveCount(0)
+    await page.reload()
+    await expect(page.getByTestId('consent-dialog')).toHaveCount(0)
+  })
+})
+
 test('the footer can reopen the consent settings', async ({ page, context, baseURL }) => {
   await setConsent(context, baseURL, false)
   await page.goto('/')

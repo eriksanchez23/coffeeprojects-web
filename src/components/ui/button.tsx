@@ -5,8 +5,10 @@ import { clsx } from 'clsx'
 type Variant = 'primary' | 'ghost' | 'outline'
 type Size = 'md' | 'lg'
 
+// No will-change: it kept a GPU layer alive for every button on the page (dozens on the home), which weighs on
+// phones for no gain; the hover lift still animates without it.
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] font-medium transition-[transform,background-color,box-shadow] duration-300 ease-[var(--ease-out-expo)] will-change-transform disabled:opacity-50 disabled:pointer-events-none'
+  'inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] font-medium transition-[transform,background-color,box-shadow] duration-300 ease-[var(--ease-out-expo)] disabled:opacity-50 disabled:pointer-events-none'
 
 const variants: Record<Variant, string> = {
   primary: 'btn-shine bg-brand text-white hover:bg-brand-hi hover:-translate-y-0.5 shadow-[var(--shadow-amber)] [.on-dark_&]:text-espresso',

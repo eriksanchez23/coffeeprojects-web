@@ -250,6 +250,18 @@
   background: linear-gradient(90deg, #c2410c, #e11d48, #f59e0b);
 }
 
+/* Phones and tablets: the lights stay still and blur less. Animating ~670 px blurred layers non-stop under the
+   sticky header (and the cookie dialog at first visit) made some phones stutter or drop the tab. */
+@media (pointer: coarse), (max-width: 767px) {
+  .aurora > span {
+    animation: none;
+    filter: blur(40px);
+  }
+  .hero-glow {
+    animation: none;
+  }
+}
+
 /* Reading progress at the top of the page (browsers with scroll-driven animations only). */
 .scroll-progress {
   position: fixed;
