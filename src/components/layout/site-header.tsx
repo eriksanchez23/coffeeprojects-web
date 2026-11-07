@@ -21,7 +21,7 @@ export async function SiteHeader() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-bg-0/85 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-line bg-bg-0/95 md:bg-bg-0/85 md:backdrop-blur-md">
       <Container className="flex h-16 items-center justify-between gap-6">
         <Logo />
         <nav aria-label={t('mainNav')} className="hidden items-center gap-7 text-sm font-medium md:flex">

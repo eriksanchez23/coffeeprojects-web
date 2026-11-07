@@ -253,11 +253,18 @@
 /* Phones and tablets: the lights stay still and blur less. Animating ~670 px blurred layers non-stop under the
    sticky header (and the cookie dialog at first visit) made some phones stutter or drop the tab. */
 @media (pointer: coarse), (max-width: 767px) {
+  /* Phones: the radial gradients already fade out softly, so no blur filters (large GPU layers) and no
+     endless animations, which keeps memory low and scrolling (and the progress bar) smooth. */
   .aurora > span {
     animation: none;
-    filter: blur(40px);
+    filter: none;
   }
   .hero-glow {
+    animation: none;
+    filter: none;
+  }
+  .hero-float,
+  .hero-float-slow {
     animation: none;
   }
 }
@@ -272,6 +279,8 @@
   transform: scaleX(0);
   background: linear-gradient(90deg, #c2410c, #e11d48, #f59e0b);
   pointer-events: none;
+  /* Its own compositor layer, so the browser can move it with the scroll off the main thread. */
+  will-change: transform;
 }
 @supports (animation-timeline: scroll()) {
   .scroll-progress {
@@ -335,18 +344,3 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* Route view transitions */
-::view-transition-old(root),
-::view-transition-new(root),
-::view-transition-old(*),
-::view-transition-new(*) {
-  animation-duration: 450ms;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-}
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none !important;
-  }
-}

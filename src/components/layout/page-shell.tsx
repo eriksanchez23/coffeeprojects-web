@@ -1,6 +1,5 @@
-/// <reference types="react/canary" />
 import { getTranslations } from 'next-intl/server'
-import { type ReactNode, ViewTransition } from 'react'
+import type { ReactNode } from 'react'
 import { ScrollEffects } from '@/components/motion/scroll-effects'
 import type { Locale } from '@/i18n/locales'
 import { getSettings } from '@/lib/cms/queries'
@@ -33,10 +32,9 @@ export async function PageShell({
       <div aria-hidden className="scroll-progress" />
       <SiteHeader />
       <main id="main" tabIndex={-1} className="outline-none">
-        {/* Route navigations are transitions, so the page content cross-fades between routes. */}
-        <ViewTransition>
-          <div>{children}</div>
-        </ViewTransition>
+        {/* No route view transition: the browser would snapshot the whole page (over 10,000 px tall on a phone),
+            which made iOS Safari run out of memory and reload the tab back at the top. */}
+        {children}
       </main>
       <SiteFooter email={settings.contactEmail} chatUrl={settings.chatUrl} />
       {!hideMobileCta && <MobileCtaBar label={t('cta')} />}

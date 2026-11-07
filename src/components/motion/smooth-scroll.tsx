@@ -6,13 +6,19 @@ import { useEffect } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
 
+/** Smoothing applies to mouse wheels and trackpads only: touch screens keep their own native scrolling. */
+const SMOOTH_INPUT = '(hover: hover) and (pointer: fine)'
+
 /** Lenis smooth scroll driven by the GSAP ticker so ScrollTrigger stays in sync. Renders nothing. */
 export default function SmoothScroll() {
   useEffect(() => {
+    // On phones and tablets Lenis would not smooth anything (touch scrolling stays native) but would still run
+    // every frame on the main thread, which made the reading progress bar trail behind the finger.
+    if (!window.matchMedia(SMOOTH_INPUT).matches) return
     const lenis = new Lenis({
       autoRaf: false,
-      // A little snappier than Lenis' default (0.1): the page follows the wheel closely and never feels behind.
-      lerp: 0.14,
+      // Snappier than Lenis' default (0.1): the page (and the progress bar) stops right after the wheel does.
+      lerp: 0.2,
       // In-page anchors are handled below: Lenis' own handler smooth-scrolls on top of the native jump.
       anchors: false,
       stopInertiaOnNavigate: true,

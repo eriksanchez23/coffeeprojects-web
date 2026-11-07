@@ -58,10 +58,17 @@ test('home projects: a swipeable row of cards with technologies and links', asyn
     await expect.poll(() => track.evaluate((el) => el.scrollLeft), { timeout: 1500 }).toBeGreaterThan(0)
   }).toPass({ timeout: 15_000 })
   const box = (await track.boundingBox())!
-  const atNext = await track.evaluate((el) => el.scrollLeft)
-  await page.mouse.move(box.x + box.width * 0.3, box.y + 120)
+  // Wait for the smooth scroll to settle, then drag further than half a card so the snap lands on the previous one.
+  let atNext = -1
+  await expect.poll(async () => {
+    const left = await track.evaluate((el) => el.scrollLeft)
+    const settled = left === atNext
+    atNext = left
+    return settled
+  }, { intervals: [150] }).toBe(true)
+  await page.mouse.move(box.x + box.width * 0.15, box.y + 120)
   await page.mouse.down()
-  await page.mouse.move(box.x + box.width * 0.6, box.y + 120, { steps: 8 })
+  await page.mouse.move(box.x + box.width * 0.85, box.y + 120, { steps: 10 })
   await page.mouse.up()
   await expect.poll(() => track.evaluate((el) => el.scrollLeft)).toBeLessThan(atNext)
   await expect(page).toHaveURL(/\/$/)
