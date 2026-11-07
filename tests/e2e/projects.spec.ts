@@ -9,8 +9,9 @@ test('hero showcase: swipe or arrows change the project, a click opens it', asyn
   await page.goto('/')
   const frame = page.getByTestId('hero-showcase-link')
   const caption = page.getByTestId('hero-showcase-caption')
-  // Skipped when the database has fewer than two projects with a cover (no carousel then).
-  test.skip((await page.getByRole('button', { name: /^Ver / }).count()) < 2, 'needs two projects with a cover')
+  // Skipped when the database has fewer than two projects with a cover: the hero then shows one project and no
+  // arrows or dots (counting "Ver …" buttons matched the home project carousel's arrows instead).
+  test.skip((await page.getByTestId('hero-showcase-controls').count()) === 0, 'needs two projects with a cover')
   const first = await caption.locator('a').innerText()
 
   // Swipe left with the mouse: next project, and the press does not navigate. Retried, since a swipe made before

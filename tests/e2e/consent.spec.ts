@@ -112,8 +112,9 @@ test.describe('Meta Pixel (dummy Pixel ID, stubbed fbevents.js)', () => {
     expect(attr?.value).toContain('facebook')
 
     // Client-side navigation: one more PageView from the app, none from fbevents' pushState hook.
-    await page.locator('main').getByRole('link', { name: 'Ver servicios' }).first().click()
-    await expect(page).toHaveURL(/\/servicios$/)
+    // (The hero's main button, always above the fold; the old "Ver servicios" button went with the 2026-11 redesign.)
+    await page.locator('main').getByRole('link', { name: 'Quiero una web nueva' }).first().click()
+    await expect(page).toHaveURL(/\/contacto\?type=web$/)
     await expect.poll(() => pageViews(page)).toBe(2)
     await page.waitForTimeout(500)
     expect(await pageViews(page)).toBe(2)

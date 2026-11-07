@@ -165,7 +165,7 @@ export function HeroShowcase({ slides, labels }: { slides: ShowcaseSlide[]; labe
             {current.stack.length > 0 && <span className="block truncate text-xs text-ink-3">{current.stack.join(' · ')}</span>}
           </p>
           {count > 1 && (
-            <div className="flex items-center gap-1.5" role="group">
+            <div className="flex items-center gap-1.5" role="group" data-testid="hero-showcase-controls">
               <ArrowButton label={labels.prev} onClick={() => go(active - 1)} dir="prev" />
               {slides.map((s, i) => (
                 <button
