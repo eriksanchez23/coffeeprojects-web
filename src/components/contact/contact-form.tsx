@@ -10,23 +10,24 @@ import { readConsentFromDocument } from '@/features/tracking/consent'
 import { Link } from '@/i18n/navigation'
 import { clsx } from 'clsx'
 import { type PlanInfo, PlanInfoCard } from './plan-info'
+import { type MaintenanceCard, MaintenancePicker, type WebPlanCard, WebPlanPicker } from './plan-picker'
 import { TurnstileWidget } from './turnstile-widget'
 
 // `plan` is a pricing package slug the page already validated against the pricing global.
 type Prefill = { type?: string; plan?: string; url?: string }
 
 /**
- * A web plan in the "new website" select: its label (prices VAT excluded), the maintenance plans that unlock its
+ * A web plan of the "new website" picker: its card (prices VAT excluded), the maintenance plans that unlock its
  * reduced price, and the VAT-included summary for each choice. Built on the server from the pricing global.
  */
 export type WebPlanOption = {
   slug: string
   contactType: ProjectType
-  label: string
+  card: WebPlanCard
   defaultMaintenance: string
   info: PlanInfo
-  maintenance: { slug: string; label: string; quote: QuoteLine[]; info: PlanInfo }[]
-  none: { label: string; quote: QuoteLine[]; info: PlanInfo }
+  maintenance: { slug: string; card: MaintenanceCard; quote: QuoteLine[]; info: PlanInfo }[]
+  none: { card: MaintenanceCard; quote: QuoteLine[]; info: PlanInfo }
 }
 
 type Path = 'web' | 'existing' | 'other'
@@ -155,6 +156,11 @@ export function ContactForm({
     : null
   const webQuote = maintenanceOption?.quote ?? null
   const quote = path === 'web' && webOptions.length > 0 ? (webQuote ?? []) : (quotes[selectedType] ?? [])
+  const pickerLabels = { recommended: t('webPlan.recommended'), isNew: t('webPlan.new'), withMaintenance: t('webPlan.withLabel') }
+  // The summary: what was chosen, then the "what you will pay" block (upfront web price, fees, total).
+  const detailLines = quote.filter((l) => l.section !== 'payment')
+  const paymentLines = quote.filter((l) => l.section === 'payment')
+  const withFees = path === 'web' && Boolean(option) && maintenanceChoice !== 'none'
   const checkedIssues = new Set((values.websiteIssues ?? '').split(','))
   const pathCards: { value: Path; title: string; text: string }[] = [
     { value: 'web', title: t('paths.web.title'), text: t('paths.web.text') },
@@ -219,34 +225,25 @@ export function ContactForm({
 
       {path === 'web' && webOptions.length > 0 && (
         <div className="grid gap-5 rounded-[var(--radius-md)] border border-line p-4 sm:p-5">
-          <div>
-            <label htmlFor="plan" className={label}>{t('webPlan.label')}</label>
-            <select id="plan" name="plan" value={planSlug} onChange={(e) => choosePlan(e.target.value)} className={field} aria-describedby="plan-hint">
-              <option value="">{t('webPlan.placeholder')}</option>
-              {webOptions.map((o) => (
-                <option key={o.slug} value={o.slug}>{o.label}</option>
-              ))}
-            </select>
-            <p id="plan-hint" className="mt-1 text-xs text-ink-3">{t('webPlan.hint')}</p>
-          </div>
+          <WebPlanPicker
+            legend={t('webPlan.label')}
+            hint={t('webPlan.hint')}
+            notSure={t('webPlan.placeholder')}
+            plans={webOptions}
+            value={planSlug}
+            onChange={choosePlan}
+            labels={pickerLabels}
+          />
           {option && (
-            <div>
-              <label htmlFor="maintenance" className={label}>{t('webPlan.maintenanceLabel')}</label>
-              <select
-                id="maintenance"
-                name="maintenance"
-                value={maintenanceChoice}
-                onChange={(e) => setMaintenance(e.target.value)}
-                className={field}
-                aria-describedby="maintenance-hint"
-              >
-                {option.maintenance.map((m) => (
-                  <option key={m.slug} value={m.slug}>{m.label}</option>
-                ))}
-                <option value="none">{option.none.label}</option>
-              </select>
-              <p id="maintenance-hint" className="mt-1 text-xs text-ink-3">{t('webPlan.maintenanceHint')}</p>
-            </div>
+            <MaintenancePicker
+              key={option.slug}
+              legend={t('webPlan.maintenanceLabel')}
+              hint={t('webPlan.maintenanceHint')}
+              options={[...option.maintenance, { slug: 'none', card: option.none.card }]}
+              value={maintenanceChoice}
+              onChange={setMaintenance}
+              labels={pickerLabels}
+            />
           )}
           {option && maintenanceOption ? (
             <section aria-label={t('webPlan.detailsTitle')} className="grid gap-3 sm:grid-cols-2" data-testid="plan-details">
@@ -326,18 +323,41 @@ export function ContactForm({
         >
           <h2 id="quote-title" className="text-xs font-semibold uppercase tracking-wider text-amber">{t('quote.title')}</h2>
           {path === 'web' && webOptions.length > 0 && !option && <p className="mt-3 text-sm text-ink-2">{t('quote.pickPlan')}</p>}
-          <dl id="quote-summary" aria-live="polite" aria-atomic="true" className="mt-3 grid gap-1.5 text-sm">
-            {quote.map((line, i) => (
-              <div
-                key={line.label}
-                className="flex flex-wrap items-baseline justify-between gap-x-3"
-                data-testid={option && i === 0 ? 'selected-plan' : undefined}
-              >
-                <dt className="text-ink-2">{line.label}</dt>
-                <dd className="text-base font-semibold text-ink-0">{line.value}</dd>
-              </div>
-            ))}
-          </dl>
+          <div id="quote-summary" aria-live="polite" aria-atomic="true">
+            <dl className="mt-3 grid gap-1.5 text-sm">
+              {detailLines.map((line, i) => (
+                <div
+                  key={line.label}
+                  className="flex flex-wrap items-baseline justify-between gap-x-3"
+                  data-testid={option && i === 0 ? 'selected-plan' : undefined}
+                >
+                  <dt className="text-ink-2">{line.label}</dt>
+                  <dd className="text-base font-semibold text-ink-0">{line.value}</dd>
+                </div>
+              ))}
+            </dl>
+            {paymentLines.length > 0 && (
+              <section aria-labelledby="payment-title" className="mt-4 rounded-[var(--radius-sm)] border border-line bg-bg-1 p-3.5" data-testid="quote-payment">
+                <h3 id="payment-title" className="text-xs font-semibold uppercase tracking-wider text-ink-2">{t('quote.paymentTitle')}</h3>
+                <dl className="mt-2 grid gap-1.5 text-sm">
+                  {paymentLines.map((line) => (
+                    <div
+                      key={line.label}
+                      className={clsx(
+                        'flex flex-wrap items-baseline justify-between gap-x-3',
+                        line.strong && 'mt-1 border-t border-line pt-2.5',
+                      )}
+                      data-testid={line.strong ? 'quote-total' : undefined}
+                    >
+                      <dt className={line.strong ? 'font-semibold text-ink-0' : 'text-ink-2'}>{line.label}</dt>
+                      <dd className={line.strong ? 'font-display text-2xl font-semibold text-brand' : 'text-base font-semibold text-ink-0'}>{line.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {withFees && <p className="mt-2 text-xs text-ink-3">{t('quote.termHint')}</p>}
+              </section>
+            )}
+          </div>
           <p className="mt-3 text-xs text-ink-3">{t('quote.vat')}. {t('quote.hint')}</p>
         </section>
       )}

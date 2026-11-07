@@ -71,7 +71,7 @@ export default async function ContactPage({
     const webWith = from(euro(p.priceWithMaintenance as number), p.fromPrice)
     const webOnly = from(euro(p.priceWebOnly as number), p.fromPrice)
     const type = p.contactType ?? 'web'
-    const quoteFor = (maintenance: { name: string; monthlyPrice: number } | 'none') =>
+    const quoteFor = (maintenance: { name: string; monthlyPrice: number; permanenceMonths: number } | 'none') =>
       quoteLines(
         buildQuote({ type, plan: p as Parameters<typeof buildQuote>[0]['plan'], maintenance, services }),
         locale,
@@ -80,7 +80,13 @@ export default async function ContactPage({
     return {
       slug: p.slug,
       contactType: type,
-      label: t('webPlan.option', { name: p.name, with: webWith, without: webOnly }),
+      card: {
+        name: p.name,
+        withPrice: webWith,
+        withoutPrice: t('webPlan.withoutLine', { price: webOnly }),
+        featured: Boolean(p.featured),
+        isNew: Boolean(p.isNew),
+      },
       defaultMaintenance: allowed[0]?.slug ?? 'none',
       info: {
         name: p.name,
@@ -91,8 +97,14 @@ export default async function ContactPage({
       },
       maintenance: allowed.map((m) => ({
         slug: m.slug,
-        label: t('webPlan.maintenanceOption', { name: m.name, monthly: euro(m.monthlyPrice as number), web: webWith }),
-        quote: quoteFor({ name: m.name, monthlyPrice: m.monthlyPrice as number }),
+        card: {
+          name: m.name,
+          price: t('webPlan.perMonth', { price: euro(m.monthlyPrice as number) }),
+          detail: t('webPlan.term', { months: m.permanenceMonths as number }),
+          web: t('webPlan.webFor', { price: webWith }),
+          featured: Boolean(m.featured),
+        },
+        quote: quoteFor({ name: m.name, monthlyPrice: m.monthlyPrice as number, permanenceMonths: m.permanenceMonths as number }),
         info: {
           name: m.name,
           pitch: m.pitch ?? undefined,
@@ -103,7 +115,13 @@ export default async function ContactPage({
         },
       })),
       none: {
-        label: t('webPlan.noneOption', { web: webOnly }),
+        card: {
+          name: t('quote.noMaintenance'),
+          price: t('webPlan.noFee'),
+          detail: t('webPlan.noTerm'),
+          web: t('webPlan.webFor', { price: webOnly }),
+          featured: false,
+        },
         quote: quoteFor('none'),
         info: {
           name: t('webPlan.noneTitle'),

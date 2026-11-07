@@ -13,8 +13,11 @@ export const VAT_RATE = 0.21
 
 /** A price with VAT; `null` when the service has no numeric price (custom quote, external store). */
 export type QuotePrice = { amount: number; from: boolean; monthly: boolean } | null
-/** Maintenance chosen with a web plan: a monthly plan (the web then costs its "with maintenance" price) or none. */
-export type QuoteMaintenance = { name: string; monthly: QuotePrice } | 'none'
+/**
+ * Maintenance chosen with a web plan: a monthly plan (the web then costs its "with maintenance" price) or none.
+ * `months` is the plan's minimum term, used to total what the visitor pays over it.
+ */
+export type QuoteMaintenance = { name: string; monthly: QuotePrice; months?: number } | 'none'
 export type Quote = {
   plan?: { name: string; withMaintenance: QuotePrice; webOnly: QuotePrice; maintenance?: QuoteMaintenance }
   /** Only without a plan: the matching service's "from" price. */
@@ -28,7 +31,7 @@ export type QuoteService = {
   pricing?: { mode?: string | null; amount?: number | null } | null
 }
 export type QuotePlan = { name: string; priceWithMaintenance: number; priceWebOnly: number; fromPrice?: boolean | null }
-export type QuoteMaintenancePlan = { name: string; monthlyPrice: number }
+export type QuoteMaintenancePlan = { name: string; monthlyPrice: number; permanenceMonths?: number | null }
 
 /** Message templates (`contact.quote` in messages/*.json); `{price}` is replaced in `from` and `perMonth`. */
 export type QuoteLabels = {
@@ -43,18 +46,46 @@ export type QuoteLabels = {
   vat: string
   maintenance: string
   noMaintenance: string
-  webPrice: string
+  /** The web, paid once at the start. */
+  upfront: string
+  /** `{months}` is replaced: the maintenance fees over the minimum term. */
+  maintenanceTerm: string
+  /** `{months}` is replaced: web + maintenance fees over the minimum term. */
+  total: string
+  /** Total without maintenance (the web only, no monthly fees). */
+  totalWebOnly: string
 }
-export type QuoteLine = { label: string; value: string }
+/**
+ * One row of the summary. `section: 'payment'` rows form the "what you will pay" block; `strong` marks its total.
+ */
+export type QuoteLine = { label: string; value: string; section?: 'payment'; strong?: boolean }
 
-const LABEL_KEYS = ['plan', 'price', 'withMaintenance', 'webOnly', 'time', 'from', 'perMonth', 'custom', 'vat', 'maintenance', 'noMaintenance', 'webPrice'] as const
+const LABEL_KEYS = [
+  'plan',
+  'price',
+  'withMaintenance',
+  'webOnly',
+  'time',
+  'from',
+  'perMonth',
+  'custom',
+  'vat',
+  'maintenance',
+  'noMaintenance',
+  'upfront',
+  'maintenanceTerm',
+  'total',
+  'totalWebOnly',
+] as const
 
 /**
  * Labels from next-intl's `t` for the `contact` namespace. Messages are precompiled at build time, so `t.raw`
  * does not return strings: the templates are rebuilt by passing the `{price}` placeholder as the value.
  */
-export function quoteLabelsFrom(t: (key: `quote.${(typeof LABEL_KEYS)[number]}`, values?: { price: string }) => string): QuoteLabels {
-  return Object.fromEntries(LABEL_KEYS.map((k) => [k, t(`quote.${k}`, { price: '{price}' })])) as QuoteLabels
+export function quoteLabelsFrom(
+  t: (key: `quote.${(typeof LABEL_KEYS)[number]}`, values?: { price: string; months: string }) => string,
+): QuoteLabels {
+  return Object.fromEntries(LABEL_KEYS.map((k) => [k, t(`quote.${k}`, { price: '{price}', months: '{months}' })])) as QuoteLabels
 }
 
 const isAmount = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v)
@@ -103,7 +134,11 @@ export function buildQuote({
             maintenance:
               maintenance === 'none'
                 ? ('none' as const)
-                : { name: maintenance.name, monthly: { amount: withVat(maintenance.monthlyPrice), from: false, monthly: true } },
+                : {
+                    name: maintenance.name,
+                    monthly: { amount: withVat(maintenance.monthlyPrice), from: false, monthly: true },
+                    ...(isAmount(maintenance.permanenceMonths) && maintenance.permanenceMonths > 0 && { months: maintenance.permanenceMonths }),
+                  },
           }),
         },
       }
@@ -118,25 +153,57 @@ function formatPrice(price: QuotePrice, locale: Locale, labels: QuoteLabels): st
   return price.from ? labels.from.replace('{price}', text) : text
 }
 
-/** Label/value rows shown in the form summary. */
+const cents = (n: number) => Math.round(n * 100) / 100
+
+/**
+ * "What you will pay" for a web plan and a maintenance choice: the web, paid once at the start, then (with a
+ * maintenance plan) its fees over the minimum term and the total of both. Prices keep the plan's "from" flag.
+ */
+function paymentLines(web: NonNullable<QuotePrice>, m: QuoteMaintenance, locale: Locale, labels: QuoteLabels): QuoteLine[] {
+  const upfront: QuoteLine = { label: labels.upfront, value: formatPrice(web, locale, labels), section: 'payment' }
+  if (m === 'none') {
+    return [upfront, { label: labels.totalWebOnly, value: formatPrice(web, locale, labels), section: 'payment', strong: true }]
+  }
+  if (!m.monthly || !m.months) return [upfront]
+  const months = String(m.months)
+  const fees = cents(m.monthly.amount * m.months)
+  return [
+    upfront,
+    {
+      label: labels.maintenanceTerm.replace('{months}', months),
+      value: formatPrice({ amount: fees, from: false, monthly: false }, locale, labels),
+      section: 'payment',
+    },
+    {
+      label: labels.total.replace('{months}', months),
+      value: formatPrice({ amount: cents(web.amount + fees), from: web.from, monthly: false }, locale, labels),
+      section: 'payment',
+      strong: true,
+    },
+  ]
+}
+
+/** Label/value rows shown in the form summary (the time first, then the "what you will pay" block). */
 export function quoteLines(quote: Quote, locale: Locale, labels: QuoteLabels): QuoteLine[] {
   const plan = quote.plan
   const m = plan?.maintenance
-  const lines: QuoteLine[] = !plan
-    ? [{ label: labels.price, value: formatPrice(quote.price ?? null, locale, labels) }]
-    : !m
-      ? [
-          { label: labels.plan, value: plan.name },
-          { label: labels.withMaintenance, value: formatPrice(plan.withMaintenance, locale, labels) },
-          { label: labels.webOnly, value: formatPrice(plan.webOnly, locale, labels) },
-        ]
-      : [
-          { label: labels.plan, value: plan.name },
-          { label: labels.maintenance, value: m === 'none' ? labels.noMaintenance : `${m.name} · ${formatPrice(m.monthly, locale, labels)}` },
-          { label: labels.webPrice, value: formatPrice(m === 'none' ? plan.webOnly : plan.withMaintenance, locale, labels) },
-        ]
-  if (quote.time) lines.push({ label: labels.time, value: quote.time })
-  return lines
+  const time: QuoteLine[] = quote.time ? [{ label: labels.time, value: quote.time }] : []
+  if (!plan) return [{ label: labels.price, value: formatPrice(quote.price ?? null, locale, labels) }, ...time]
+  if (!m) {
+    return [
+      { label: labels.plan, value: plan.name },
+      { label: labels.withMaintenance, value: formatPrice(plan.withMaintenance, locale, labels) },
+      { label: labels.webOnly, value: formatPrice(plan.webOnly, locale, labels) },
+      ...time,
+    ]
+  }
+  const web = m === 'none' ? plan.webOnly : plan.withMaintenance
+  return [
+    { label: labels.plan, value: plan.name },
+    { label: labels.maintenance, value: m === 'none' ? labels.noMaintenance : `${m.name} · ${formatPrice(m.monthly, locale, labels)}` },
+    ...time,
+    ...(web ? paymentLines(web, m, locale, labels) : []),
+  ]
 }
 
 /** One-line version stored on the lead and sent to the team, in the visitor's language. */
@@ -148,9 +215,11 @@ export function quoteSummaryText(quote: Quote, locale: Locale, labels: QuoteLabe
   return `${body} (${labels.vat})`.replace(/[  ]/g, ' ')
 }
 
+type MaintenanceRow = { slug: string; name: string; monthlyPrice: number; permanenceMonths?: number | null }
+
 type SummaryPricing = {
   packages?: (QuotePlan & { slug: string; minPlan?: string | null })[] | null
-  maintenancePlans?: { slug: string; name: string; monthlyPrice?: number | null }[] | null
+  maintenancePlans?: { slug: string; name: string; monthlyPrice?: number | null; permanenceMonths?: number | null }[] | null
 }
 
 /**
@@ -163,11 +232,15 @@ export function leadQuoteSummary(
     services: readonly QuoteService[]
     pricing: SummaryPricing
     labels: QuoteLabels
-    resolveMaintenance: (value: unknown, minPlan: string | null | undefined, plans: { slug: string; name: string; monthlyPrice: number }[]) => { name: string; monthlyPrice: number } | 'none' | undefined
+    resolveMaintenance: (
+      value: unknown,
+      minPlan: string | null | undefined,
+      plans: MaintenanceRow[],
+    ) => MaintenanceRow | 'none' | undefined
   },
 ): string {
   const plan = input.plan ? (pricing.packages ?? []).find((p) => p.slug === input.plan) : undefined
-  const maintenancePlans = (pricing.maintenancePlans ?? []).filter((m): m is { slug: string; name: string; monthlyPrice: number } => isAmount(m.monthlyPrice))
+  const maintenancePlans = (pricing.maintenancePlans ?? []).filter((m): m is MaintenanceRow => isAmount(m.monthlyPrice))
   const maintenance = plan ? resolveMaintenance(input.maintenance, plan.minPlan, maintenancePlans) : undefined
   return quoteSummaryText(buildQuote({ type: input.projectType, plan, maintenance, services }), input.locale, labels)
 }

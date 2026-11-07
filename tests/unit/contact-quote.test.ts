@@ -14,7 +14,10 @@ const labels = {
   vat: 'IVA (21 %) incluido',
   maintenance: 'Mantenimiento',
   noMaintenance: 'Sin mantenimiento',
-  webPrice: 'Precio de la web',
+  upfront: 'Al inicio: la web (pago único)',
+  maintenanceTerm: 'Mantenimiento · {months} meses',
+  total: 'Total en {months} meses',
+  totalWebOnly: 'Total (sin cuotas mensuales)',
   hint: 'x',
 }
 
@@ -113,32 +116,65 @@ describe('quoteLines / quoteSummaryText', () => {
 })
 
 describe('maintenance chosen with a web plan', () => {
-  it('with a maintenance plan: its monthly fee and the reduced web price, VAT included', () => {
-    expect(ql(buildQuote({ type: 'web', plan: landing, maintenance: { name: 'Esencial', monthlyPrice: 25 }, services }))).toEqual([
+  const pay = { section: 'payment' as const }
+
+  it('with a maintenance plan: the web paid up front, the fees over the minimum term and the total, VAT included', () => {
+    const q = buildQuote({ type: 'web', plan: landing, maintenance: { name: 'Esencial', monthlyPrice: 25, permanenceMonths: 24 }, services })
+    expect(ql(q)).toEqual([
       { label: 'Plan', value: 'Landing Page' },
       { label: 'Mantenimiento', value: 'Esencial · 30,25 €/mes' },
-      { label: 'Precio de la web', value: '422,29 €' },
       { label: 'Plazo estimado', value: '1-2 semanas' },
+      { label: 'Al inicio: la web (pago único)', value: '422,29 €', ...pay },
+      // 30,25 € × 24
+      { label: 'Mantenimiento · 24 meses', value: '726 €', ...pay },
+      { label: 'Total en 24 meses', value: '1.148,29 €', ...pay, strong: true },
     ])
   })
 
-  it('without maintenance: the web-only price', () => {
+  it('totals cents exactly and keeps "from" on the web and the total, never on the fees', () => {
+    const q = buildQuote({ type: 'web', plan: pro, maintenance: { name: 'Pro', monthlyPrice: 79, permanenceMonths: 12 }, services })
+    const lines = ql(q).filter((l) => l.section === 'payment')
+    expect(lines).toEqual([
+      { label: 'Al inicio: la web (pago único)', value: 'desde 2.165,90 €', ...pay },
+      // 95,59 € × 12 = 1.147,08 €
+      { label: 'Mantenimiento · 12 meses', value: '1.147,08 €', ...pay },
+      { label: 'Total en 12 meses', value: 'desde 3.312,98 €', ...pay, strong: true },
+    ])
+  })
+
+  it('without a known minimum term: only the upfront web price', () => {
+    const q = buildQuote({ type: 'web', plan: landing, maintenance: { name: 'Esencial', monthlyPrice: 25 }, services })
+    expect(ql(q).filter((l) => l.section === 'payment')).toEqual([{ label: 'Al inicio: la web (pago único)', value: '422,29 €', ...pay }])
+  })
+
+  it('without maintenance: the web-only price, which is also the total', () => {
     expect(ql(buildQuote({ type: 'web', plan: pro, maintenance: 'none', services }))).toEqual([
       { label: 'Plan', value: 'Web Profesional' },
       { label: 'Mantenimiento', value: 'Sin mantenimiento' },
-      { label: 'Precio de la web', value: 'desde 3.133,90 €' },
       { label: 'Plazo estimado', value: '1-2 semanas' },
+      { label: 'Al inicio: la web (pago único)', value: 'desde 3.133,90 €', ...pay },
+      { label: 'Total (sin cuotas mensuales)', value: 'desde 3.133,90 €', ...pay, strong: true },
     ])
+  })
+
+  it('the stored one-line summary includes what the visitor will pay', () => {
+    const q = buildQuote({ type: 'web', plan: landing, maintenance: { name: 'Esencial', monthlyPrice: 25, permanenceMonths: 24 }, services })
+    expect(quoteSummaryText(q, 'es', labels)).toBe(
+      'Plan: Landing Page · Mantenimiento: Esencial · 30,25 €/mes · Plazo estimado: 1-2 semanas · Al inicio: la web (pago único): 422,29 € · Mantenimiento · 24 meses: 726 € · Total en 24 meses: 1.148,29 € (IVA (21 %) incluido)',
+    )
   })
 })
 
 describe('quoteLabelsFrom', () => {
   it('rebuilds the {price} templates from a next-intl style translator (messages are precompiled)', () => {
     const messages: Record<string, string> = { 'quote.from': 'desde {price}', 'quote.perMonth': '{price}/mes' }
-    const t = (key: string, values?: { price: string }) => (messages[key] ?? key).replace('{price}', values?.price ?? '')
+    const messages2: Record<string, string> = { ...messages, 'quote.total': 'Total en {months} meses' }
+    const t = (key: string, values?: { price: string; months: string }) =>
+      (messages2[key] ?? key).replace('{price}', values?.price ?? '').replace('{months}', values?.months ?? '')
     const l = quoteLabelsFrom(t)
     expect(l.from).toBe('desde {price}')
     expect(l.perMonth).toBe('{price}/mes')
+    expect(l.total).toBe('Total en {months} meses')
     expect(l.vat).toBe('quote.vat')
   })
 })

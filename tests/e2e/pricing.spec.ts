@@ -113,10 +113,10 @@ test('a web plan CTA carries type and plan to the contact page, which shows the 
 
   await expect(page.getByTestId('selected-plan')).toContainText('Web Corporativa')
   await expect(page.locator('input[name="projectType"]')).toHaveValue('web')
-  await expect(page.locator('select[name="plan"]')).toHaveValue('web-corporativa')
+  await expect(page.getByRole('radio', { name: /^Web Corporativa/ })).toBeChecked()
   // The store CTA opens the same "new website" path with the store preselected.
   await page.goto('/contacto?type=ecommerce&plan=tienda-online')
-  await expect(page.locator('select[name="plan"]')).toHaveValue('tienda-online')
+  await expect(page.getByRole('radio', { name: /^Tienda Online/ })).toBeChecked()
   await expect(page.locator('input[name="projectType"]')).toHaveValue('ecommerce')
 
   await page.goto('/precios')
@@ -127,7 +127,7 @@ test('an unknown plan is ignored by the contact page', async ({ page }) => {
   for (const plan of ['premium', 'esencial']) {
     await page.goto(`/contacto?type=web&plan=${plan}`)
     await expect(page.getByTestId('selected-plan')).toHaveCount(0)
-    await expect(page.locator('select[name="plan"]')).toHaveValue('')
+    await expect(page.getByRole('radio', { name: /Aún no lo sé/ })).toBeChecked()
   }
 })
 
@@ -156,7 +156,7 @@ test('submitting with a plan stores it and keeps personal data out of the URL', 
   expect(docs[0]).toMatchObject({ plan: 'landing-page', projectType: 'web' })
   // S17: the lead keeps the price/time summary the visitor saw, rebuilt on the server.
   expect(docs[0]!.quotedSummary).toBe(
-    'Plan elegido: Landing Page · Mantenimiento: Esencial · 30,25 €/mes · Precio de la web: 422,29 € · Plazo estimado: 1-2 semanas (IVA (21 %) incluido)',
+    'Plan elegido: Landing Page · Mantenimiento: Esencial · 30,25 €/mes · Plazo estimado: 1-2 semanas · Al inicio: la web (pago único): 422,29 € · Mantenimiento · 24 meses: 726 € · Total en 24 meses: 1.148,29 € (IVA (21 %) incluido)',
   )
 })
 

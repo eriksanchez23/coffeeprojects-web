@@ -108,8 +108,13 @@
       "hint": "Prix indicatif selon le type de projet ; nous vous confirmerons le montant exact dans notre proposition.",
       "maintenance": "Maintenance",
       "noMaintenance": "Sans maintenance",
-      "webPrice": "Prix du site",
-      "pickPlan": "Choisissez le type de site pour voir son prix."
+      "pickPlan": "Choisissez le type de site pour voir son prix.",
+      "upfront": "Au départ : le site (paiement unique)",
+      "maintenanceTerm": "Maintenance · {months} mois",
+      "total": "Total sur {months} mois",
+      "totalWebOnly": "Total (sans mensualités)",
+      "paymentTitle": "Ce que vous paierez",
+      "termHint": "La mensualité commence le jour de la livraison. Après l’engagement, elle se renouvelle chaque mois et vous pouvez résilier avec 30 jours de préavis."
     },
     "errors": {
       "required": "Ce champ est obligatoire.",
@@ -155,10 +160,7 @@
     "webPlan": {
       "label": "Type de site",
       "placeholder": "Je ne sais pas encore, aidez-moi à choisir",
-      "option": "{name} — {with} avec maintenance · {without} sans maintenance",
       "maintenanceLabel": "Maintenance",
-      "maintenanceOption": "Formule {name} — {monthly}/mois · votre site coûte {web}",
-      "noneOption": "Sans maintenance — votre site coûte {web}",
       "hint": "Prix hors TVA. Avec n’importe quelle formule de maintenance, le site coûte moins cher.",
       "maintenanceHint": "Comprend hébergement, domaine, SSL, sauvegardes et modifications chaque mois. Vous pouvez l’ajouter plus tard.",
       "detailsTitle": "Ce que comprend votre choix",
@@ -174,7 +176,16 @@
       "saving": "Avec cette formule, votre site vous coûte {amount} de moins (HT).",
       "noneTitle": "Le site seul",
       "noneText": "Nous installons le site sur l’hébergement et le domaine que vous souscrivez vous-même. Ensuite, les modifications et corrections sont facturées à part au tarif « sans formule ».",
-      "noneExtra": "Sans maintenance, le site coûte {amount} de plus (HT). Vous pourrez la souscrire plus tard."
+      "noneExtra": "Sans maintenance, le site coûte {amount} de plus (HT). Vous pourrez la souscrire plus tard.",
+      "recommended": "Recommandé",
+      "new": "Nouveau",
+      "withLabel": "avec maintenance",
+      "withoutLine": "{price} sans maintenance",
+      "perMonth": "{price}/mois",
+      "term": "Engagement de {months, plural, one {# mois} other {# mois}}",
+      "webFor": "Votre site vous coûte {price}",
+      "noFee": "Sans mensualité",
+      "noTerm": "Sans engagement"
     }
   },
   "pricing": {

@@ -108,8 +108,13 @@
       "hint": "Indicative price for this type of project; we will confirm the exact amount in our proposal.",
       "maintenance": "Maintenance",
       "noMaintenance": "No maintenance",
-      "webPrice": "Website price",
-      "pickPlan": "Choose the type of website to see its price."
+      "pickPlan": "Choose the type of website to see its price.",
+      "upfront": "Up front: the website (one-off)",
+      "maintenanceTerm": "Maintenance · {months} months",
+      "total": "Total over {months} months",
+      "totalWebOnly": "Total (no monthly fees)",
+      "paymentTitle": "What you will pay",
+      "termHint": "The fee starts on delivery day. After the minimum term it renews monthly and you can cancel with 30 days' notice."
     },
     "errors": {
       "required": "This field is required.",
@@ -155,10 +160,7 @@
     "webPlan": {
       "label": "Type of website",
       "placeholder": "Not sure yet, help me choose",
-      "option": "{name} — {with} with maintenance · {without} without maintenance",
       "maintenanceLabel": "Maintenance",
-      "maintenanceOption": "{name} plan — {monthly}/month · your website costs {web}",
-      "noneOption": "No maintenance — your website costs {web}",
       "hint": "Prices exclude VAT. With any maintenance plan the website costs less.",
       "maintenanceHint": "Includes hosting, domain, SSL, backups and monthly changes. You can add it later.",
       "detailsTitle": "What your choice includes",
@@ -174,7 +176,16 @@
       "saving": "With this plan your website costs {amount} less (VAT excluded).",
       "noneTitle": "Website only",
       "noneText": "We install the website on the hosting and domain you take out yourself. After that, changes and fixes are charged separately at the \"no plan\" rate.",
-      "noneExtra": "Without maintenance the website costs {amount} more (VAT excluded). You can add it later."
+      "noneExtra": "Without maintenance the website costs {amount} more (VAT excluded). You can add it later.",
+      "recommended": "Recommended",
+      "new": "New",
+      "withLabel": "with maintenance",
+      "withoutLine": "{price} without maintenance",
+      "perMonth": "{price}/month",
+      "term": "{months, plural, one {# month} other {# months}} minimum term",
+      "webFor": "Your website costs {price}",
+      "noFee": "No fee",
+      "noTerm": "No minimum term"
     }
   },
   "pricing": {

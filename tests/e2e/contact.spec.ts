@@ -30,36 +30,55 @@ test('submits a valid request and lands on the thank-you page', async ({ page })
   expect(page.url()).not.toContain('@')
 })
 
-test('a new website: choose the type of website, then maintenance or none, and the price follows (S17)', async ({ page }) => {
+// The radios are visually hidden inside their cards: visitors (and these tests) click the card itself.
+test('a new website: pick the type of website, then maintenance or none, and the price follows (S17)', async ({ page }) => {
   await page.goto('/contacto?type=web&plan=landing-page')
   const summary = page.getByTestId('quote-summary')
-  const planSelect = page.getByLabel('Tipo de web')
-  const maintenance = page.getByLabel('Mantenimiento', { exact: true })
-  await expect(planSelect).toHaveValue('landing-page')
-  // Each type of website shows its price with and without maintenance (VAT excluded, like the pricing page).
-  await expect(planSelect.locator('option[value="landing-page"]')).toHaveText(/Landing Page — 349\s€ con mantenimiento · 590\s€ sin mantenimiento/)
+  const payment = page.getByTestId('quote-payment')
+  const plans = page.getByRole('group', { name: 'Tipo de web', exact: true })
+  const maintenance = page.getByRole('group', { name: 'Mantenimiento', exact: true })
+  await expect(plans.getByRole('radio', { name: /^Landing Page/ })).toBeChecked()
+  // Each type of website is a card with its price with and without maintenance (VAT excluded, like the pricing page).
+  await expect(page.getByTestId('plan-landing-page')).toContainText(/Landing Page\s*349\s€\s*con mantenimiento\s*590\s€ sin mantenimiento/)
+  await expect(page.getByTestId('plan-tienda-online')).toContainText('Recomendado')
   // The plan's minimum maintenance comes preselected; the summary shows prices with 21 % VAT.
-  await expect(maintenance).toHaveValue('esencial')
+  await expect(maintenance.getByRole('radio', { name: /^Esencial/ })).toBeChecked()
+  await expect(page.getByTestId('maintenance-esencial')).toContainText(/25\s€\/mes\s*Permanencia de 24 meses\s*La web te sale por 349\s€/)
   await expect(summary).toContainText(/Mantenimiento\s*Esencial · 30,25\s€\/mes/)
-  await expect(summary).toContainText(/Precio de la web\s*422,29\s€/)
   await expect(summary).toContainText(/Plazo estimado\s*1-2 semanas/)
   await expect(summary).toContainText('IVA (21 %) incluido')
+  // What the visitor will pay: the web up front, the fees over the minimum term and the total.
+  await expect(payment).toContainText(/Al inicio: la web \(pago único\)\s*422,29\s€/)
+  await expect(payment).toContainText(/Mantenimiento · 24 meses\s*726\s€/)
+  await expect(page.getByTestId('quote-total')).toContainText(/Total en 24 meses\s*1\.148,29\s€/)
+  await expect(payment).toContainText('Tras la permanencia se renueva mes a mes')
 
-  await maintenance.selectOption('none')
+  await page.getByTestId('maintenance-none').click()
   await expect(summary).toContainText(/Mantenimiento\s*Sin mantenimiento/)
-  await expect(summary).toContainText(/Precio de la web\s*713,90\s€/)
+  await expect(payment).toContainText(/Al inicio: la web \(pago único\)\s*713,90\s€/)
+  await expect(page.getByTestId('quote-total')).toContainText(/Total \(sin cuotas mensuales\)\s*713,90\s€/)
+  await expect(payment).not.toContainText('Tras la permanencia')
 
   // An online store only offers the maintenance plans that unlock its reduced price, and is sent as a store.
-  await planSelect.selectOption('tienda-online')
-  await expect(maintenance.locator('option')).toHaveText([/^Plan Plus/, /^Plan Pro/, /^Sin mantenimiento/])
-  await expect(maintenance).toHaveValue('plus')
+  await page.getByTestId('plan-tienda-online').click()
+  await expect(maintenance.getByRole('radio')).toHaveCount(3)
+  await expect(page.getByTestId('maintenance-esencial')).toHaveCount(0)
+  await expect(maintenance.getByRole('radio', { name: /^Plus/ })).toBeChecked()
   await expect(summary).toContainText(/Plus · 54,45\s€\/mes/)
-  await expect(summary).toContainText(/Precio de la web\s*1\.802,90\s€/)
+  await expect(payment).toContainText(/Al inicio: la web \(pago único\)\s*1\.802,90\s€/)
+  await expect(page.getByTestId('quote-total')).toContainText(/Total en 24 meses\s*3\.109,70\s€/)
   await expect(page.locator('input[name="projectType"]')).toHaveValue('ecommerce')
 
-  // "Not sure yet": no maintenance select and no price until a type of website is chosen.
-  await planSelect.selectOption('')
+  // Arrow keys move through the maintenance cards like any radio group.
+  await maintenance.getByRole('radio', { name: /^Plus/ }).focus()
+  await page.keyboard.press('ArrowRight')
+  await expect(maintenance.getByRole('radio', { name: /^Pro/ })).toBeChecked()
+  await expect(page.getByTestId('quote-total')).toContainText(/Total en 12 meses\s*2\.949,98\s€/)
+
+  // "Not sure yet": no maintenance choice and no price until a type of website is chosen.
+  await page.getByTestId('plan-unsure').click()
   await expect(maintenance).toHaveCount(0)
+  await expect(payment).toHaveCount(0)
   await expect(summary).toContainText('Elige el tipo de web para ver su precio.')
   await expect(page.locator('input[name="projectType"]')).toHaveValue('web')
 
@@ -79,13 +98,13 @@ test('a new website: choose the type of website, then maintenance or none, and t
 
 test('the chosen website and maintenance show what they include, with links to their pricing cards', async ({ page, context }) => {
   await page.goto('/contacto')
-  const planSelect = page.getByLabel('Tipo de web')
-  const maintenance = page.getByLabel('Mantenimiento', { exact: true })
+  const plans = page.getByRole('group', { name: 'Tipo de web', exact: true })
+  const maintenance = page.getByRole('group', { name: 'Mantenimiento', exact: true })
   // Nothing chosen yet: a link to compare every plan.
   await expect(page.getByTestId('plan-details')).toHaveCount(0)
   await expect(page.getByRole('link', { name: /Ver y comparar todos los planes/ })).toHaveAttribute('href', '/precios')
 
-  await planSelect.selectOption('tienda-online')
+  await page.getByTestId('plan-tienda-online').click()
   const web = page.getByTestId('plan-info')
   const plan = page.getByTestId('maintenance-info')
   await expect(web).toContainText('Tienda Online')
@@ -96,11 +115,11 @@ test('the chosen website and maintenance show what they include, with links to t
   await expect(plan).toContainText(/la web te sale 700\s€ más barata/)
   await expect(plan.getByRole('link', { name: /Ver el mantenimiento en precios/ })).toHaveAttribute('href', '/precios#maintenance-plus')
 
-  await maintenance.selectOption('pro')
+  await page.getByTestId('maintenance-pro').click()
   await expect(plan).toContainText(/79\s€\/mes \+ IVA · permanencia de 12 meses/)
   await expect(plan.getByRole('link', { name: /Ver el mantenimiento en precios/ })).toHaveAttribute('href', '/precios#maintenance-pro')
 
-  await maintenance.selectOption('none')
+  await page.getByTestId('maintenance-none').click()
   await expect(plan).toContainText('Solo la web')
   await expect(plan).toContainText(/cuesta 700\s€ más/)
   await expect(plan.getByRole('link', { name: /Comparar con y sin mantenimiento/ })).toHaveAttribute('href', '/precios#pricing-comparison-title')
@@ -110,7 +129,7 @@ test('the chosen website and maintenance show what they include, with links to t
   await pricing.waitForLoadState()
   await expect(pricing).toHaveURL(/\/precios#plan-tienda-online$/)
   await expect(pricing.locator('#plan-tienda-online')).toBeInViewport()
-  await expect(page.getByLabel('Tipo de web')).toHaveValue('tienda-online')
+  await expect(plans.getByRole('radio', { name: /^Tienda Online/ })).toBeChecked()
 })
 
 test('the quote summary is localized', async ({ page }) => {
