@@ -14,12 +14,15 @@ export function WebPlanList({
   locale,
   vat,
   from,
+  markFeatured = true,
   className,
 }: {
   plans: WebPlan[]
   locale: Locale
   vat: string
   from: string
+  /** The dot next to the recommended plan; the home page leaves it to the pricing page. */
+  markFeatured?: boolean
   className?: string
 }) {
   return (
@@ -31,7 +34,7 @@ export function WebPlanList({
             className="group flex items-baseline justify-between gap-4 px-4 py-3 transition-colors hover:bg-bg-2"
           >
             <span className="flex items-center gap-2 font-medium text-ink-0">
-              {p.featured && <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-brand" />}
+              {markFeatured && p.featured && <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-brand" data-testid="plan-list-featured" />}
               {p.name}
             </span>
             <span className="shrink-0 text-right text-sm text-ink-2">

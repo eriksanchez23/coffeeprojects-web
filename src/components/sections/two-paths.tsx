@@ -49,7 +49,7 @@ export async function TwoPaths({ paths, newService, redesignService, extras, pla
             {c.key === 'new' && plans.length > 0 && (
               <div className="mt-8">
                 <p className="mb-3 text-sm font-semibold text-ink-1">{t('plansLead')}</p>
-                <WebPlanList plans={plans} locale={locale} vat={vat} from={tc('from')} />
+                <WebPlanList plans={plans} locale={locale} vat={vat} from={tc('from')} markFeatured={false} />
                 <Link href="/pricing" className="mt-3 inline-block text-sm font-medium text-brand hover:text-brand-hi">
                   {t('seeAllPlans')} <span aria-hidden>→</span>
                 </Link>

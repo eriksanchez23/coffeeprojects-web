@@ -197,3 +197,15 @@ test('the services list shows the re-priced services with the VAT note', async (
   expect(main).toContain('Desde 1.490 € + IVA')
   expect(main).toContain('Desde 25 €/mes + IVA')
 })
+
+test('the recommended plan is marked on the pricing page and the service page, not in the home plan list', async ({ page }) => {
+  await page.goto('/')
+  const homeList = page.getByRole('link', { name: /Tienda Online/ }).first()
+  await expect(homeList).toBeAttached()
+  await expect(page.getByTestId('plan-list-featured')).toHaveCount(0)
+  await page.goto('/servicios/webs-y-landing-pages')
+  await expect(page.getByTestId('plan-list-featured')).toHaveCount(1)
+  await page.goto('/precios')
+  const store = page.getByRole('listitem').filter({ has: page.getByRole('heading', { level: 3, name: 'Tienda Online', exact: true }) })
+  await expect(store.getByText('Recomendado')).toBeVisible()
+})
