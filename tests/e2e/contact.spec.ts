@@ -132,6 +132,24 @@ test('the chosen website and maintenance show what they include, with links to t
   await expect(plans.getByRole('radio', { name: /^Tienda Online/ })).toBeChecked()
 })
 
+test('a chosen plan has a fixed price: no "from" in the summary, even for a plan listed "from" an amount', async ({ page }) => {
+  await page.goto('/contacto?type=web&plan=web-profesional')
+  const summary = page.getByTestId('quote-summary')
+  await expect(page.getByTestId('quote-total')).toContainText(/Total en 12 meses\s*3\.312,98\s€/)
+  await expect(page.getByTestId('quote-payment')).toContainText(/Al inicio: la web \(pago único\)\s*2\.165,90\s€/)
+  await page.getByTestId('maintenance-none').click()
+  await expect(page.getByTestId('quote-total')).toContainText(/Total \(sin cuotas mensuales\)\s*3\.133,90\s€/)
+  await expect(summary).not.toContainText('desde')
+  // Fixed price: no "indicative price" note, only the VAT one.
+  await expect(summary).toContainText('IVA (21 %) incluido')
+  await expect(summary).not.toContainText('Precio orientativo')
+  // Without a plan, a project type still shows its indicative "from" price.
+  await page.getByText('Otro proyecto', { exact: true }).click()
+  await page.getByLabel('Tipo de proyecto *').selectOption('ecommerce')
+  await expect(summary).toContainText(/desde 1\.802,90\s€/)
+  await expect(summary).toContainText('Precio orientativo')
+})
+
 test('the quote summary is localized', async ({ page }) => {
   await page.goto('/en/contact?type=ecommerce')
   await expect(page.getByTestId('quote-summary')).toContainText(/from €1,802\.90/)

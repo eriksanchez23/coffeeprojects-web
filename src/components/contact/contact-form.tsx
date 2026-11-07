@@ -358,7 +358,10 @@ export function ContactForm({
               </section>
             )}
           </div>
-          <p className="mt-3 text-xs text-ink-3">{t('quote.vat')}. {t('quote.hint')}</p>
+          {/* A chosen plan's price is fixed; only a project type without a plan shows an indicative price. */}
+          <p className="mt-3 text-xs text-ink-3">
+            {t('quote.vat')}.{!(path === 'web' && option) && ` ${t('quote.hint')}`}
+          </p>
         </section>
       )}
 

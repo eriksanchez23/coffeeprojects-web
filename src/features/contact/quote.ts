@@ -110,6 +110,8 @@ function servicePrice(service: QuoteService | undefined): QuotePrice {
 /**
  * `maintenance`: the visitor's choice for the web plan (`'none'` = web only); omitted when not chosen yet, in
  * which case both web prices are shown. Ignored without a plan.
+ * A chosen plan has a fixed price, so its prices never read "from" (even when the pricing page lists the plan
+ * "from" an amount); only a project type without a plan keeps its service's "from" price.
  */
 export function buildQuote({
   type,
@@ -128,8 +130,8 @@ export function buildQuote({
     ? {
         plan: {
           name: plan.name,
-          withMaintenance: { amount: withVat(plan.priceWithMaintenance), from: Boolean(plan.fromPrice), monthly: false },
-          webOnly: { amount: withVat(plan.priceWebOnly), from: Boolean(plan.fromPrice), monthly: false },
+          withMaintenance: { amount: withVat(plan.priceWithMaintenance), from: false, monthly: false },
+          webOnly: { amount: withVat(plan.priceWebOnly), from: false, monthly: false },
           ...(maintenance && {
             maintenance:
               maintenance === 'none'
@@ -157,7 +159,7 @@ const cents = (n: number) => Math.round(n * 100) / 100
 
 /**
  * "What you will pay" for a web plan and a maintenance choice: the web, paid once at the start, then (with a
- * maintenance plan) its fees over the minimum term and the total of both. Prices keep the plan's "from" flag.
+ * maintenance plan) its fees over the minimum term and the total of both.
  */
 function paymentLines(web: NonNullable<QuotePrice>, m: QuoteMaintenance, locale: Locale, labels: QuoteLabels): QuoteLine[] {
   const upfront: QuoteLine = { label: labels.upfront, value: formatPrice(web, locale, labels), section: 'payment' }
@@ -176,7 +178,7 @@ function paymentLines(web: NonNullable<QuotePrice>, m: QuoteMaintenance, locale:
     },
     {
       label: labels.total.replace('{months}', months),
-      value: formatPrice({ amount: cents(web.amount + fees), from: web.from, monthly: false }, locale, labels),
+      value: formatPrice({ amount: cents(web.amount + fees), from: false, monthly: false }, locale, labels),
       section: 'payment',
       strong: true,
     },

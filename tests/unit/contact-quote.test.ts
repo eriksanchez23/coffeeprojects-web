@@ -63,9 +63,10 @@ describe('buildQuote', () => {
     })
   })
 
-  it('keeps the plan "from" flag', () => {
+  it('a chosen plan has a fixed price, even one the pricing page lists "from" an amount', () => {
     const q = buildQuote({ type: 'web', plan: pro, services })
-    expect(q.plan?.withMaintenance).toEqual({ amount: 2165.9, from: true, monthly: false })
+    expect(q.plan?.withMaintenance).toEqual({ amount: 2165.9, from: false, monthly: false })
+    expect(q.plan?.webOnly).toEqual({ amount: 3133.9, from: false, monthly: false })
   })
 
   it('without a plan uses the service "from" price with VAT (monthly kept)', () => {
@@ -91,8 +92,8 @@ describe('quoteLines / quoteSummaryText', () => {
     ])
   })
 
-  it('formats "from", monthly and custom prices', () => {
-    expect(ql(buildQuote({ type: 'web', plan: pro, services }))[1]!.value).toBe('desde 2.165,90 €')
+  it('formats "from", monthly and custom prices; a chosen plan has a fixed price, never "from"', () => {
+    expect(ql(buildQuote({ type: 'web', plan: pro, services }))[1]!.value).toBe('2.165,90 €')
     expect(ql(buildQuote({ type: 'maintenance', services }))[0]).toEqual({ label: 'Precio final', value: 'desde 30,25 €/mes' })
     expect(ql(buildQuote({ type: 'ecommerce', services }))[0]!.value).toBe('desde 1.802,90 €')
     expect(ql(buildQuote({ type: 'custom', services }))[0]!.value).toBe('A medida (bajo presupuesto)')
@@ -131,14 +132,14 @@ describe('maintenance chosen with a web plan', () => {
     ])
   })
 
-  it('totals cents exactly and keeps "from" on the web and the total, never on the fees', () => {
+  it('totals cents exactly, with fixed prices even for a plan listed "from" an amount', () => {
     const q = buildQuote({ type: 'web', plan: pro, maintenance: { name: 'Pro', monthlyPrice: 79, permanenceMonths: 12 }, services })
     const lines = ql(q).filter((l) => l.section === 'payment')
     expect(lines).toEqual([
-      { label: 'Al inicio: la web (pago único)', value: 'desde 2.165,90 €', ...pay },
+      { label: 'Al inicio: la web (pago único)', value: '2.165,90 €', ...pay },
       // 95,59 € × 12 = 1.147,08 €
       { label: 'Mantenimiento · 12 meses', value: '1.147,08 €', ...pay },
-      { label: 'Total en 12 meses', value: 'desde 3.312,98 €', ...pay, strong: true },
+      { label: 'Total en 12 meses', value: '3.312,98 €', ...pay, strong: true },
     ])
   })
 
@@ -152,8 +153,8 @@ describe('maintenance chosen with a web plan', () => {
       { label: 'Plan', value: 'Web Profesional' },
       { label: 'Mantenimiento', value: 'Sin mantenimiento' },
       { label: 'Plazo estimado', value: '1-2 semanas' },
-      { label: 'Al inicio: la web (pago único)', value: 'desde 3.133,90 €', ...pay },
-      { label: 'Total (sin cuotas mensuales)', value: 'desde 3.133,90 €', ...pay, strong: true },
+      { label: 'Al inicio: la web (pago único)', value: '3.133,90 €', ...pay },
+      { label: 'Total (sin cuotas mensuales)', value: '3.133,90 €', ...pay, strong: true },
     ])
   })
 
